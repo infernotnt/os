@@ -1,0 +1,160 @@
+GAS LISTING /tmp/ccehfWEy.s 			page 1
+
+
+   1              		.file	"main.cpp"
+   2              		.option pic
+   3              		.option norelax
+   4              		.text
+   5              	.Ltext0:
+   6              		.align	2
+   7              		.globl	main
+   9              	main:
+  10              	.LFB3:
+  11              		.file 1 "src/main.cpp"
+   1:src/main.cpp  **** #include "../lib/console.h"
+   2:src/main.cpp  **** 
+   3:src/main.cpp  **** #include "../h/alloc.h"
+   4:src/main.cpp  **** #include "../h/my_console.h"
+   5:src/main.cpp  **** 
+   6:src/main.cpp  **** extern "C" void trapRoutine();
+   7:src/main.cpp  **** 
+   8:src/main.cpp  **** int main()
+   9:src/main.cpp  **** {
+  12              		.loc 1 9 1
+  13              		.cfi_startproc
+  14 0000 130101FF 		addi	sp,sp,-16
+  15              		.cfi_def_cfa_offset 16
+  16 0004 23341100 		sd	ra,8(sp)
+  17 0008 23308100 		sd	s0,0(sp)
+  18              		.cfi_offset 1, -8
+  19              		.cfi_offset 8, -16
+  20 000c 13040101 		addi	s0,sp,16
+  21              		.cfi_def_cfa 8, 0
+  10:src/main.cpp  **** //    putString("Start");
+  11:src/main.cpp  **** //    putNewline();
+  12:src/main.cpp  **** 
+  13:src/main.cpp  ****     MemAlloc* memAlloc = MemAlloc::get();
+  22              		.loc 1 13 5
+  23              		.loc 1 13 39 is_stmt 0
+  24 0010 97000000 		call	_ZN8MemAlloc3getEv@plt
+  24      E7800000 
+  25              	.LVL0:
+  14:src/main.cpp  ****     memAlloc->allocMem(10);
+  26              		.loc 1 14 5 is_stmt 1
+  27              		.loc 1 14 23 is_stmt 0
+  28 0018 9305A000 		li	a1,10
+  29 001c 97000000 		call	_ZN8MemAlloc8allocMemEm@plt
+  29      E7800000 
+  30              	.LVL1:
+  15:src/main.cpp  **** 
+  16:src/main.cpp  ****     __asm__ volatile ("csrw stvec, %[vector]" : : [vector] "r" (&trapRoutine));
+  31              		.loc 1 16 5 is_stmt 1
+  32              		.loc 1 16 79 is_stmt 0
+  33 0024 97070000 		la	a5,trapRoutine
+  33      83B70700 
+  34              	#APP
+  35              	# 16 "src/main.cpp" 1
+  17              	    __asm__ volatile ("csrs sstatus, 0x02");
+  36              		csrw stvec, a5
+  37              	# 0 "" 2
+  38              		.loc 1 17 5 is_stmt 1
+GAS LISTING /tmp/ccehfWEy.s 			page 2
+
+
+  39              		.loc 1 17 44 is_stmt 0
+  40              	# 17 "src/main.cpp" 1
+  18              	
+  41              		csrs sstatus, 0x02
+  42              	# 0 "" 2
+  43              	#NO_APP
+  44              	.L2:
+  19:src/main.cpp  ****     while(true)
+  45              		.loc 1 19 5 is_stmt 1 discriminator 1
+  46              		.loc 1 19 5 discriminator 1
+  47 0034 6F000000 		j	.L2
+  48              		.cfi_endproc
+  49              	.LFE3:
+  51              	.Letext0:
+  52              		.file 2 "src/../h/../lib/hw.h"
+  53              		.file 3 "src/../h/alloc.h"
+GAS LISTING /tmp/ccehfWEy.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 main.cpp
+     /tmp/ccehfWEy.s:9      .text:0000000000000000 main
+     /tmp/ccehfWEy.s:13     .text:0000000000000000 .L0 
+     /tmp/ccehfWEy.s:14     .text:0000000000000000 .L0 
+     /tmp/ccehfWEy.s:15     .text:0000000000000004 .L0 
+     /tmp/ccehfWEy.s:18     .text:000000000000000c .L0 
+     /tmp/ccehfWEy.s:19     .text:000000000000000c .L0 
+     /tmp/ccehfWEy.s:21     .text:0000000000000010 .L0 
+     /tmp/ccehfWEy.s:23     .text:0000000000000010 .L0 
+     /tmp/ccehfWEy.s:24     .text:0000000000000010 .L0 
+     /tmp/ccehfWEy.s:27     .text:0000000000000018 .L0 
+     /tmp/ccehfWEy.s:28     .text:0000000000000018 .L0 
+     /tmp/ccehfWEy.s:32     .text:0000000000000024 .L0 
+     /tmp/ccehfWEy.s:33     .text:0000000000000024 .L0 
+     /tmp/ccehfWEy.s:39     .text:0000000000000030 .L0 
+        src/main.cpp:17     .text:0000000000000030 .L0 
+     /tmp/ccehfWEy.s:46     .text:0000000000000034 .L0 
+     /tmp/ccehfWEy.s:47     .text:0000000000000034 .L0 
+     /tmp/ccehfWEy.s:48     .text:0000000000000038 .L0 
+     /tmp/ccehfWEy.s:54     .text:0000000000000038 .L0 
+     /tmp/ccehfWEy.s:33     .text:0000000000000024 .L0 
+     /tmp/ccehfWEy.s:44     .text:0000000000000034 .L2
+     /tmp/ccehfWEy.s:342    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+     /tmp/ccehfWEy.s:765    .debug_str:00000000000000d7 .LASF31
+     /tmp/ccehfWEy.s:775    .debug_str:00000000000001d6 .LASF32
+     /tmp/ccehfWEy.s:789    .debug_str:0000000000000234 .LASF33
+     /tmp/ccehfWEy.s:5      .text:0000000000000000 .Ltext0
+     /tmp/ccehfWEy.s:51     .text:0000000000000038 .Letext0
+     /tmp/ccehfWEy.s:731    .debug_line:0000000000000000 .Ldebug_line0
+     /tmp/ccehfWEy.s:777    .debug_str:00000000000001e3 .LASF0
+     /tmp/ccehfWEy.s:759    .debug_str:00000000000000a7 .LASF1
+     /tmp/ccehfWEy.s:755    .debug_str:0000000000000087 .LASF2
+     /tmp/ccehfWEy.s:741    .debug_str:000000000000002e .LASF4
+     /tmp/ccehfWEy.s:757    .debug_str:0000000000000095 .LASF3
+     /tmp/ccehfWEy.s:737    .debug_str:0000000000000019 .LASF5
+     /tmp/ccehfWEy.s:735    .debug_str:0000000000000006 .LASF6
+     /tmp/ccehfWEy.s:751    .debug_str:0000000000000065 .LASF7
+     /tmp/ccehfWEy.s:781    .debug_str:00000000000001f5 .LASF8
+     /tmp/ccehfWEy.s:739    .debug_str:0000000000000020 .LASF9
+     /tmp/ccehfWEy.s:805    .debug_str:00000000000002b6 .LASF10
+     /tmp/ccehfWEy.s:753    .debug_str:0000000000000078 .LASF11
+     /tmp/ccehfWEy.s:797    .debug_str:000000000000027c .LASF12
+     /tmp/ccehfWEy.s:785    .debug_str:000000000000021b .LASF13
+     /tmp/ccehfWEy.s:763    .debug_str:00000000000000cb .LASF14
+     /tmp/ccehfWEy.s:747    .debug_str:0000000000000046 .LASF15
+     /tmp/ccehfWEy.s:783    .debug_str:0000000000000205 .LASF16
+     /tmp/ccehfWEy.s:749    .debug_str:000000000000005c .LASF26
+     /tmp/ccehfWEy.s:745    .debug_str:000000000000003e .LASF25
+     /tmp/ccehfWEy.s:801    .debug_str:00000000000002ab .LASF17
+     /tmp/ccehfWEy.s:733    .debug_str:0000000000000000 .LASF18
+     /tmp/ccehfWEy.s:803    .debug_str:00000000000002b1 .LASF19
+     /tmp/ccehfWEy.s:773    .debug_str:00000000000001d1 .LASF20
+     /tmp/ccehfWEy.s:799    .debug_str:000000000000028c .LASF27
+     /tmp/ccehfWEy.s:793    .debug_str:0000000000000260 .LASF34
+     /tmp/ccehfWEy.s:743    .debug_str:0000000000000035 .LASF35
+     /tmp/ccehfWEy.s:791    .debug_str:0000000000000257 .LASF21
+GAS LISTING /tmp/ccehfWEy.s 			page 4
+
+
+     /tmp/ccehfWEy.s:771    .debug_str:00000000000001b9 .LASF23
+     /tmp/ccehfWEy.s:787    .debug_str:000000000000022b .LASF22
+     /tmp/ccehfWEy.s:767    .debug_str:000000000000019b .LASF24
+     /tmp/ccehfWEy.s:761    .debug_str:00000000000000ba .LASF28
+     /tmp/ccehfWEy.s:779    .debug_str:00000000000001f0 .LASF29
+     /tmp/ccehfWEy.s:769    .debug_str:00000000000001b4 .LASF36
+     /tmp/ccehfWEy.s:10     .text:0000000000000000 .LFB3
+     /tmp/ccehfWEy.s:49     .text:0000000000000038 .LFE3
+     /tmp/ccehfWEy.s:795    .debug_str:0000000000000273 .LASF30
+     /tmp/ccehfWEy.s:711    .debug_loc:0000000000000000 .LLST0
+     /tmp/ccehfWEy.s:25     .text:0000000000000018 .LVL0
+     /tmp/ccehfWEy.s:30     .text:0000000000000024 .LVL1
+     /tmp/ccehfWEy.s:55     .debug_info:0000000000000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_ZN8MemAlloc3getEv
+_ZN8MemAlloc8allocMemEm
+trapRoutine

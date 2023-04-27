@@ -1,0 +1,112 @@
+GAS LISTING /tmp/ccfydnst.s 			page 1
+
+
+   1              		.file	"cTrapRoutine.c"
+   2              		.option nopic
+   3              		.option norelax
+   4              		.text
+   5              	.Ltext0:
+   6              		.cfi_sections	.debug_frame
+   7              		.align	2
+   8              		.globl	cTrapRoutine
+  10              	cTrapRoutine:
+  11              	.LFB0:
+  12              		.file 1 "src/cTrapRoutine.c"
+   1:src/cTrapRoutine.c **** #include "../lib/console.h"
+   2:src/cTrapRoutine.c **** 
+   3:src/cTrapRoutine.c **** void cTrapRoutine()
+   4:src/cTrapRoutine.c **** {
+  13              		.loc 1 4 1
+  14              		.cfi_startproc
+  15 0000 130101FF 		addi	sp,sp,-16
+  16              		.cfi_def_cfa_offset 16
+  17 0004 23341100 		sd	ra,8(sp)
+  18 0008 23308100 		sd	s0,0(sp)
+  19              		.cfi_offset 1, -8
+  20              		.cfi_offset 8, -16
+  21 000c 13040101 		addi	s0,sp,16
+  22              		.cfi_def_cfa 8, 0
+   5:src/cTrapRoutine.c ****     __putc('m');
+  23              		.loc 1 5 5
+  24 0010 1305D006 		li	a0,109
+  25 0014 97000000 		call	__putc
+  25      E7800000 
+  26              	.LVL0:
+   6:src/cTrapRoutine.c ****     __putc('m');
+  27              		.loc 1 6 5
+  28 001c 1305D006 		li	a0,109
+  29 0020 97000000 		call	__putc
+  29      E7800000 
+  30              	.LVL1:
+   7:src/cTrapRoutine.c ****     __putc('m');
+  31              		.loc 1 7 5
+  32 0028 1305D006 		li	a0,109
+  33 002c 97000000 		call	__putc
+  33      E7800000 
+  34              	.LVL2:
+   8:src/cTrapRoutine.c ****     __putc('m');
+  35              		.loc 1 8 5
+  36 0034 1305D006 		li	a0,109
+  37 0038 97000000 		call	__putc
+  37      E7800000 
+  38              	.LVL3:
+   9:src/cTrapRoutine.c **** }...
+  39              		.loc 1 9 1 is_stmt 0
+  40 0040 83308100 		ld	ra,8(sp)
+  41              		.cfi_restore 1
+  42 0044 03340100 		ld	s0,0(sp)
+  43              		.cfi_restore 8
+  44              		.cfi_def_cfa 2, 16
+  45 0048 13010101 		addi	sp,sp,16
+GAS LISTING /tmp/ccfydnst.s 			page 2
+
+
+  46              		.cfi_def_cfa_offset 0
+  47 004c 67800000 		jr	ra
+  48              		.cfi_endproc
+  49              	.LFE0:
+  51              	.Letext0:
+  52              		.file 2 "src/../lib/console.h"
+GAS LISTING /tmp/ccfydnst.s 			page 3
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 cTrapRoutine.c
+     /tmp/ccfydnst.s:10     .text:0000000000000000 cTrapRoutine
+     /tmp/ccfydnst.s:14     .text:0000000000000000 .L0 
+     /tmp/ccfydnst.s:15     .text:0000000000000000 .L0 
+     /tmp/ccfydnst.s:16     .text:0000000000000004 .L0 
+     /tmp/ccfydnst.s:19     .text:000000000000000c .L0 
+     /tmp/ccfydnst.s:20     .text:000000000000000c .L0 
+     /tmp/ccfydnst.s:22     .text:0000000000000010 .L0 
+     /tmp/ccfydnst.s:24     .text:0000000000000010 .L0 
+     /tmp/ccfydnst.s:28     .text:000000000000001c .L0 
+     /tmp/ccfydnst.s:32     .text:0000000000000028 .L0 
+     /tmp/ccfydnst.s:36     .text:0000000000000034 .L0 
+     /tmp/ccfydnst.s:40     .text:0000000000000040 .L0 
+     /tmp/ccfydnst.s:41     .text:0000000000000044 .L0 
+     /tmp/ccfydnst.s:43     .text:0000000000000048 .L0 
+     /tmp/ccfydnst.s:44     .text:0000000000000048 .L0 
+     /tmp/ccfydnst.s:46     .text:000000000000004c .L0 
+     /tmp/ccfydnst.s:48     .text:0000000000000050 .L0 
+     /tmp/ccfydnst.s:53     .text:0000000000000050 .L0 
+                     .debug_frame:0000000000000000 .L0 
+     /tmp/ccfydnst.s:129    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+     /tmp/ccfydnst.s:238    .debug_str:0000000000000000 .LASF0
+     /tmp/ccfydnst.s:240    .debug_str:000000000000009e .LASF1
+     /tmp/ccfydnst.s:242    .debug_str:00000000000000b1 .LASF2
+     /tmp/ccfydnst.s:5      .text:0000000000000000 .Ltext0
+     /tmp/ccfydnst.s:51     .text:0000000000000050 .Letext0
+     /tmp/ccfydnst.s:236    .debug_line:0000000000000000 .Ldebug_line0
+     /tmp/ccfydnst.s:246    .debug_str:00000000000000db .LASF3
+     /tmp/ccfydnst.s:11     .text:0000000000000000 .LFB0
+     /tmp/ccfydnst.s:49     .text:0000000000000050 .LFE0
+     /tmp/ccfydnst.s:26     .text:000000000000001c .LVL0
+     /tmp/ccfydnst.s:30     .text:0000000000000028 .LVL1
+     /tmp/ccfydnst.s:34     .text:0000000000000034 .LVL2
+     /tmp/ccfydnst.s:38     .text:0000000000000040 .LVL3
+     /tmp/ccfydnst.s:244    .debug_str:00000000000000d4 .LASF4
+     /tmp/ccfydnst.s:54     .debug_info:0000000000000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+__putc
