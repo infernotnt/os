@@ -23,7 +23,13 @@ MemAlloc* MemAlloc::get()
 
 void* MemAlloc::allocMem(size_t size)
 {
-    // puts it in the first place large enough found
+    // Algorithm: puts it in the first place large enough found
+
+    putString("Allocating at least ");
+    putInt(size);
+    putString(" bytes");
+
+//    __asm__ volatile ("ecall");
 
     if(size % MEM_BLOCK_SIZE != 0) // align size
     {
@@ -48,8 +54,8 @@ void* MemAlloc::allocMem(size_t size)
     }
 
     assert(false); // there is no slot large enough
-    return nullptr;
 
+    return nullptr;
 }
 
 //int mem_free (void*);

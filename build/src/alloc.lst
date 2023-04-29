@@ -1,4 +1,4 @@
-GAS LISTING /tmp/cc1wo5Wt.s 			page 1
+GAS LISTING /tmp/ccerZjSf.s 			page 1
 
 
    1              		.file	"alloc.cpp"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/cc1wo5Wt.s 			page 1
   29              	.LVL2:
   30              	.LBE8:
   31              	.LBE7:
-GAS LISTING /tmp/cc1wo5Wt.s 			page 2
+GAS LISTING /tmp/ccerZjSf.s 			page 2
 
 
    6:src/alloc.cpp **** {
@@ -118,7 +118,7 @@ GAS LISTING /tmp/cc1wo5Wt.s 			page 1
   68 0044 23341100 		sd	ra,8(sp)
   69 0048 23308100 		sd	s0,0(sp)
   70              		.cfi_offset 1, -8
-GAS LISTING /tmp/cc1wo5Wt.s 			page 3
+GAS LISTING /tmp/ccerZjSf.s 			page 3
 
 
   71              		.cfi_offset 8, -16
@@ -152,390 +152,460 @@ GAS LISTING /tmp/cc1wo5Wt.s 			page 1
   94              		.section	.rodata.str1.8,"aMS",@progbits,1
   95              		.align	3
   96              	.LC0:
-  97 0000 7372632F 		.string	"src/alloc.cpp"
-  97      616C6C6F 
-  97      632E6370 
-  97      7000
-  98              		.text
-  99              		.align	2
- 100              		.globl	_ZN8MemAlloc8allocMemEm
- 102              	_ZN8MemAlloc8allocMemEm:
- 103              	.LFB7:
+  97 0000 416C6C6F 		.string	"Allocating at least "
+  97      63617469 
+  97      6E672061 
+  97      74206C65 
+  97      61737420 
+  98 0015 000000   		.align	3
+  99              	.LC1:
+ 100 0018 20627974 		.string	" bytes"
+ 100      657300
+ 101 001f 00       		.align	3
+ 102              	.LC2:
+ 103 0020 7372632F 		.string	"src/alloc.cpp"
+ 103      616C6C6F 
+ 103      632E6370 
+ 103      7000
+ 104              		.text
+ 105              		.align	2
+ 106              		.globl	_ZN8MemAlloc8allocMemEm
+ 108              	_ZN8MemAlloc8allocMemEm:
+ 109              	.LFB7:
   23:src/alloc.cpp **** 
   24:src/alloc.cpp **** void* MemAlloc::allocMem(size_t size)
   25:src/alloc.cpp **** {
- 104              		.loc 1 25 1 is_stmt 1
- 105              		.cfi_startproc
- 106              	.LVL4:
- 107 0084 130101FE 		addi	sp,sp,-32
- 108              		.cfi_def_cfa_offset 32
- 109 0088 233C1100 		sd	ra,24(sp)
- 110 008c 23388100 		sd	s0,16(sp)
- 111 0090 23349100 		sd	s1,8(sp)
- 112 0094 23302101 		sd	s2,0(sp)
- 113              		.cfi_offset 1, -8
- 114              		.cfi_offset 8, -16
- 115              		.cfi_offset 9, -24
- 116              		.cfi_offset 18, -32
- 117 0098 13040102 		addi	s0,sp,32
-GAS LISTING /tmp/cc1wo5Wt.s 			page 4
+ 110              		.loc 1 25 1 is_stmt 1
+ 111              		.cfi_startproc
+ 112              	.LVL4:
+GAS LISTING /tmp/ccerZjSf.s 			page 4
 
 
- 118              		.cfi_def_cfa 8, 0
- 119 009c 93040500 		mv	s1,a0
- 120 00a0 13890500 		mv	s2,a1
-  26:src/alloc.cpp ****     // puts it in the first place large enough found
+ 113 0084 130101FE 		addi	sp,sp,-32
+ 114              		.cfi_def_cfa_offset 32
+ 115 0088 233C1100 		sd	ra,24(sp)
+ 116 008c 23388100 		sd	s0,16(sp)
+ 117 0090 23349100 		sd	s1,8(sp)
+ 118 0094 23302101 		sd	s2,0(sp)
+ 119              		.cfi_offset 1, -8
+ 120              		.cfi_offset 8, -16
+ 121              		.cfi_offset 9, -24
+ 122              		.cfi_offset 18, -32
+ 123 0098 13040102 		addi	s0,sp,32
+ 124              		.cfi_def_cfa 8, 0
+ 125 009c 93040500 		mv	s1,a0
+ 126 00a0 13890500 		mv	s2,a1
+  26:src/alloc.cpp ****     // Algorithm: puts it in the first place large enough found
   27:src/alloc.cpp **** 
-  28:src/alloc.cpp ****     if(size % MEM_BLOCK_SIZE != 0) // align size
- 121              		.loc 1 28 5
- 122              		.loc 1 28 13 is_stmt 0
- 123 00a4 93F7F503 		andi	a5,a1,63
- 124              		.loc 1 28 5
- 125 00a8 63860700 		beqz	a5,.L11
-  29:src/alloc.cpp ****     {
-  30:src/alloc.cpp ****         size += MEM_BLOCK_SIZE - (size % MEM_BLOCK_SIZE);
- 126              		.loc 1 30 9 is_stmt 1
- 127              		.loc 1 30 14 is_stmt 0
- 128 00ac 13F905FC 		andi	s2,a1,-64
- 129 00b0 13090904 		addi	s2,s2,64
+  28:src/alloc.cpp ****     putString("Allocating at least ");
+ 127              		.loc 1 28 5
+ 128              		.loc 1 28 14 is_stmt 0
+ 129 00a4 17050000 		lla	a0,.LC0
+ 129      13050500 
  130              	.LVL5:
- 131              	.L11:
-  31:src/alloc.cpp ****     }
-  32:src/alloc.cpp **** 
-  33:src/alloc.cpp ****     assert(size % MEM_BLOCK_SIZE == 0);
- 132              		.loc 1 33 5 is_stmt 1
- 133 00b4 1375F903 		andi	a0,s2,63
- 134              	.LVL6:
- 135 00b8 13061002 		li	a2,33
- 136 00bc 97050000 		lla	a1,.LC0
- 136      93850500 
- 137 00c4 13351500 		seqz	a0,a0
- 138 00c8 97000000 		call	_Z7_assertbPKci@plt
- 138      E7800000 
- 139              	.LVL7:
-  34:src/alloc.cpp **** 
-  35:src/alloc.cpp ****     MemNode* pCur = &freeHead;
- 140              		.loc 1 35 5
- 141              	.L15:
-  36:src/alloc.cpp ****     while(pCur != nullptr)
- 142              		.loc 1 36 5
- 143              		.loc 1 36 16
- 144 00d0 638A0404 		beqz	s1,.L12
- 145              	.LBB9:
-  37:src/alloc.cpp ****     {
-  38:src/alloc.cpp ****         if(pCur->size >= size)
- 146              		.loc 1 38 9
- 147              	.LBB10:
- 148              		.loc 1 38 18 is_stmt 0
- 149 00d4 83B70401 		ld	a5,16(s1)
- 150              		.loc 1 38 9
- 151 00d8 63F62701 		bgeu	a5,s2,.L17
- 152              	.LBE10:
-  39:src/alloc.cpp ****         {
-  40:src/alloc.cpp ****             assert((uint64)pCur->base % MEM_BLOCK_SIZE == 0); // check for alignment errors
-  41:src/alloc.cpp ****             void* ret = pCur->base;
-  42:src/alloc.cpp ****             pCur->size -= size;
-  43:src/alloc.cpp ****             pCur->base += size;
-  44:src/alloc.cpp ****             return ret;
-  45:src/alloc.cpp ****         }
-GAS LISTING /tmp/cc1wo5Wt.s 			page 5
+ 131 00ac 97000000 		call	_Z9putStringPKc@plt
+ 131      E7800000 
+ 132              	.LVL6:
+  29:src/alloc.cpp ****     putInt(size);
+ 133              		.loc 1 29 5 is_stmt 1
+ 134              		.loc 1 29 11 is_stmt 0
+ 135 00b4 1B050900 		sext.w	a0,s2
+ 136 00b8 97000000 		call	_Z6putInti@plt
+ 136      E7800000 
+ 137              	.LVL7:
+  30:src/alloc.cpp ****     putString(" bytes");
+ 138              		.loc 1 30 5 is_stmt 1
+ 139              		.loc 1 30 14 is_stmt 0
+ 140 00c0 17050000 		lla	a0,.LC1
+ 140      13050500 
+ 141 00c8 97000000 		call	_Z9putStringPKc@plt
+ 141      E7800000 
+ 142              	.LVL8:
+  31:src/alloc.cpp **** 
+  32:src/alloc.cpp ****     __asm__ volatile ("ecall");
+ 143              		.loc 1 32 5 is_stmt 1
+ 144              		.loc 1 32 31 is_stmt 0
+ 145              	#APP
+ 146              	# 32 "src/alloc.cpp" 1
+  33              	
+  34:src/alloc.cpp ****     if(size % MEM_BLOCK_SIZE != 0) // align size
+ 147              		ecall
+ 148              	# 0 "" 2
+ 149              		.loc 1 34 5 is_stmt 1
+ 150              		.loc 1 34 13 is_stmt 0
+ 151              	#NO_APP
+ 152 00d4 9377F903 		andi	a5,s2,63
+ 153              		.loc 1 34 5
+ 154 00d8 63860700 		beqz	a5,.L11
+  35:src/alloc.cpp ****     {
+GAS LISTING /tmp/ccerZjSf.s 			page 5
 
 
-  46:src/alloc.cpp **** 
-  47:src/alloc.cpp ****         pCur = pCur->pNext;
- 153              		.loc 1 47 9 is_stmt 1
- 154              		.loc 1 47 14 is_stmt 0
- 155 00dc 83B48400 		ld	s1,8(s1)
- 156              	.LVL8:
- 157              	.LBE9:
-  36:src/alloc.cpp ****     {
- 158              		.loc 1 36 5
- 159 00e0 6FF01FFF 		j	.L15
- 160              	.L17:
- 161              	.LBB13:
- 162              	.LBB12:
- 163              	.LBB11:
-  40:src/alloc.cpp ****             void* ret = pCur->base;
- 164              		.loc 1 40 13 is_stmt 1
- 165 00e4 03B58401 		ld	a0,24(s1)
- 166 00e8 1375F503 		andi	a0,a0,63
- 167 00ec 13068002 		li	a2,40
- 168 00f0 97050000 		lla	a1,.LC0
- 168      93850500 
- 169 00f8 13351500 		seqz	a0,a0
- 170 00fc 97000000 		call	_Z7_assertbPKci@plt
- 170      E7800000 
- 171              	.LVL9:
-  41:src/alloc.cpp ****             pCur->size -= size;
- 172              		.loc 1 41 13
-  41:src/alloc.cpp ****             pCur->size -= size;
- 173              		.loc 1 41 19 is_stmt 0
- 174 0104 03B78401 		ld	a4,24(s1)
- 175              	.LVL10:
-  42:src/alloc.cpp ****             pCur->base += size;
- 176              		.loc 1 42 13 is_stmt 1
-  42:src/alloc.cpp ****             pCur->base += size;
- 177              		.loc 1 42 24 is_stmt 0
- 178 0108 83B70401 		ld	a5,16(s1)
- 179 010c B3872741 		sub	a5,a5,s2
- 180 0110 23B8F400 		sd	a5,16(s1)
-  43:src/alloc.cpp ****             return ret;
- 181              		.loc 1 43 13 is_stmt 1
-  43:src/alloc.cpp ****             return ret;
- 182              		.loc 1 43 24 is_stmt 0
- 183 0114 33092701 		add	s2,a4,s2
- 184              	.LVL11:
- 185 0118 23BC2401 		sd	s2,24(s1)
-  44:src/alloc.cpp ****         }
- 186              		.loc 1 44 13 is_stmt 1
-  44:src/alloc.cpp ****         }
- 187              		.loc 1 44 20 is_stmt 0
- 188 011c 93040700 		mv	s1,a4
- 189              	.LVL12:
- 190 0120 6F00C001 		j	.L10
- 191              	.LVL13:
- 192              	.L12:
- 193              	.LBE11:
- 194              	.LBE12:
- 195              	.LBE13:
-GAS LISTING /tmp/cc1wo5Wt.s 			page 6
-
-
-  48:src/alloc.cpp ****     }
-  49:src/alloc.cpp **** 
-  50:src/alloc.cpp ****     assert(false); // there is no slot large enough
- 196              		.loc 1 50 5 is_stmt 1
- 197 0124 13062003 		li	a2,50
- 198 0128 97050000 		lla	a1,.LC0
- 198      93850500 
- 199 0130 13050000 		li	a0,0
- 200 0134 97000000 		call	_Z7_assertbPKci@plt
- 200      E7800000 
- 201              	.LVL14:
-  51:src/alloc.cpp ****     return nullptr;
- 202              		.loc 1 51 5
- 203              	.L10:
+  36:src/alloc.cpp ****         size += MEM_BLOCK_SIZE - (size % MEM_BLOCK_SIZE);
+ 155              		.loc 1 36 9 is_stmt 1
+ 156              		.loc 1 36 14 is_stmt 0
+ 157 00dc 137909FC 		andi	s2,s2,-64
+ 158              	.LVL9:
+ 159 00e0 13090904 		addi	s2,s2,64
+ 160              	.LVL10:
+ 161              	.L11:
+  37:src/alloc.cpp ****     }
+  38:src/alloc.cpp **** 
+  39:src/alloc.cpp ****     assert(size % MEM_BLOCK_SIZE == 0);
+ 162              		.loc 1 39 5 is_stmt 1
+ 163 00e4 1375F903 		andi	a0,s2,63
+ 164 00e8 13067002 		li	a2,39
+ 165 00ec 97050000 		lla	a1,.LC2
+ 165      93850500 
+ 166 00f4 13351500 		seqz	a0,a0
+ 167 00f8 97000000 		call	_Z7_assertbPKci@plt
+ 167      E7800000 
+ 168              	.LVL11:
+  40:src/alloc.cpp **** 
+  41:src/alloc.cpp ****     MemNode* pCur = &freeHead;
+ 169              		.loc 1 41 5
+ 170              	.L15:
+  42:src/alloc.cpp ****     while(pCur != nullptr)
+ 171              		.loc 1 42 5
+ 172              		.loc 1 42 16
+ 173 0100 638A0404 		beqz	s1,.L12
+ 174              	.LBB9:
+  43:src/alloc.cpp ****     {
+  44:src/alloc.cpp ****         if(pCur->size >= size)
+ 175              		.loc 1 44 9
+ 176              	.LBB10:
+ 177              		.loc 1 44 18 is_stmt 0
+ 178 0104 83B70401 		ld	a5,16(s1)
+ 179              		.loc 1 44 9
+ 180 0108 63F62701 		bgeu	a5,s2,.L17
+ 181              	.LBE10:
+  45:src/alloc.cpp ****         {
+  46:src/alloc.cpp ****             assert((uint64)pCur->base % MEM_BLOCK_SIZE == 0); // check for alignment errors
+  47:src/alloc.cpp ****             void* ret = pCur->base;
+  48:src/alloc.cpp ****             pCur->size -= size;
+  49:src/alloc.cpp ****             pCur->base += size;
+  50:src/alloc.cpp ****             return ret;
+  51:src/alloc.cpp ****         }
   52:src/alloc.cpp **** 
-  53:src/alloc.cpp **** }
- 204              		.loc 1 53 1 is_stmt 0
- 205 013c 13850400 		mv	a0,s1
- 206 0140 83308101 		ld	ra,24(sp)
- 207              		.cfi_restore 1
- 208 0144 03340101 		ld	s0,16(sp)
- 209              		.cfi_restore 8
- 210              		.cfi_def_cfa 2, 32
- 211 0148 83348100 		ld	s1,8(sp)
- 212              		.cfi_restore 9
- 213 014c 03390100 		ld	s2,0(sp)
- 214              		.cfi_restore 18
- 215 0150 13010102 		addi	sp,sp,32
- 216              		.cfi_def_cfa_offset 0
- 217 0154 67800000 		jr	ra
- 218              		.cfi_endproc
- 219              	.LFE7:
- 221              		.bss
- 222              		.align	3
- 223              		.set	.LANCHOR0,. + 0
- 226              	_ZGVZN8MemAlloc3getEvE8instance:
- 227 0000 00000000 		.zero	8
- 227      00000000 
- 230              	_ZZN8MemAlloc3getEvE8instance:
- 231 0008 00000000 		.zero	32
- 231      00000000 
- 231      00000000 
- 231      00000000 
- 231      00000000 
- 232              		.text
- 233              	.Letext0:
- 234              		.file 3 "src/../h/../lib/hw.h"
- 235              		.file 4 "src/../h/my_console.h"
-GAS LISTING /tmp/cc1wo5Wt.s 			page 7
+  53:src/alloc.cpp ****         pCur = pCur->pNext;
+ 182              		.loc 1 53 9 is_stmt 1
+ 183              		.loc 1 53 14 is_stmt 0
+ 184 010c 83B48400 		ld	s1,8(s1)
+ 185              	.LVL12:
+ 186              	.LBE9:
+  42:src/alloc.cpp ****     {
+ 187              		.loc 1 42 5
+ 188 0110 6FF01FFF 		j	.L15
+ 189              	.L17:
+ 190              	.LBB13:
+GAS LISTING /tmp/ccerZjSf.s 			page 6
+
+
+ 191              	.LBB12:
+ 192              	.LBB11:
+  46:src/alloc.cpp ****             void* ret = pCur->base;
+ 193              		.loc 1 46 13 is_stmt 1
+ 194 0114 03B58401 		ld	a0,24(s1)
+ 195 0118 1375F503 		andi	a0,a0,63
+ 196 011c 1306E002 		li	a2,46
+ 197 0120 97050000 		lla	a1,.LC2
+ 197      93850500 
+ 198 0128 13351500 		seqz	a0,a0
+ 199 012c 97000000 		call	_Z7_assertbPKci@plt
+ 199      E7800000 
+ 200              	.LVL13:
+  47:src/alloc.cpp ****             pCur->size -= size;
+ 201              		.loc 1 47 13
+  47:src/alloc.cpp ****             pCur->size -= size;
+ 202              		.loc 1 47 19 is_stmt 0
+ 203 0134 03B78401 		ld	a4,24(s1)
+ 204              	.LVL14:
+  48:src/alloc.cpp ****             pCur->base += size;
+ 205              		.loc 1 48 13 is_stmt 1
+  48:src/alloc.cpp ****             pCur->base += size;
+ 206              		.loc 1 48 24 is_stmt 0
+ 207 0138 83B70401 		ld	a5,16(s1)
+ 208 013c B3872741 		sub	a5,a5,s2
+ 209 0140 23B8F400 		sd	a5,16(s1)
+  49:src/alloc.cpp ****             return ret;
+ 210              		.loc 1 49 13 is_stmt 1
+  49:src/alloc.cpp ****             return ret;
+ 211              		.loc 1 49 24 is_stmt 0
+ 212 0144 33092701 		add	s2,a4,s2
+ 213              	.LVL15:
+ 214 0148 23BC2401 		sd	s2,24(s1)
+  50:src/alloc.cpp ****         }
+ 215              		.loc 1 50 13 is_stmt 1
+  50:src/alloc.cpp ****         }
+ 216              		.loc 1 50 20 is_stmt 0
+ 217 014c 93040700 		mv	s1,a4
+ 218              	.LVL16:
+ 219 0150 6F00C001 		j	.L10
+ 220              	.LVL17:
+ 221              	.L12:
+ 222              	.LBE11:
+ 223              	.LBE12:
+ 224              	.LBE13:
+  54:src/alloc.cpp ****     }
+  55:src/alloc.cpp **** 
+  56:src/alloc.cpp ****     assert(false); // there is no slot large enough
+ 225              		.loc 1 56 5 is_stmt 1
+ 226 0154 13068003 		li	a2,56
+ 227 0158 97050000 		lla	a1,.LC2
+ 227      93850500 
+ 228 0160 13050000 		li	a0,0
+ 229 0164 97000000 		call	_Z7_assertbPKci@plt
+ 229      E7800000 
+ 230              	.LVL18:
+  57:src/alloc.cpp **** 
+GAS LISTING /tmp/ccerZjSf.s 			page 7
+
+
+  58:src/alloc.cpp ****     return nullptr;
+ 231              		.loc 1 58 5
+ 232              	.L10:
+  59:src/alloc.cpp **** }
+ 233              		.loc 1 59 1 is_stmt 0
+ 234 016c 13850400 		mv	a0,s1
+ 235 0170 83308101 		ld	ra,24(sp)
+ 236              		.cfi_restore 1
+ 237 0174 03340101 		ld	s0,16(sp)
+ 238              		.cfi_restore 8
+ 239              		.cfi_def_cfa 2, 32
+ 240 0178 83348100 		ld	s1,8(sp)
+ 241              		.cfi_restore 9
+ 242 017c 03390100 		ld	s2,0(sp)
+ 243              		.cfi_restore 18
+ 244 0180 13010102 		addi	sp,sp,32
+ 245              		.cfi_def_cfa_offset 0
+ 246 0184 67800000 		jr	ra
+ 247              		.cfi_endproc
+ 248              	.LFE7:
+ 250              		.bss
+ 251              		.align	3
+ 252              		.set	.LANCHOR0,. + 0
+ 255              	_ZGVZN8MemAlloc3getEvE8instance:
+ 256 0000 00000000 		.zero	8
+ 256      00000000 
+ 259              	_ZZN8MemAlloc3getEvE8instance:
+ 260 0008 00000000 		.zero	32
+ 260      00000000 
+ 260      00000000 
+ 260      00000000 
+ 260      00000000 
+ 261              		.text
+ 262              	.Letext0:
+ 263              		.file 3 "src/../h/../lib/hw.h"
+ 264              		.file 4 "src/../h/my_console.h"
+GAS LISTING /tmp/ccerZjSf.s 			page 8
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 alloc.cpp
-     /tmp/cc1wo5Wt.s:9      .text:0000000000000000 _ZN8MemAllocC2Ev
-     /tmp/cc1wo5Wt.s:13     .text:0000000000000000 .L0 
-     /tmp/cc1wo5Wt.s:15     .text:0000000000000000 .L0 
-     /tmp/cc1wo5Wt.s:16     .text:0000000000000004 .L0 
-     /tmp/cc1wo5Wt.s:18     .text:0000000000000008 .L0 
-     /tmp/cc1wo5Wt.s:20     .text:000000000000000c .L0 
-     /tmp/cc1wo5Wt.s:27     .text:000000000000000c .L0 
-     /tmp/cc1wo5Wt.s:33     .text:0000000000000014 .L0 
-     /tmp/cc1wo5Wt.s:34     .text:0000000000000014 .L0 
-     /tmp/cc1wo5Wt.s:38     .text:000000000000001c .L0 
-     /tmp/cc1wo5Wt.s:39     .text:0000000000000020 .L0 
-     /tmp/cc1wo5Wt.s:40     .text:0000000000000020 .L0 
-     /tmp/cc1wo5Wt.s:42     .text:0000000000000024 .L0 
-     /tmp/cc1wo5Wt.s:44     .text:0000000000000028 .L0 
-     /tmp/cc1wo5Wt.s:9      .text:0000000000000000 _ZN8MemAllocC1Ev
-     /tmp/cc1wo5Wt.s:52     .text:0000000000000028 _ZN8MemAlloc3getEv
-     /tmp/cc1wo5Wt.s:55     .text:0000000000000028 .L0 
-     /tmp/cc1wo5Wt.s:56     .text:0000000000000028 .L0 
-     /tmp/cc1wo5Wt.s:57     .text:0000000000000028 .L0 
-     /tmp/cc1wo5Wt.s:58     .text:0000000000000028 .L0 
-     /tmp/cc1wo5Wt.s:61     .text:0000000000000034 .L0 
-     /tmp/cc1wo5Wt.s:62     .text:0000000000000034 .L0 
-     /tmp/cc1wo5Wt.s:66     .text:0000000000000040 .L0 
-     /tmp/cc1wo5Wt.s:67     .text:0000000000000044 .L0 
-     /tmp/cc1wo5Wt.s:70     .text:000000000000004c .L0 
-     /tmp/cc1wo5Wt.s:71     .text:000000000000004c .L0 
-     /tmp/cc1wo5Wt.s:73     .text:0000000000000050 .L0 
-     /tmp/cc1wo5Wt.s:75     .text:0000000000000050 .L0 
-     /tmp/cc1wo5Wt.s:81     .text:000000000000006c .L0 
-     /tmp/cc1wo5Wt.s:82     .text:000000000000006c .L0 
-     /tmp/cc1wo5Wt.s:84     .text:0000000000000078 .L0 
-     /tmp/cc1wo5Wt.s:86     .text:000000000000007c .L0 
-     /tmp/cc1wo5Wt.s:87     .text:000000000000007c .L0 
-     /tmp/cc1wo5Wt.s:89     .text:0000000000000080 .L0 
-     /tmp/cc1wo5Wt.s:91     .text:0000000000000084 .L0 
-     /tmp/cc1wo5Wt.s:102    .text:0000000000000084 _ZN8MemAlloc8allocMemEm
-     /tmp/cc1wo5Wt.s:105    .text:0000000000000084 .L0 
-     /tmp/cc1wo5Wt.s:107    .text:0000000000000084 .L0 
-     /tmp/cc1wo5Wt.s:108    .text:0000000000000088 .L0 
-     /tmp/cc1wo5Wt.s:113    .text:0000000000000098 .L0 
-     /tmp/cc1wo5Wt.s:114    .text:0000000000000098 .L0 
-     /tmp/cc1wo5Wt.s:115    .text:0000000000000098 .L0 
-     /tmp/cc1wo5Wt.s:116    .text:0000000000000098 .L0 
-     /tmp/cc1wo5Wt.s:118    .text:000000000000009c .L0 
-     /tmp/cc1wo5Wt.s:122    .text:00000000000000a4 .L0 
-     /tmp/cc1wo5Wt.s:123    .text:00000000000000a4 .L0 
-     /tmp/cc1wo5Wt.s:125    .text:00000000000000a8 .L0 
-     /tmp/cc1wo5Wt.s:127    .text:00000000000000ac .L0 
-     /tmp/cc1wo5Wt.s:128    .text:00000000000000ac .L0 
-     /tmp/cc1wo5Wt.s:133    .text:00000000000000b4 .L0 
-     /tmp/cc1wo5Wt.s:142    .text:00000000000000d0 .L0 
-     /tmp/cc1wo5Wt.s:143    .text:00000000000000d0 .L0 
-     /tmp/cc1wo5Wt.s:144    .text:00000000000000d0 .L0 
-     /tmp/cc1wo5Wt.s:148    .text:00000000000000d4 .L0 
-     /tmp/cc1wo5Wt.s:149    .text:00000000000000d4 .L0 
-GAS LISTING /tmp/cc1wo5Wt.s 			page 8
+     /tmp/ccerZjSf.s:9      .text:0000000000000000 _ZN8MemAllocC2Ev
+     /tmp/ccerZjSf.s:13     .text:0000000000000000 .L0 
+     /tmp/ccerZjSf.s:15     .text:0000000000000000 .L0 
+     /tmp/ccerZjSf.s:16     .text:0000000000000004 .L0 
+     /tmp/ccerZjSf.s:18     .text:0000000000000008 .L0 
+     /tmp/ccerZjSf.s:20     .text:000000000000000c .L0 
+     /tmp/ccerZjSf.s:27     .text:000000000000000c .L0 
+     /tmp/ccerZjSf.s:33     .text:0000000000000014 .L0 
+     /tmp/ccerZjSf.s:34     .text:0000000000000014 .L0 
+     /tmp/ccerZjSf.s:38     .text:000000000000001c .L0 
+     /tmp/ccerZjSf.s:39     .text:0000000000000020 .L0 
+     /tmp/ccerZjSf.s:40     .text:0000000000000020 .L0 
+     /tmp/ccerZjSf.s:42     .text:0000000000000024 .L0 
+     /tmp/ccerZjSf.s:44     .text:0000000000000028 .L0 
+     /tmp/ccerZjSf.s:9      .text:0000000000000000 _ZN8MemAllocC1Ev
+     /tmp/ccerZjSf.s:52     .text:0000000000000028 _ZN8MemAlloc3getEv
+     /tmp/ccerZjSf.s:55     .text:0000000000000028 .L0 
+     /tmp/ccerZjSf.s:56     .text:0000000000000028 .L0 
+     /tmp/ccerZjSf.s:57     .text:0000000000000028 .L0 
+     /tmp/ccerZjSf.s:58     .text:0000000000000028 .L0 
+     /tmp/ccerZjSf.s:61     .text:0000000000000034 .L0 
+     /tmp/ccerZjSf.s:62     .text:0000000000000034 .L0 
+     /tmp/ccerZjSf.s:66     .text:0000000000000040 .L0 
+     /tmp/ccerZjSf.s:67     .text:0000000000000044 .L0 
+     /tmp/ccerZjSf.s:70     .text:000000000000004c .L0 
+     /tmp/ccerZjSf.s:71     .text:000000000000004c .L0 
+     /tmp/ccerZjSf.s:73     .text:0000000000000050 .L0 
+     /tmp/ccerZjSf.s:75     .text:0000000000000050 .L0 
+     /tmp/ccerZjSf.s:81     .text:000000000000006c .L0 
+     /tmp/ccerZjSf.s:82     .text:000000000000006c .L0 
+     /tmp/ccerZjSf.s:84     .text:0000000000000078 .L0 
+     /tmp/ccerZjSf.s:86     .text:000000000000007c .L0 
+     /tmp/ccerZjSf.s:87     .text:000000000000007c .L0 
+     /tmp/ccerZjSf.s:89     .text:0000000000000080 .L0 
+     /tmp/ccerZjSf.s:91     .text:0000000000000084 .L0 
+     /tmp/ccerZjSf.s:108    .text:0000000000000084 _ZN8MemAlloc8allocMemEm
+     /tmp/ccerZjSf.s:111    .text:0000000000000084 .L0 
+     /tmp/ccerZjSf.s:113    .text:0000000000000084 .L0 
+     /tmp/ccerZjSf.s:114    .text:0000000000000088 .L0 
+     /tmp/ccerZjSf.s:119    .text:0000000000000098 .L0 
+     /tmp/ccerZjSf.s:120    .text:0000000000000098 .L0 
+     /tmp/ccerZjSf.s:121    .text:0000000000000098 .L0 
+     /tmp/ccerZjSf.s:122    .text:0000000000000098 .L0 
+     /tmp/ccerZjSf.s:124    .text:000000000000009c .L0 
+     /tmp/ccerZjSf.s:128    .text:00000000000000a4 .L0 
+     /tmp/ccerZjSf.s:129    .text:00000000000000a4 .L0 
+     /tmp/ccerZjSf.s:134    .text:00000000000000b4 .L0 
+     /tmp/ccerZjSf.s:135    .text:00000000000000b4 .L0 
+     /tmp/ccerZjSf.s:139    .text:00000000000000c0 .L0 
+     /tmp/ccerZjSf.s:140    .text:00000000000000c0 .L0 
+     /tmp/ccerZjSf.s:144    .text:00000000000000d0 .L0 
+       src/alloc.cpp:32     .text:00000000000000d0 .L0 
+     /tmp/ccerZjSf.s:150    .text:00000000000000d4 .L0 
+     /tmp/ccerZjSf.s:152    .text:00000000000000d4 .L0 
+     /tmp/ccerZjSf.s:154    .text:00000000000000d8 .L0 
+GAS LISTING /tmp/ccerZjSf.s 			page 9
 
 
-     /tmp/cc1wo5Wt.s:151    .text:00000000000000d8 .L0 
-     /tmp/cc1wo5Wt.s:154    .text:00000000000000dc .L0 
-     /tmp/cc1wo5Wt.s:155    .text:00000000000000dc .L0 
-     /tmp/cc1wo5Wt.s:159    .text:00000000000000e0 .L0 
-     /tmp/cc1wo5Wt.s:165    .text:00000000000000e4 .L0 
-     /tmp/cc1wo5Wt.s:173    .text:0000000000000104 .L0 
-     /tmp/cc1wo5Wt.s:174    .text:0000000000000104 .L0 
-     /tmp/cc1wo5Wt.s:177    .text:0000000000000108 .L0 
-     /tmp/cc1wo5Wt.s:178    .text:0000000000000108 .L0 
-     /tmp/cc1wo5Wt.s:182    .text:0000000000000114 .L0 
-     /tmp/cc1wo5Wt.s:183    .text:0000000000000114 .L0 
-     /tmp/cc1wo5Wt.s:187    .text:000000000000011c .L0 
-     /tmp/cc1wo5Wt.s:188    .text:000000000000011c .L0 
-     /tmp/cc1wo5Wt.s:197    .text:0000000000000124 .L0 
-     /tmp/cc1wo5Wt.s:204    .text:000000000000013c .L0 
-     /tmp/cc1wo5Wt.s:205    .text:000000000000013c .L0 
-     /tmp/cc1wo5Wt.s:207    .text:0000000000000144 .L0 
-     /tmp/cc1wo5Wt.s:209    .text:0000000000000148 .L0 
-     /tmp/cc1wo5Wt.s:210    .text:0000000000000148 .L0 
-     /tmp/cc1wo5Wt.s:212    .text:000000000000014c .L0 
-     /tmp/cc1wo5Wt.s:214    .text:0000000000000150 .L0 
-     /tmp/cc1wo5Wt.s:216    .text:0000000000000154 .L0 
-     /tmp/cc1wo5Wt.s:218    .text:0000000000000158 .L0 
-     /tmp/cc1wo5Wt.s:223    .bss:0000000000000000 .LANCHOR0
-     /tmp/cc1wo5Wt.s:226    .bss:0000000000000000 _ZGVZN8MemAlloc3getEvE8instance
-     /tmp/cc1wo5Wt.s:230    .bss:0000000000000008 _ZZN8MemAlloc3getEvE8instance
-     /tmp/cc1wo5Wt.s:236    .text:0000000000000158 .L0 
-     /tmp/cc1wo5Wt.s:58     .text:0000000000000028 .L0 
-     /tmp/cc1wo5Wt.s:62     .text:0000000000000034 .L0 
-     /tmp/cc1wo5Wt.s:75     .text:0000000000000050 .L0 
-     /tmp/cc1wo5Wt.s:79     .text:0000000000000064 .L0 
-     /tmp/cc1wo5Wt.s:82     .text:000000000000006c .L0 
-     /tmp/cc1wo5Wt.s:96     .rodata.str1.8:0000000000000000 .LC0
-     /tmp/cc1wo5Wt.s:136    .text:00000000000000bc .L0 
-     /tmp/cc1wo5Wt.s:168    .text:00000000000000f0 .L0 
-     /tmp/cc1wo5Wt.s:198    .text:0000000000000128 .L0 
-     /tmp/cc1wo5Wt.s:64     .text:0000000000000040 .L9
-     /tmp/cc1wo5Wt.s:131    .text:00000000000000b4 .L11
-     /tmp/cc1wo5Wt.s:192    .text:0000000000000124 .L12
-     /tmp/cc1wo5Wt.s:160    .text:00000000000000e4 .L17
-     /tmp/cc1wo5Wt.s:141    .text:00000000000000d0 .L15
-     /tmp/cc1wo5Wt.s:203    .text:000000000000013c .L10
-     /tmp/cc1wo5Wt.s:717    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
-     /tmp/cc1wo5Wt.s:1465   .debug_str:00000000000000f7 .LASF33
-     /tmp/cc1wo5Wt.s:1509   .debug_str:00000000000002f6 .LASF34
-     /tmp/cc1wo5Wt.s:1491   .debug_str:000000000000026c .LASF35
-     /tmp/cc1wo5Wt.s:5      .text:0000000000000000 .Ltext0
-     /tmp/cc1wo5Wt.s:233    .text:0000000000000158 .Letext0
-     /tmp/cc1wo5Wt.s:1427   .debug_line:0000000000000000 .Ldebug_line0
-     /tmp/cc1wo5Wt.s:1475   .debug_str:00000000000001fa .LASF0
-     /tmp/cc1wo5Wt.s:1459   .debug_str:00000000000000c7 .LASF1
-     /tmp/cc1wo5Wt.s:1453   .debug_str:00000000000000a2 .LASF2
-     /tmp/cc1wo5Wt.s:1441   .debug_str:0000000000000052 .LASF4
-     /tmp/cc1wo5Wt.s:1457   .debug_str:00000000000000b5 .LASF3
-     /tmp/cc1wo5Wt.s:1433   .debug_str:0000000000000019 .LASF5
-     /tmp/cc1wo5Wt.s:1431   .debug_str:0000000000000006 .LASF6
-     /tmp/cc1wo5Wt.s:1449   .debug_str:0000000000000080 .LASF7
-GAS LISTING /tmp/cc1wo5Wt.s 			page 9
+     /tmp/ccerZjSf.s:156    .text:00000000000000dc .L0 
+     /tmp/ccerZjSf.s:157    .text:00000000000000dc .L0 
+     /tmp/ccerZjSf.s:163    .text:00000000000000e4 .L0 
+     /tmp/ccerZjSf.s:171    .text:0000000000000100 .L0 
+     /tmp/ccerZjSf.s:172    .text:0000000000000100 .L0 
+     /tmp/ccerZjSf.s:173    .text:0000000000000100 .L0 
+     /tmp/ccerZjSf.s:177    .text:0000000000000104 .L0 
+     /tmp/ccerZjSf.s:178    .text:0000000000000104 .L0 
+     /tmp/ccerZjSf.s:180    .text:0000000000000108 .L0 
+     /tmp/ccerZjSf.s:183    .text:000000000000010c .L0 
+     /tmp/ccerZjSf.s:184    .text:000000000000010c .L0 
+     /tmp/ccerZjSf.s:188    .text:0000000000000110 .L0 
+     /tmp/ccerZjSf.s:194    .text:0000000000000114 .L0 
+     /tmp/ccerZjSf.s:202    .text:0000000000000134 .L0 
+     /tmp/ccerZjSf.s:203    .text:0000000000000134 .L0 
+     /tmp/ccerZjSf.s:206    .text:0000000000000138 .L0 
+     /tmp/ccerZjSf.s:207    .text:0000000000000138 .L0 
+     /tmp/ccerZjSf.s:211    .text:0000000000000144 .L0 
+     /tmp/ccerZjSf.s:212    .text:0000000000000144 .L0 
+     /tmp/ccerZjSf.s:216    .text:000000000000014c .L0 
+     /tmp/ccerZjSf.s:217    .text:000000000000014c .L0 
+     /tmp/ccerZjSf.s:226    .text:0000000000000154 .L0 
+     /tmp/ccerZjSf.s:233    .text:000000000000016c .L0 
+     /tmp/ccerZjSf.s:234    .text:000000000000016c .L0 
+     /tmp/ccerZjSf.s:236    .text:0000000000000174 .L0 
+     /tmp/ccerZjSf.s:238    .text:0000000000000178 .L0 
+     /tmp/ccerZjSf.s:239    .text:0000000000000178 .L0 
+     /tmp/ccerZjSf.s:241    .text:000000000000017c .L0 
+     /tmp/ccerZjSf.s:243    .text:0000000000000180 .L0 
+     /tmp/ccerZjSf.s:245    .text:0000000000000184 .L0 
+     /tmp/ccerZjSf.s:247    .text:0000000000000188 .L0 
+     /tmp/ccerZjSf.s:252    .bss:0000000000000000 .LANCHOR0
+     /tmp/ccerZjSf.s:255    .bss:0000000000000000 _ZGVZN8MemAlloc3getEvE8instance
+     /tmp/ccerZjSf.s:259    .bss:0000000000000008 _ZZN8MemAlloc3getEvE8instance
+     /tmp/ccerZjSf.s:265    .text:0000000000000188 .L0 
+     /tmp/ccerZjSf.s:58     .text:0000000000000028 .L0 
+     /tmp/ccerZjSf.s:62     .text:0000000000000034 .L0 
+     /tmp/ccerZjSf.s:75     .text:0000000000000050 .L0 
+     /tmp/ccerZjSf.s:79     .text:0000000000000064 .L0 
+     /tmp/ccerZjSf.s:82     .text:000000000000006c .L0 
+     /tmp/ccerZjSf.s:96     .rodata.str1.8:0000000000000000 .LC0
+     /tmp/ccerZjSf.s:129    .text:00000000000000a4 .L0 
+     /tmp/ccerZjSf.s:99     .rodata.str1.8:0000000000000018 .LC1
+     /tmp/ccerZjSf.s:140    .text:00000000000000c0 .L0 
+     /tmp/ccerZjSf.s:102    .rodata.str1.8:0000000000000020 .LC2
+     /tmp/ccerZjSf.s:165    .text:00000000000000ec .L0 
+     /tmp/ccerZjSf.s:197    .text:0000000000000120 .L0 
+     /tmp/ccerZjSf.s:227    .text:0000000000000158 .L0 
+     /tmp/ccerZjSf.s:64     .text:0000000000000040 .L9
+     /tmp/ccerZjSf.s:161    .text:00000000000000e4 .L11
+     /tmp/ccerZjSf.s:221    .text:0000000000000154 .L12
+     /tmp/ccerZjSf.s:189    .text:0000000000000114 .L17
+     /tmp/ccerZjSf.s:170    .text:0000000000000100 .L15
+     /tmp/ccerZjSf.s:232    .text:000000000000016c .L10
+     /tmp/ccerZjSf.s:791    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+     /tmp/ccerZjSf.s:1558   .debug_str:0000000000000130 .LASF39
+     /tmp/ccerZjSf.s:1600   .debug_str:000000000000030c .LASF40
+GAS LISTING /tmp/ccerZjSf.s 			page 10
 
 
-     /tmp/cc1wo5Wt.s:1479   .debug_str:000000000000020c .LASF8
-     /tmp/cc1wo5Wt.s:1437   .debug_str:0000000000000025 .LASF9
-     /tmp/cc1wo5Wt.s:1511   .debug_str:0000000000000304 .LASF10
-     /tmp/cc1wo5Wt.s:1451   .debug_str:0000000000000093 .LASF11
-     /tmp/cc1wo5Wt.s:1501   .debug_str:00000000000002bc .LASF12
-     /tmp/cc1wo5Wt.s:1487   .debug_str:0000000000000253 .LASF13
-     /tmp/cc1wo5Wt.s:1463   .debug_str:00000000000000eb .LASF14
-     /tmp/cc1wo5Wt.s:1447   .debug_str:000000000000006a .LASF15
-     /tmp/cc1wo5Wt.s:1481   .debug_str:000000000000021c .LASF16
-     /tmp/cc1wo5Wt.s:1473   .debug_str:00000000000001f1 .LASF26
-     /tmp/cc1wo5Wt.s:1445   .debug_str:0000000000000062 .LASF25
-     /tmp/cc1wo5Wt.s:1505   .debug_str:00000000000002eb .LASF17
-     /tmp/cc1wo5Wt.s:1429   .debug_str:0000000000000000 .LASF18
-     /tmp/cc1wo5Wt.s:1507   .debug_str:00000000000002f1 .LASF19
-     /tmp/cc1wo5Wt.s:1471   .debug_str:00000000000001ec .LASF20
-     /tmp/cc1wo5Wt.s:1503   .debug_str:00000000000002cc .LASF27
-     /tmp/cc1wo5Wt.s:1497   .debug_str:00000000000002a1 .LASF36
-     /tmp/cc1wo5Wt.s:1443   .debug_str:0000000000000059 .LASF37
-     /tmp/cc1wo5Wt.s:1493   .debug_str:000000000000028f .LASF21
-     /tmp/cc1wo5Wt.s:1469   .debug_str:00000000000001d4 .LASF23
-     /tmp/cc1wo5Wt.s:1489   .debug_str:0000000000000263 .LASF22
-     /tmp/cc1wo5Wt.s:1467   .debug_str:00000000000001bb .LASF24
-     /tmp/cc1wo5Wt.s:1461   .debug_str:00000000000000da .LASF28
-     /tmp/cc1wo5Wt.s:1477   .debug_str:0000000000000207 .LASF29
-     /tmp/cc1wo5Wt.s:103    .text:0000000000000084 .LFB7
-     /tmp/cc1wo5Wt.s:219    .text:0000000000000158 .LFE7
-     /tmp/cc1wo5Wt.s:1455   .debug_str:00000000000000b0 .LASF32
-     /tmp/cc1wo5Wt.s:1348   .debug_loc:0000000000000000 .LLST3
-     /tmp/cc1wo5Wt.s:1366   .debug_loc:000000000000004c .LLST4
-     /tmp/cc1wo5Wt.s:1435   .debug_str:0000000000000020 .LASF30
-     /tmp/cc1wo5Wt.s:1381   .debug_loc:0000000000000095 .LLST5
-     /tmp/cc1wo5Wt.s:163    .text:00000000000000e4 .LBB11
-     /tmp/cc1wo5Wt.s:193    .text:0000000000000124 .LBE11
-     /tmp/cc1wo5Wt.s:1392   .debug_loc:00000000000000cb .LLST6
-     /tmp/cc1wo5Wt.s:171    .text:0000000000000104 .LVL9
-     /tmp/cc1wo5Wt.s:139    .text:00000000000000d0 .LVL7
-     /tmp/cc1wo5Wt.s:201    .text:000000000000013c .LVL14
-     /tmp/cc1wo5Wt.s:53     .text:0000000000000028 .LFB6
-     /tmp/cc1wo5Wt.s:92     .text:0000000000000084 .LFE6
-     /tmp/cc1wo5Wt.s:1495   .debug_str:0000000000000298 .LASF31
-     /tmp/cc1wo5Wt.s:77     .text:0000000000000060 .LVL3
-     /tmp/cc1wo5Wt.s:1485   .debug_str:0000000000000242 .LASF38
-     /tmp/cc1wo5Wt.s:10     .text:0000000000000000 .LFB4
-     /tmp/cc1wo5Wt.s:45     .text:0000000000000028 .LFE4
-     /tmp/cc1wo5Wt.s:23     .text:000000000000000c .LBB7
-     /tmp/cc1wo5Wt.s:31     .text:0000000000000014 .LBE7
-     /tmp/cc1wo5Wt.s:1399   .debug_loc:00000000000000ee .LLST0
-     /tmp/cc1wo5Wt.s:1407   .debug_loc:0000000000000112 .LLST2
-     /tmp/cc1wo5Wt.s:1439   .debug_str:0000000000000033 .LASF39
-     /tmp/cc1wo5Wt.s:1483   .debug_str:0000000000000232 .LASF40
-     /tmp/cc1wo5Wt.s:1499   .debug_str:00000000000002b4 .LASF41
-     /tmp/cc1wo5Wt.s:106    .text:0000000000000084 .LVL4
-     /tmp/cc1wo5Wt.s:134    .text:00000000000000b8 .LVL6
-     /tmp/cc1wo5Wt.s:130    .text:00000000000000b4 .LVL5
-     /tmp/cc1wo5Wt.s:184    .text:0000000000000118 .LVL11
-     /tmp/cc1wo5Wt.s:191    .text:0000000000000124 .LVL13
-     /tmp/cc1wo5Wt.s:189    .text:0000000000000120 .LVL12
-GAS LISTING /tmp/cc1wo5Wt.s 			page 10
+     /tmp/ccerZjSf.s:1522   .debug_str:0000000000000025 .LASF41
+     /tmp/ccerZjSf.s:5      .text:0000000000000000 .Ltext0
+     /tmp/ccerZjSf.s:262    .text:0000000000000188 .Letext0
+     /tmp/ccerZjSf.s:1512   .debug_line:0000000000000000 .Ldebug_line0
+     /tmp/ccerZjSf.s:1566   .debug_str:000000000000022a .LASF0
+     /tmp/ccerZjSf.s:1552   .debug_str:0000000000000100 .LASF1
+     /tmp/ccerZjSf.s:1546   .debug_str:00000000000000db .LASF2
+     /tmp/ccerZjSf.s:1528   .debug_str:0000000000000066 .LASF4
+     /tmp/ccerZjSf.s:1550   .debug_str:00000000000000ee .LASF3
+     /tmp/ccerZjSf.s:1518   .debug_str:0000000000000019 .LASF5
+     /tmp/ccerZjSf.s:1516   .debug_str:0000000000000006 .LASF6
+     /tmp/ccerZjSf.s:1540   .debug_str:00000000000000ae .LASF7
+     /tmp/ccerZjSf.s:1570   .debug_str:000000000000023c .LASF8
+     /tmp/ccerZjSf.s:1524   .debug_str:0000000000000039 .LASF9
+     /tmp/ccerZjSf.s:1604   .debug_str:0000000000000321 .LASF10
+     /tmp/ccerZjSf.s:1542   .debug_str:00000000000000c1 .LASF11
+     /tmp/ccerZjSf.s:1592   .debug_str:00000000000002d2 .LASF12
+     /tmp/ccerZjSf.s:1578   .debug_str:0000000000000283 .LASF13
+     /tmp/ccerZjSf.s:1556   .debug_str:0000000000000124 .LASF14
+     /tmp/ccerZjSf.s:1536   .debug_str:000000000000008e .LASF15
+     /tmp/ccerZjSf.s:1572   .debug_str:000000000000024c .LASF16
+     /tmp/ccerZjSf.s:1582   .debug_str:000000000000029c .LASF26
+     /tmp/ccerZjSf.s:1534   .debug_str:0000000000000086 .LASF25
+     /tmp/ccerZjSf.s:1596   .debug_str:0000000000000301 .LASF17
+     /tmp/ccerZjSf.s:1514   .debug_str:0000000000000000 .LASF18
+     /tmp/ccerZjSf.s:1598   .debug_str:0000000000000307 .LASF19
+     /tmp/ccerZjSf.s:1564   .debug_str:0000000000000225 .LASF20
+     /tmp/ccerZjSf.s:1594   .debug_str:00000000000002e2 .LASF27
+     /tmp/ccerZjSf.s:1588   .debug_str:00000000000002b7 .LASF42
+     /tmp/ccerZjSf.s:1532   .debug_str:000000000000007d .LASF43
+     /tmp/ccerZjSf.s:1584   .debug_str:00000000000002a5 .LASF21
+     /tmp/ccerZjSf.s:1562   .debug_str:000000000000020d .LASF23
+     /tmp/ccerZjSf.s:1580   .debug_str:0000000000000293 .LASF22
+     /tmp/ccerZjSf.s:1560   .debug_str:00000000000001f4 .LASF24
+     /tmp/ccerZjSf.s:1554   .debug_str:0000000000000113 .LASF28
+     /tmp/ccerZjSf.s:1568   .debug_str:0000000000000237 .LASF29
+     /tmp/ccerZjSf.s:109    .text:0000000000000084 .LFB7
+     /tmp/ccerZjSf.s:248    .text:0000000000000188 .LFE7
+     /tmp/ccerZjSf.s:1548   .debug_str:00000000000000e9 .LASF32
+     /tmp/ccerZjSf.s:1422   .debug_loc:0000000000000000 .LLST3
+     /tmp/ccerZjSf.s:1440   .debug_loc:000000000000004c .LLST4
+     /tmp/ccerZjSf.s:1520   .debug_str:0000000000000020 .LASF30
+     /tmp/ccerZjSf.s:1466   .debug_loc:00000000000000be .LLST5
+     /tmp/ccerZjSf.s:192    .text:0000000000000114 .LBB11
+     /tmp/ccerZjSf.s:222    .text:0000000000000154 .LBE11
+     /tmp/ccerZjSf.s:1477   .debug_loc:00000000000000f4 .LLST6
+     /tmp/ccerZjSf.s:200    .text:0000000000000134 .LVL13
+     /tmp/ccerZjSf.s:132    .text:00000000000000b4 .LVL6
+     /tmp/ccerZjSf.s:137    .text:00000000000000c0 .LVL7
+     /tmp/ccerZjSf.s:142    .text:00000000000000d0 .LVL8
+     /tmp/ccerZjSf.s:168    .text:0000000000000100 .LVL11
+     /tmp/ccerZjSf.s:230    .text:000000000000016c .LVL18
+     /tmp/ccerZjSf.s:53     .text:0000000000000028 .LFB6
+     /tmp/ccerZjSf.s:92     .text:0000000000000084 .LFE6
+     /tmp/ccerZjSf.s:1586   .debug_str:00000000000002ae .LASF31
+     /tmp/ccerZjSf.s:77     .text:0000000000000060 .LVL3
+     /tmp/ccerZjSf.s:1576   .debug_str:0000000000000272 .LASF44
+GAS LISTING /tmp/ccerZjSf.s 			page 11
 
 
-     /tmp/cc1wo5Wt.s:175    .text:0000000000000108 .LVL10
-     /tmp/cc1wo5Wt.s:21     .text:000000000000000c .LVL1
-     /tmp/cc1wo5Wt.s:29     .text:0000000000000014 .LVL2
-     /tmp/cc1wo5Wt.s:237    .debug_info:0000000000000000 .Ldebug_info0
+     /tmp/ccerZjSf.s:10     .text:0000000000000000 .LFB4
+     /tmp/ccerZjSf.s:45     .text:0000000000000028 .LFE4
+     /tmp/ccerZjSf.s:23     .text:000000000000000c .LBB7
+     /tmp/ccerZjSf.s:31     .text:0000000000000014 .LBE7
+     /tmp/ccerZjSf.s:1484   .debug_loc:0000000000000117 .LLST0
+     /tmp/ccerZjSf.s:1492   .debug_loc:000000000000013b .LLST2
+     /tmp/ccerZjSf.s:1526   .debug_str:0000000000000047 .LASF45
+     /tmp/ccerZjSf.s:1574   .debug_str:0000000000000262 .LASF33
+     /tmp/ccerZjSf.s:1590   .debug_str:00000000000002ca .LASF35
+     /tmp/ccerZjSf.s:1530   .debug_str:000000000000006d .LASF34
+     /tmp/ccerZjSf.s:1538   .debug_str:00000000000000a4 .LASF36
+     /tmp/ccerZjSf.s:1544   .debug_str:00000000000000d0 .LASF37
+     /tmp/ccerZjSf.s:1602   .debug_str:000000000000031a .LASF38
+     /tmp/ccerZjSf.s:112    .text:0000000000000084 .LVL4
+     /tmp/ccerZjSf.s:130    .text:00000000000000ac .LVL5
+     /tmp/ccerZjSf.s:158    .text:00000000000000e0 .LVL9
+     /tmp/ccerZjSf.s:160    .text:00000000000000e4 .LVL10
+     /tmp/ccerZjSf.s:213    .text:0000000000000148 .LVL15
+     /tmp/ccerZjSf.s:220    .text:0000000000000154 .LVL17
+     /tmp/ccerZjSf.s:218    .text:0000000000000150 .LVL16
+     /tmp/ccerZjSf.s:204    .text:0000000000000138 .LVL14
+     /tmp/ccerZjSf.s:21     .text:000000000000000c .LVL1
+     /tmp/ccerZjSf.s:29     .text:0000000000000014 .LVL2
+     /tmp/ccerZjSf.s:266    .debug_info:0000000000000000 .Ldebug_info0
 
 UNDEFINED SYMBOLS
+_Z9putStringPKc
+_Z6putInti
 _Z7_assertbPKci
