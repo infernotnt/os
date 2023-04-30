@@ -4,6 +4,8 @@
 
 #include "../h/my_console.h"
 
+//inline void _assert(bool valid, const char* file, int line)
+
 void stopKernel()
 {
     putNewline();
@@ -136,19 +138,4 @@ void putInt(int n)
         }
     }
 
-}
-
-void _assert(bool valid, const char* file, int line)
-{
-    if(valid)
-        return;
-
-    putString("===================== ASSERT file: ");
-    putString(file);
-    putString("    line: ");
-    putInt(line);
-    putString("   ===========================");
-    putNewline();
-
-    stopKernel();
 }

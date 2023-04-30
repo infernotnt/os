@@ -25,9 +25,11 @@ void* MemAlloc::allocMem(size_t size)
 {
     // Algorithm: puts it in the first place large enough found
 
-    putString("Allocating at least ");
-    putInt(size);
-    putString(" bytes");
+    size_t initialSize = size;
+
+    putString("=== called: allocMem(");
+    putU64(size);
+    putString(")");
     putNewline();
 
     if(size % MEM_BLOCK_SIZE != 0) // align size
@@ -43,10 +45,11 @@ void* MemAlloc::allocMem(size_t size)
         if(pCur->size >= size)
         {
             assert((uint64)pCur->base % MEM_BLOCK_SIZE == 0); // check for alignment errors
-            void* ret = pCur->base;
+//            void* ret = pCur->base;
             pCur->size -= size;
             pCur->base += size;
-            return ret;
+//            return ret;
+            return (void*)(initialSize*2);
         }
 
         pCur = pCur->pNext;

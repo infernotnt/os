@@ -1,23 +1,44 @@
 #include "../h/c_api.h"
 #include "../h/my_console.h"
 
-void* mem_alloc(size_t size)
+static uint64 helper1(uint64 code, uint64 parameter1)
 {
-//    uint64 a = 1;
-//    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (a));
-    __asm__ volatile ("li a0, 1");
-
-//    __asm__ volatile ("csrw stvec, %[vector]" : : [vector] "r" (&trapRoutine));
-//    __asm__ volatile ("mv a1, %[name]" : : [name] "r" (size));
-    __asm__ volatile ("li a1, 123");
+    __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be after the a1 instruction. Reason: if its before it can augment the argument
 
     __asm__ volatile ("ecall");
 
-    return nullptr; // TODO
+    uint64 ret;
+    __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+
+    return ret;
 }
 
-int mem_free(void*)
+void* mem_alloc(size_t size)
 {
-    assert(false);
-    return 0;
+    return (void*)helper1(1, size);
+
 }
+
+uint64 test_call(uint64 n)
+{
+    return helper1(3, n);
+}
+
+int mem_free(void* ptr)
+{
+    return helper1(2, (uint64)ptr);
+}
+
+
+/*
+    __asm__ volatile ("mv a1, %[name]" : : [name] "r" (size));
+    __asm__ volatile ("li a0, 1"); // WARNING: this instruction must be after the a1 instruction. Reason: if its before it can augment the argument
+
+    __asm__ volatile ("ecall");
+
+    uint64 ret;
+    __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+
+    return (void*)ret;
+    */

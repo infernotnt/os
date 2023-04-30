@@ -17,12 +17,37 @@ void userMain()
 
     mem_alloc(6969);
 
+    const int n = 1000000;
+    int a, b;
+    a = b = n*37;
     while(true)
     {
-//        int n = 1;
-//        putInt(fib(n));
-//        putNewline();
-//        n++;
+        a++;
+        b++;
+        assert(a == b);
+
+        if(a % n == 0) {
+            int out = fib(a/n);
+            putString("fib(");
+            putInt(a/n);
+            putString(") = ");
+            putInt(out);
+            putNewline();
+
+            if(a/n == 38)
+            {
+                assert(out == 39088169);
+            }
+
+            uint64 ret = (uint64)test_call(a / n);
+            putString("ret= ");
+            putU64(ret);
+            putNewline();
+            putNewline();
+
+            assert(ret == (uint64)(a/n * 2));
+        }
+
     }
 
     putString("Application ended");

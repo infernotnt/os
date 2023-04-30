@@ -1,7 +1,4 @@
-#ifndef PROJECT_BASE_V1_1_ALLOC_H
-#define PROJECT_BASE_V1_1_ALLOC_H
-
-#endif //PROJECT_BASE_V1_1_ALLOC_H
+#pragma once
 
 #include "../lib/hw.h"
 #include "../h/my_console.h"

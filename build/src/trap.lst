@@ -1,0 +1,1108 @@
+GAS LISTING /tmp/ccet2IJ2.s 			page 1
+
+
+   1              		.file	"trap.cpp"
+   2              		.option pic
+   3              		.option norelax
+   4              		.text
+   5              	.Ltext0:
+   6              		.align	2
+   7              		.globl	_Z8testCallm
+   9              	_Z8testCallm:
+  10              	.LFB4:
+  11              		.file 1 "src/trap.cpp"
+   1:src/trap.cpp  **** #include "../h/trap.h"
+   2:src/trap.cpp  **** 
+   3:src/trap.cpp  **** int gTimer = 0;
+   4:src/trap.cpp  **** 
+   5:src/trap.cpp  **** uint64 testCall(uint64 n)
+   6:src/trap.cpp  **** {
+  12              		.loc 1 6 1
+  13              		.cfi_startproc
+  14              	.LVL0:
+  15 0000 130101FF 		addi	sp,sp,-16
+  16              		.cfi_def_cfa_offset 16
+  17 0004 23348100 		sd	s0,8(sp)
+  18              		.cfi_offset 8, -8
+  19 0008 13040101 		addi	s0,sp,16
+  20              		.cfi_def_cfa 8, 0
+   7:src/trap.cpp  ****     return n * 2;
+  21              		.loc 1 7 5
+   8:src/trap.cpp  **** }
+  22              		.loc 1 8 1 is_stmt 0
+  23 000c 13151500 		slli	a0,a0,1
+  24              	.LVL1:
+  25 0010 03348100 		ld	s0,8(sp)
+  26              		.cfi_restore 8
+  27              		.cfi_def_cfa 2, 16
+  28 0014 13010101 		addi	sp,sp,16
+  29              		.cfi_def_cfa_offset 0
+  30 0018 67800000 		jr	ra
+  31              		.cfi_endproc
+  32              	.LFE4:
+  34              		.section	.rodata.str1.8,"aMS",@progbits,1
+  35              		.align	3
+  36              	.LC0:
+  37 0000 3D3D3D3D 		.string	"===================== ASSERT file: "
+  37      3D3D3D3D 
+  37      3D3D3D3D 
+  37      3D3D3D3D 
+  37      3D3D3D3D 
+  38 0024 00000000 		.align	3
+  39              	.LC1:
+  40 0028 7372632F 		.string	"src/trap.cpp"
+  40      74726170 
+  40      2E637070 
+  40      00
+  41 0035 000000   		.align	3
+  42              	.LC2:
+  43 0038 20202020 		.string	"    line: "
+  43      6C696E65 
+GAS LISTING /tmp/ccet2IJ2.s 			page 2
+
+
+  43      3A2000
+  44 0043 00000000 		.align	3
+  44      00
+  45              	.LC3:
+  46 0048 2020203D 		.string	"   ==========================="
+  46      3D3D3D3D 
+  46      3D3D3D3D 
+  46      3D3D3D3D 
+  46      3D3D3D3D 
+  47 0067 00       		.align	3
+  48              	.LC4:
+  49 0068 54696D65 		.string	"Time: "
+  49      3A2000
+  50 006f 00       		.align	3
+  51              	.LC5:
+  52 0070 7300     		.string	"s"
+  53              		.text
+  54              		.align	2
+  55              		.globl	_Z25cExternalInterruptRoutinev
+  57              	_Z25cExternalInterruptRoutinev:
+  58              	.LFB5:
+   9:src/trap.cpp  **** 
+  10:src/trap.cpp  **** void cExternalInterruptRoutine()
+  11:src/trap.cpp  **** {
+  59              		.loc 1 11 1 is_stmt 1
+  60              		.cfi_startproc
+  61 001c 130101FE 		addi	sp,sp,-32
+  62              		.cfi_def_cfa_offset 32
+  63 0020 233C1100 		sd	ra,24(sp)
+  64 0024 23388100 		sd	s0,16(sp)
+  65 0028 23349100 		sd	s1,8(sp)
+  66              		.cfi_offset 1, -8
+  67              		.cfi_offset 8, -16
+  68              		.cfi_offset 9, -24
+  69 002c 13040102 		addi	s0,sp,32
+  70              		.cfi_def_cfa 8, 0
+  12:src/trap.cpp  ****     uint64 scause;
+  71              		.loc 1 12 5
+  13:src/trap.cpp  ****     __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
+  72              		.loc 1 13 5
+  73              		.loc 1 13 68 is_stmt 0
+  74              	#APP
+  75              	# 13 "src/trap.cpp" 1
+  14              	
+  76              		csrr a5, scause
+  77              	# 0 "" 2
+  78              	.LVL2:
+  15:src/trap.cpp  ****     int isExternal = (scause & (0x1UL << 63)) != 0;
+  79              		.loc 1 15 5 is_stmt 1
+  16:src/trap.cpp  ****     int cause = scause & (~(1UL << 63));
+  80              		.loc 1 16 5
+  81              		.loc 1 16 9 is_stmt 0
+  82              	#NO_APP
+  83 0034 9B840700 		sext.w	s1,a5
+  84              	.LVL3:
+  17:src/trap.cpp  **** 
+  18:src/trap.cpp  ****     assert(isExternal == 1);
+GAS LISTING /tmp/ccet2IJ2.s 			page 3
+
+
+  85              		.loc 1 18 5 is_stmt 1
+  86              	.LBB4:
+  87              	.LBB5:
+  88              		.file 2 "src/../h/../h/../h/my_console.h"
+   1:src/../h/../h/../h/my_console.h **** #pragma once
+   2:src/../h/../h/../h/my_console.h **** 
+   3:src/../h/../h/../h/my_console.h **** #define __DEBUG_MODE
+   4:src/../h/../h/../h/my_console.h **** 
+   5:src/../h/../h/../h/my_console.h **** #include "../lib/console.h"
+   6:src/../h/../h/../h/my_console.h **** #include "../lib/hw.h"
+   7:src/../h/../h/../h/my_console.h **** #include "../h/risc.h"
+   8:src/../h/../h/../h/my_console.h **** 
+   9:src/../h/../h/../h/my_console.h **** void putString(const char* s);
+  10:src/../h/../h/../h/my_console.h **** void putInt(int n);
+  11:src/../h/../h/../h/my_console.h **** void putNewline();
+  12:src/../h/../h/../h/my_console.h **** void putU64(uint64 n);
+  13:src/../h/../h/../h/my_console.h **** void putBinary(uint64 n);
+  14:src/../h/../h/../h/my_console.h **** void stopKernel();
+  15:src/../h/../h/../h/my_console.h **** 
+  16:src/../h/../h/../h/my_console.h **** inline void _assert(bool valid, const char* file, int line) // MUST be inline
+  17:src/../h/../h/../h/my_console.h **** {
+  18:src/../h/../h/../h/my_console.h ****     if(valid)
+  89              		.loc 2 18 5
+  90 0038 63D60702 		bgez	a5,.L8
+  91              	.LVL4:
+  92              	.L4:
+  93              	.LBE5:
+  94              	.LBE4:
+  19:src/trap.cpp  **** 
+  20:src/trap.cpp  ****     __asm__ volatile ("csrc sip, 0xA"); // clears the 9th bit in register sip. (the bit signifies e
+  95              		.loc 1 20 5
+  96              		.loc 1 20 39 is_stmt 0
+  97              	#APP
+  98              	# 20 "src/trap.cpp" 1
+  21              	
+  22:src/trap.cpp  ****     if (cause == 1)
+  99              		csrc sip, 0xA
+ 100              	# 0 "" 2
+ 101              		.loc 1 22 5 is_stmt 1
+ 102              	#NO_APP
+ 103 0040 93071000 		li	a5,1
+ 104 0044 6380F408 		beq	s1,a5,.L9
+ 105              	.L5:
+  23:src/trap.cpp  ****     {
+  24:src/trap.cpp  ****         if (gTimer % 10 == 0) {
+  25:src/trap.cpp  ****             putString("Time: ");
+  26:src/trap.cpp  ****             putInt(gTimer / 10);
+  27:src/trap.cpp  ****             putString("s");
+  28:src/trap.cpp  ****             putNewline();
+  29:src/trap.cpp  ****         }
+  30:src/trap.cpp  ****         gTimer++;
+  31:src/trap.cpp  ****     }
+  32:src/trap.cpp  **** 
+  33:src/trap.cpp  ****     console_handler();
+ 106              		.loc 1 33 5
+ 107              		.loc 1 33 20 is_stmt 0
+ 108 0048 97000000 		call	console_handler@plt
+GAS LISTING /tmp/ccet2IJ2.s 			page 4
+
+
+ 108      E7800000 
+ 109              	.LVL5:
+  34:src/trap.cpp  **** }
+ 110              		.loc 1 34 1
+ 111 0050 83308101 		ld	ra,24(sp)
+ 112              		.cfi_remember_state
+ 113              		.cfi_restore 1
+ 114 0054 03340101 		ld	s0,16(sp)
+ 115              		.cfi_restore 8
+ 116              		.cfi_def_cfa 2, 32
+ 117 0058 83348100 		ld	s1,8(sp)
+ 118              		.cfi_restore 9
+ 119              	.LVL6:
+ 120 005c 13010102 		addi	sp,sp,32
+ 121              		.cfi_def_cfa_offset 0
+ 122 0060 67800000 		jr	ra
+ 123              	.LVL7:
+ 124              	.L8:
+ 125              		.cfi_restore_state
+ 126              	.LBB7:
+ 127              	.LBB6:
+  19:src/../h/../h/../h/my_console.h ****         return;
+  20:src/../h/../h/../h/my_console.h **** 
+  21:src/../h/../h/../h/my_console.h ****     putString("===================== ASSERT file: ");
+ 128              		.loc 2 21 5 is_stmt 1
+ 129              		.loc 2 21 14 is_stmt 0
+ 130 0064 17050000 		lla	a0,.LC0
+ 130      13050500 
+ 131 006c 97000000 		call	_Z9putStringPKc@plt
+ 131      E7800000 
+ 132              	.LVL8:
+  22:src/../h/../h/../h/my_console.h ****     putString(file);
+ 133              		.loc 2 22 5 is_stmt 1
+ 134              		.loc 2 22 14 is_stmt 0
+ 135 0074 17050000 		lla	a0,.LC1
+ 135      13050500 
+ 136 007c 97000000 		call	_Z9putStringPKc@plt
+ 136      E7800000 
+ 137              	.LVL9:
+  23:src/../h/../h/../h/my_console.h ****     putString("    line: ");
+ 138              		.loc 2 23 5 is_stmt 1
+ 139              		.loc 2 23 14 is_stmt 0
+ 140 0084 17050000 		lla	a0,.LC2
+ 140      13050500 
+ 141 008c 97000000 		call	_Z9putStringPKc@plt
+ 141      E7800000 
+ 142              	.LVL10:
+  24:src/../h/../h/../h/my_console.h ****     putInt(line);
+ 143              		.loc 2 24 5 is_stmt 1
+ 144              		.loc 2 24 11 is_stmt 0
+ 145 0094 13052001 		li	a0,18
+ 146 0098 97000000 		call	_Z6putInti@plt
+ 146      E7800000 
+ 147              	.LVL11:
+  25:src/../h/../h/../h/my_console.h ****     putString("   ===========================");
+ 148              		.loc 2 25 5 is_stmt 1
+ 149              		.loc 2 25 14 is_stmt 0
+GAS LISTING /tmp/ccet2IJ2.s 			page 5
+
+
+ 150 00a0 17050000 		lla	a0,.LC3
+ 150      13050500 
+ 151 00a8 97000000 		call	_Z9putStringPKc@plt
+ 151      E7800000 
+ 152              	.LVL12:
+  26:src/../h/../h/../h/my_console.h ****     putNewline();
+ 153              		.loc 2 26 5 is_stmt 1
+ 154              		.loc 2 26 15 is_stmt 0
+ 155 00b0 97000000 		call	_Z10putNewlinev@plt
+ 155      E7800000 
+ 156              	.LVL13:
+  27:src/../h/../h/../h/my_console.h **** 
+  28:src/../h/../h/../h/my_console.h ****     stopKernel();
+ 157              		.loc 2 28 5 is_stmt 1
+ 158              		.loc 2 28 15 is_stmt 0
+ 159 00b8 97000000 		call	_Z10stopKernelv@plt
+ 159      E7800000 
+ 160              	.LVL14:
+ 161 00c0 6FF0DFF7 		j	.L4
+ 162              	.LVL15:
+ 163              	.L9:
+ 164              	.LBE6:
+ 165              	.LBE7:
+  24:src/trap.cpp  ****             putString("Time: ");
+ 166              		.loc 1 24 9 is_stmt 1
+  24:src/trap.cpp  ****             putString("Time: ");
+ 167              		.loc 1 24 20 is_stmt 0
+ 168 00c4 97070000 		lw	a5,.LANCHOR0
+ 168      83A70700 
+ 169 00cc 1307A000 		li	a4,10
+ 170 00d0 BBE7E702 		remw	a5,a5,a4
+  24:src/trap.cpp  ****             putString("Time: ");
+ 171              		.loc 1 24 9
+ 172 00d4 638E0700 		beqz	a5,.L10
+ 173              	.L6:
+  30:src/trap.cpp  ****     }
+ 174              		.loc 1 30 9 is_stmt 1
+  30:src/trap.cpp  ****     }
+ 175              		.loc 1 30 15 is_stmt 0
+ 176 00d8 17070000 		lla	a4,.LANCHOR0
+ 176      13070700 
+ 177 00e0 83270700 		lw	a5,0(a4)
+ 178 00e4 9B871700 		addiw	a5,a5,1
+ 179 00e8 2320F700 		sw	a5,0(a4)
+ 180 00ec 6FF0DFF5 		j	.L5
+ 181              	.L10:
+  25:src/trap.cpp  ****             putInt(gTimer / 10);
+ 182              		.loc 1 25 13 is_stmt 1
+  25:src/trap.cpp  ****             putInt(gTimer / 10);
+ 183              		.loc 1 25 22 is_stmt 0
+ 184 00f0 17050000 		lla	a0,.LC4
+ 184      13050500 
+ 185 00f8 97000000 		call	_Z9putStringPKc@plt
+ 185      E7800000 
+ 186              	.LVL16:
+  26:src/trap.cpp  ****             putString("s");
+ 187              		.loc 1 26 13 is_stmt 1
+GAS LISTING /tmp/ccet2IJ2.s 			page 6
+
+
+  26:src/trap.cpp  ****             putString("s");
+ 188              		.loc 1 26 19 is_stmt 0
+ 189 0100 17050000 		lw	a0,.LANCHOR0
+ 189      03250500 
+ 190 0108 9307A000 		li	a5,10
+ 191 010c 3B45F502 		divw	a0,a0,a5
+ 192 0110 97000000 		call	_Z6putInti@plt
+ 192      E7800000 
+ 193              	.LVL17:
+  27:src/trap.cpp  ****             putNewline();
+ 194              		.loc 1 27 13 is_stmt 1
+  27:src/trap.cpp  ****             putNewline();
+ 195              		.loc 1 27 22 is_stmt 0
+ 196 0118 17050000 		lla	a0,.LC5
+ 196      13050500 
+ 197 0120 97000000 		call	_Z9putStringPKc@plt
+ 197      E7800000 
+ 198              	.LVL18:
+  28:src/trap.cpp  ****         }
+ 199              		.loc 1 28 13 is_stmt 1
+  28:src/trap.cpp  ****         }
+ 200              		.loc 1 28 23 is_stmt 0
+ 201 0128 97000000 		call	_Z10putNewlinev@plt
+ 201      E7800000 
+ 202              	.LVL19:
+ 203 0130 6FF09FFA 		j	.L6
+ 204              		.cfi_endproc
+ 205              	.LFE5:
+ 207              		.section	.rodata.str1.8
+ 208 0072 00000000 		.align	3
+ 208      0000
+ 209              	.LC6:
+ 210 0078 496C6C65 		.string	"Illegal instruction, terminating kernel."
+ 210      67616C20 
+ 210      696E7374 
+ 210      72756374 
+ 210      696F6E2C 
+ 211              		.text
+ 212              		.align	2
+ 213              		.globl	_Z25cInternalInterruptRoutinev
+ 215              	_Z25cInternalInterruptRoutinev:
+ 216              	.LFB6:
+  35:src/trap.cpp  **** 
+  36:src/trap.cpp  **** void cInternalInterruptRoutine()
+  37:src/trap.cpp  **** {
+ 217              		.loc 1 37 1 is_stmt 1
+ 218              		.cfi_startproc
+ 219 0134 130101FE 		addi	sp,sp,-32
+ 220              		.cfi_def_cfa_offset 32
+ 221 0138 233C1100 		sd	ra,24(sp)
+ 222 013c 23388100 		sd	s0,16(sp)
+ 223 0140 23349100 		sd	s1,8(sp)
+ 224              		.cfi_offset 1, -8
+ 225              		.cfi_offset 8, -16
+ 226              		.cfi_offset 9, -24
+ 227 0144 13040102 		addi	s0,sp,32
+ 228              		.cfi_def_cfa 8, 0
+GAS LISTING /tmp/ccet2IJ2.s 			page 7
+
+
+  38:src/trap.cpp  ****     uint64 scause;
+ 229              		.loc 1 38 5
+  39:src/trap.cpp  ****     __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
+ 230              		.loc 1 39 5
+ 231              		.loc 1 39 68 is_stmt 0
+ 232              	#APP
+ 233              	# 39 "src/trap.cpp" 1
+  40              	
+ 234              		csrr a5, scause
+ 235              	# 0 "" 2
+ 236              	.LVL20:
+  41:src/trap.cpp  **** //    int isExternal = (scause & (0x1UL << 63)) != 0;
+  42:src/trap.cpp  ****     int cause = scause & (~(1UL << 63));
+ 237              		.loc 1 42 5 is_stmt 1
+  43:src/trap.cpp  **** 
+  44:src/trap.cpp  ****     __asm__ volatile ("csrc sip, 0x2"); // clears the 1st bit in register sip. (the bit signifies i
+ 238              		.loc 1 44 5
+ 239              		.loc 1 44 39 is_stmt 0
+ 240              	# 44 "src/trap.cpp" 1
+  45              	
+  46:src/trap.cpp  ****     if(cause != 8 && cause != 9)
+ 241              		csrc sip, 0x2
+ 242              	# 0 "" 2
+ 243              		.loc 1 46 5 is_stmt 1
+ 244              		.loc 1 46 19 is_stmt 0
+ 245              	#NO_APP
+ 246 0150 9B8787FF 		addiw	a5,a5,-8
+ 247              	.LVL21:
+ 248              		.loc 1 46 5
+ 249 0154 13071000 		li	a4,1
+ 250 0158 636AF704 		bgtu	a5,a4,.L18
+ 251              	.L12:
+  47:src/trap.cpp  ****     {
+  48:src/trap.cpp  ****         putString("Illegal instruction, terminating kernel.");
+  49:src/trap.cpp  ****         putNewline();
+  50:src/trap.cpp  ****         assert(false);
+  51:src/trap.cpp  ****     }
+  52:src/trap.cpp  **** 
+  53:src/trap.cpp  ****     // if we are here it means it was a system call that caused the trap handler
+  54:src/trap.cpp  **** 
+  55:src/trap.cpp  ****     uint64 sepc;
+ 252              		.loc 1 55 5 is_stmt 1
+  56:src/trap.cpp  ****     __asm__ volatile ("csrr %[name], sepc" : [name] "=r"(sepc));
+ 253              		.loc 1 56 5
+ 254              		.loc 1 56 64 is_stmt 0
+ 255              	#APP
+ 256              	# 56 "src/trap.cpp" 1
+  57              	    sepc += 4;
+ 257              		csrr a5, sepc
+ 258              	# 0 "" 2
+ 259              	.LVL22:
+ 260              		.loc 1 57 5 is_stmt 1
+ 261              		.loc 1 57 10 is_stmt 0
+ 262              	#NO_APP
+ 263 0160 93874700 		addi	a5,a5,4
+ 264              	.LVL23:
+  58:src/trap.cpp  ****     __asm__ volatile ("csrw sepc, %[name]" : : [name] "r" (sepc));
+GAS LISTING /tmp/ccet2IJ2.s 			page 8
+
+
+ 265              		.loc 1 58 5 is_stmt 1
+ 266              		.loc 1 58 66 is_stmt 0
+ 267              	#APP
+ 268              	# 58 "src/trap.cpp" 1
+  59              	
+  60:src/trap.cpp  ****     //dispatchSystemCall();
+  61:src/trap.cpp  ****     uint64 code, parameter1;
+ 269              		csrw sepc, a5
+ 270              	# 0 "" 2
+ 271              		.loc 1 61 5 is_stmt 1
+  62:src/trap.cpp  ****     __asm__ volatile ("mv %[name], a0" : [name] "=r"(code));
+ 272              		.loc 1 62 5
+ 273              		.loc 1 62 60 is_stmt 0
+ 274              	# 62 "src/trap.cpp" 1
+  63              	    __asm__ volatile ("mv %[name], a1" : [name] "=r"(parameter1));
+ 275              		mv a5, a0
+ 276              	# 0 "" 2
+ 277              	.LVL24:
+ 278              		.loc 1 63 5 is_stmt 1
+ 279              		.loc 1 63 66 is_stmt 0
+ 280              	# 63 "src/trap.cpp" 1
+  64              	
+ 281              		mv s1, a1
+ 282              	# 0 "" 2
+ 283              	.LVL25:
+  65:src/trap.cpp  **** //    putString("=== system call. code= ");
+  66:src/trap.cpp  **** //    putU64(code);
+  67:src/trap.cpp  **** //    putString( " parameter1= ");
+  68:src/trap.cpp  **** //    putU64(parameter1);
+  69:src/trap.cpp  **** //    putNewline();
+  70:src/trap.cpp  **** //
+  71:src/trap.cpp  **** //    assert(code != 0);
+  72:src/trap.cpp  **** //    assert(sizeof(void*) == 8);
+  73:src/trap.cpp  **** 
+  74:src/trap.cpp  ****     uint64 ret = -1;
+ 284              		.loc 1 74 5 is_stmt 1
+  75:src/trap.cpp  ****     if(code == 1)
+ 285              		.loc 1 75 5
+ 286              	#NO_APP
+ 287 0170 13071000 		li	a4,1
+ 288 0174 6388E70A 		beq	a5,a4,.L19
+  76:src/trap.cpp  ****     {
+  77:src/trap.cpp  ****         ret = (uint64)MemAlloc::get()->allocMem(parameter1);
+  78:src/trap.cpp  ****     }
+  79:src/trap.cpp  ****     else if (code == 2)
+ 289              		.loc 1 79 10
+ 290 0178 13072000 		li	a4,2
+ 291 017c 6380E70C 		beq	a5,a4,.L20
+  80:src/trap.cpp  ****     {
+  81:src/trap.cpp  ****         ret = (uint64)MemAlloc::get()->freeMem((void*)parameter1);
+  82:src/trap.cpp  ****     }
+  83:src/trap.cpp  **** #ifdef __DEBUG_MODE
+  84:src/trap.cpp  ****     else if (code == 3) // Test call
+ 292              		.loc 1 84 10
+ 293 0180 13073000 		li	a4,3
+ 294 0184 6398E70C 		bne	a5,a4,.L16
+  85:src/trap.cpp  ****     {
+GAS LISTING /tmp/ccet2IJ2.s 			page 9
+
+
+  86:src/trap.cpp  ****         ret = (uint64)testCall(parameter1);
+ 295              		.loc 1 86 9
+ 296              		.loc 1 86 31 is_stmt 0
+ 297 0188 13850400 		mv	a0,s1
+ 298 018c 97000000 		call	_Z8testCallm
+ 298      E7800000 
+ 299              	.LVL26:
+ 300              	.L14:
+  87:src/trap.cpp  ****     }
+  88:src/trap.cpp  **** #endif
+  89:src/trap.cpp  ****     else
+  90:src/trap.cpp  ****     {
+  91:src/trap.cpp  ****         assert(false); // unknown code
+  92:src/trap.cpp  ****     }
+  93:src/trap.cpp  **** 
+  94:src/trap.cpp  ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (ret));
+ 301              		.loc 1 94 5 is_stmt 1
+ 302              		.loc 1 94 61 is_stmt 0
+ 303              	#APP
+ 304              	# 94 "src/trap.cpp" 1
+  95              	
+  96:src/trap.cpp  **** //    assert(1);
+  97:src/trap.cpp  **** //    assert(isExternal == 0);
+  98:src/trap.cpp  **** }...
+ 305              		mv a0, a0
+ 306              	# 0 "" 2
+ 307              		.loc 1 98 1
+ 308              	#NO_APP
+ 309 0198 83308101 		ld	ra,24(sp)
+ 310              		.cfi_remember_state
+ 311              		.cfi_restore 1
+ 312 019c 03340101 		ld	s0,16(sp)
+ 313              		.cfi_restore 8
+ 314              		.cfi_def_cfa 2, 32
+ 315 01a0 83348100 		ld	s1,8(sp)
+ 316              		.cfi_restore 9
+ 317              	.LVL27:
+ 318 01a4 13010102 		addi	sp,sp,32
+ 319              		.cfi_def_cfa_offset 0
+ 320 01a8 67800000 		jr	ra
+ 321              	.LVL28:
+ 322              	.L18:
+ 323              		.cfi_restore_state
+  48:src/trap.cpp  ****         putString("Illegal instruction, terminating kernel.");
+ 324              		.loc 1 48 9 is_stmt 1
+  48:src/trap.cpp  ****         putString("Illegal instruction, terminating kernel.");
+ 325              		.loc 1 48 18 is_stmt 0
+ 326 01ac 17050000 		lla	a0,.LC6
+ 326      13050500 
+ 327 01b4 97000000 		call	_Z9putStringPKc@plt
+ 327      E7800000 
+ 328              	.LVL29:
+  49:src/trap.cpp  ****         putNewline();
+ 329              		.loc 1 49 9 is_stmt 1
+  49:src/trap.cpp  ****         putNewline();
+ 330              		.loc 1 49 19 is_stmt 0
+ 331 01bc 97000000 		call	_Z10putNewlinev@plt
+GAS LISTING /tmp/ccet2IJ2.s 			page 10
+
+
+ 331      E7800000 
+ 332              	.LVL30:
+  50:src/trap.cpp  ****         assert(false);
+ 333              		.loc 1 50 9 is_stmt 1
+ 334              	.LBB12:
+ 335              	.LBB13:
+  18:src/../h/../h/../h/my_console.h ****         return;
+ 336              		.loc 2 18 5
+  21:src/../h/../h/../h/my_console.h ****     putString(file);
+ 337              		.loc 2 21 5
+  21:src/../h/../h/../h/my_console.h ****     putString(file);
+ 338              		.loc 2 21 14 is_stmt 0
+ 339 01c4 17050000 		lla	a0,.LC0
+ 339      13050500 
+ 340 01cc 97000000 		call	_Z9putStringPKc@plt
+ 340      E7800000 
+ 341              	.LVL31:
+  22:src/../h/../h/../h/my_console.h ****     putString("    line: ");
+ 342              		.loc 2 22 5 is_stmt 1
+  22:src/../h/../h/../h/my_console.h ****     putString("    line: ");
+ 343              		.loc 2 22 14 is_stmt 0
+ 344 01d4 17050000 		lla	a0,.LC1
+ 344      13050500 
+ 345 01dc 97000000 		call	_Z9putStringPKc@plt
+ 345      E7800000 
+ 346              	.LVL32:
+  23:src/../h/../h/../h/my_console.h ****     putInt(line);
+ 347              		.loc 2 23 5 is_stmt 1
+  23:src/../h/../h/../h/my_console.h ****     putInt(line);
+ 348              		.loc 2 23 14 is_stmt 0
+ 349 01e4 17050000 		lla	a0,.LC2
+ 349      13050500 
+ 350 01ec 97000000 		call	_Z9putStringPKc@plt
+ 350      E7800000 
+ 351              	.LVL33:
+  24:src/../h/../h/../h/my_console.h ****     putString("   ===========================");
+ 352              		.loc 2 24 5 is_stmt 1
+  24:src/../h/../h/../h/my_console.h ****     putString("   ===========================");
+ 353              		.loc 2 24 11 is_stmt 0
+ 354 01f4 13052003 		li	a0,50
+ 355 01f8 97000000 		call	_Z6putInti@plt
+ 355      E7800000 
+ 356              	.LVL34:
+  25:src/../h/../h/../h/my_console.h ****     putNewline();
+ 357              		.loc 2 25 5 is_stmt 1
+  25:src/../h/../h/../h/my_console.h ****     putNewline();
+ 358              		.loc 2 25 14 is_stmt 0
+ 359 0200 17050000 		lla	a0,.LC3
+ 359      13050500 
+ 360 0208 97000000 		call	_Z9putStringPKc@plt
+ 360      E7800000 
+ 361              	.LVL35:
+  26:src/../h/../h/../h/my_console.h **** 
+ 362              		.loc 2 26 5 is_stmt 1
+  26:src/../h/../h/../h/my_console.h **** 
+ 363              		.loc 2 26 15 is_stmt 0
+ 364 0210 97000000 		call	_Z10putNewlinev@plt
+GAS LISTING /tmp/ccet2IJ2.s 			page 11
+
+
+ 364      E7800000 
+ 365              	.LVL36:
+ 366              		.loc 2 28 5 is_stmt 1
+ 367              		.loc 2 28 15 is_stmt 0
+ 368 0218 97000000 		call	_Z10stopKernelv@plt
+ 368      E7800000 
+ 369              	.LVL37:
+ 370 0220 6FF0DFF3 		j	.L12
+ 371              	.LVL38:
+ 372              	.L19:
+ 373              	.LBE13:
+ 374              	.LBE12:
+  77:src/trap.cpp  ****         ret = (uint64)MemAlloc::get()->allocMem(parameter1);
+ 375              		.loc 1 77 9 is_stmt 1
+  77:src/trap.cpp  ****         ret = (uint64)MemAlloc::get()->allocMem(parameter1);
+ 376              		.loc 1 77 48 is_stmt 0
+ 377 0224 97000000 		call	_ZN8MemAlloc3getEv@plt
+ 377      E7800000 
+ 378              	.LVL39:
+ 379 022c 93850400 		mv	a1,s1
+ 380 0230 97000000 		call	_ZN8MemAlloc8allocMemEm@plt
+ 380      E7800000 
+ 381              	.LVL40:
+ 382 0238 6FF0DFF5 		j	.L14
+ 383              	.LVL41:
+ 384              	.L20:
+  81:src/trap.cpp  ****         ret = (uint64)MemAlloc::get()->freeMem((void*)parameter1);
+ 385              		.loc 1 81 9 is_stmt 1
+  81:src/trap.cpp  ****         ret = (uint64)MemAlloc::get()->freeMem((void*)parameter1);
+ 386              		.loc 1 81 47 is_stmt 0
+ 387 023c 97000000 		call	_ZN8MemAlloc3getEv@plt
+ 387      E7800000 
+ 388              	.LVL42:
+ 389 0244 93850400 		mv	a1,s1
+ 390 0248 97000000 		call	_ZN8MemAlloc7freeMemEPv@plt
+ 390      E7800000 
+ 391              	.LVL43:
+ 392 0250 6FF05FF4 		j	.L14
+ 393              	.LVL44:
+ 394              	.L16:
+  91:src/trap.cpp  ****         assert(false); // unknown code
+ 395              		.loc 1 91 9 is_stmt 1
+ 396              	.LBB14:
+ 397              	.LBB15:
+  18:src/../h/../h/../h/my_console.h ****         return;
+ 398              		.loc 2 18 5
+  21:src/../h/../h/../h/my_console.h ****     putString(file);
+ 399              		.loc 2 21 5
+  21:src/../h/../h/../h/my_console.h ****     putString(file);
+ 400              		.loc 2 21 14 is_stmt 0
+ 401 0254 17050000 		lla	a0,.LC0
+ 401      13050500 
+ 402 025c 97000000 		call	_Z9putStringPKc@plt
+ 402      E7800000 
+ 403              	.LVL45:
+  22:src/../h/../h/../h/my_console.h ****     putString("    line: ");
+ 404              		.loc 2 22 5 is_stmt 1
+GAS LISTING /tmp/ccet2IJ2.s 			page 12
+
+
+  22:src/../h/../h/../h/my_console.h ****     putString("    line: ");
+ 405              		.loc 2 22 14 is_stmt 0
+ 406 0264 17050000 		lla	a0,.LC1
+ 406      13050500 
+ 407 026c 97000000 		call	_Z9putStringPKc@plt
+ 407      E7800000 
+ 408              	.LVL46:
+  23:src/../h/../h/../h/my_console.h ****     putInt(line);
+ 409              		.loc 2 23 5 is_stmt 1
+  23:src/../h/../h/../h/my_console.h ****     putInt(line);
+ 410              		.loc 2 23 14 is_stmt 0
+ 411 0274 17050000 		lla	a0,.LC2
+ 411      13050500 
+ 412 027c 97000000 		call	_Z9putStringPKc@plt
+ 412      E7800000 
+ 413              	.LVL47:
+  24:src/../h/../h/../h/my_console.h ****     putString("   ===========================");
+ 414              		.loc 2 24 5 is_stmt 1
+  24:src/../h/../h/../h/my_console.h ****     putString("   ===========================");
+ 415              		.loc 2 24 11 is_stmt 0
+ 416 0284 1305B005 		li	a0,91
+ 417 0288 97000000 		call	_Z6putInti@plt
+ 417      E7800000 
+ 418              	.LVL48:
+  25:src/../h/../h/../h/my_console.h ****     putNewline();
+ 419              		.loc 2 25 5 is_stmt 1
+  25:src/../h/../h/../h/my_console.h ****     putNewline();
+ 420              		.loc 2 25 14 is_stmt 0
+ 421 0290 17050000 		lla	a0,.LC3
+ 421      13050500 
+ 422 0298 97000000 		call	_Z9putStringPKc@plt
+ 422      E7800000 
+ 423              	.LVL49:
+  26:src/../h/../h/../h/my_console.h **** 
+ 424              		.loc 2 26 5 is_stmt 1
+  26:src/../h/../h/../h/my_console.h **** 
+ 425              		.loc 2 26 15 is_stmt 0
+ 426 02a0 97000000 		call	_Z10putNewlinev@plt
+ 426      E7800000 
+ 427              	.LVL50:
+ 428              		.loc 2 28 5 is_stmt 1
+ 429              		.loc 2 28 15 is_stmt 0
+ 430 02a8 97000000 		call	_Z10stopKernelv@plt
+ 430      E7800000 
+ 431              	.LVL51:
+ 432              	.LBE15:
+ 433              	.LBE14:
+  74:src/trap.cpp  ****     uint64 ret = -1;
+ 434              		.loc 1 74 12
+ 435 02b0 1305F0FF 		li	a0,-1
+ 436 02b4 6FF01FEE 		j	.L14
+ 437              		.cfi_endproc
+ 438              	.LFE6:
+ 440              		.globl	gTimer
+ 441              		.bss
+ 442              		.align	2
+ 443              		.set	.LANCHOR0,. + 0
+GAS LISTING /tmp/ccet2IJ2.s 			page 13
+
+
+ 446              	gTimer:
+ 447 0000 00000000 		.zero	4
+ 448              		.text
+ 449              	.Letext0:
+ 450              		.file 3 "src/../h/../h/../lib/hw.h"
+ 451              		.file 4 "src/../h/../h/alloc.h"
+ 452              		.file 5 "src/../h/../h/../h/../lib/console.h"
+GAS LISTING /tmp/ccet2IJ2.s 			page 14
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 trap.cpp
+     /tmp/ccet2IJ2.s:9      .text:0000000000000000 _Z8testCallm
+     /tmp/ccet2IJ2.s:13     .text:0000000000000000 .L0 
+     /tmp/ccet2IJ2.s:15     .text:0000000000000000 .L0 
+     /tmp/ccet2IJ2.s:16     .text:0000000000000004 .L0 
+     /tmp/ccet2IJ2.s:18     .text:0000000000000008 .L0 
+     /tmp/ccet2IJ2.s:20     .text:000000000000000c .L0 
+     /tmp/ccet2IJ2.s:22     .text:000000000000000c .L0 
+     /tmp/ccet2IJ2.s:23     .text:000000000000000c .L0 
+     /tmp/ccet2IJ2.s:26     .text:0000000000000014 .L0 
+     /tmp/ccet2IJ2.s:27     .text:0000000000000014 .L0 
+     /tmp/ccet2IJ2.s:29     .text:0000000000000018 .L0 
+     /tmp/ccet2IJ2.s:31     .text:000000000000001c .L0 
+     /tmp/ccet2IJ2.s:57     .text:000000000000001c _Z25cExternalInterruptRoutinev
+     /tmp/ccet2IJ2.s:60     .text:000000000000001c .L0 
+     /tmp/ccet2IJ2.s:61     .text:000000000000001c .L0 
+     /tmp/ccet2IJ2.s:62     .text:0000000000000020 .L0 
+     /tmp/ccet2IJ2.s:66     .text:000000000000002c .L0 
+     /tmp/ccet2IJ2.s:67     .text:000000000000002c .L0 
+     /tmp/ccet2IJ2.s:68     .text:000000000000002c .L0 
+     /tmp/ccet2IJ2.s:70     .text:0000000000000030 .L0 
+     /tmp/ccet2IJ2.s:72     .text:0000000000000030 .L0 
+     /tmp/ccet2IJ2.s:73     .text:0000000000000030 .L0 
+        src/trap.cpp:13     .text:0000000000000030 .L0 
+     /tmp/ccet2IJ2.s:80     .text:0000000000000034 .L0 
+     /tmp/ccet2IJ2.s:81     .text:0000000000000034 .L0 
+     /tmp/ccet2IJ2.s:83     .text:0000000000000034 .L0 
+     /tmp/ccet2IJ2.s:89     .text:0000000000000038 .L0 
+     /tmp/ccet2IJ2.s:90     .text:0000000000000038 .L0 
+     /tmp/ccet2IJ2.s:96     .text:000000000000003c .L0 
+        src/trap.cpp:20     .text:000000000000003c .L0 
+     /tmp/ccet2IJ2.s:103    .text:0000000000000040 .L0 
+     /tmp/ccet2IJ2.s:107    .text:0000000000000048 .L0 
+     /tmp/ccet2IJ2.s:108    .text:0000000000000048 .L0 
+     /tmp/ccet2IJ2.s:111    .text:0000000000000050 .L0 
+     /tmp/ccet2IJ2.s:112    .text:0000000000000054 .L0 
+     /tmp/ccet2IJ2.s:113    .text:0000000000000054 .L0 
+     /tmp/ccet2IJ2.s:115    .text:0000000000000058 .L0 
+     /tmp/ccet2IJ2.s:116    .text:0000000000000058 .L0 
+     /tmp/ccet2IJ2.s:118    .text:000000000000005c .L0 
+     /tmp/ccet2IJ2.s:121    .text:0000000000000060 .L0 
+     /tmp/ccet2IJ2.s:125    .text:0000000000000064 .L0 
+     /tmp/ccet2IJ2.s:129    .text:0000000000000064 .L0 
+     /tmp/ccet2IJ2.s:130    .text:0000000000000064 .L0 
+     /tmp/ccet2IJ2.s:134    .text:0000000000000074 .L0 
+     /tmp/ccet2IJ2.s:135    .text:0000000000000074 .L0 
+     /tmp/ccet2IJ2.s:139    .text:0000000000000084 .L0 
+     /tmp/ccet2IJ2.s:140    .text:0000000000000084 .L0 
+     /tmp/ccet2IJ2.s:144    .text:0000000000000094 .L0 
+     /tmp/ccet2IJ2.s:145    .text:0000000000000094 .L0 
+     /tmp/ccet2IJ2.s:149    .text:00000000000000a0 .L0 
+     /tmp/ccet2IJ2.s:150    .text:00000000000000a0 .L0 
+     /tmp/ccet2IJ2.s:154    .text:00000000000000b0 .L0 
+     /tmp/ccet2IJ2.s:155    .text:00000000000000b0 .L0 
+     /tmp/ccet2IJ2.s:158    .text:00000000000000b8 .L0 
+     /tmp/ccet2IJ2.s:159    .text:00000000000000b8 .L0 
+GAS LISTING /tmp/ccet2IJ2.s 			page 15
+
+
+     /tmp/ccet2IJ2.s:167    .text:00000000000000c4 .L0 
+     /tmp/ccet2IJ2.s:168    .text:00000000000000c4 .L0 
+     /tmp/ccet2IJ2.s:172    .text:00000000000000d4 .L0 
+     /tmp/ccet2IJ2.s:175    .text:00000000000000d8 .L0 
+     /tmp/ccet2IJ2.s:176    .text:00000000000000d8 .L0 
+     /tmp/ccet2IJ2.s:183    .text:00000000000000f0 .L0 
+     /tmp/ccet2IJ2.s:184    .text:00000000000000f0 .L0 
+     /tmp/ccet2IJ2.s:188    .text:0000000000000100 .L0 
+     /tmp/ccet2IJ2.s:189    .text:0000000000000100 .L0 
+     /tmp/ccet2IJ2.s:195    .text:0000000000000118 .L0 
+     /tmp/ccet2IJ2.s:196    .text:0000000000000118 .L0 
+     /tmp/ccet2IJ2.s:200    .text:0000000000000128 .L0 
+     /tmp/ccet2IJ2.s:201    .text:0000000000000128 .L0 
+     /tmp/ccet2IJ2.s:204    .text:0000000000000134 .L0 
+     /tmp/ccet2IJ2.s:215    .text:0000000000000134 _Z25cInternalInterruptRoutinev
+     /tmp/ccet2IJ2.s:218    .text:0000000000000134 .L0 
+     /tmp/ccet2IJ2.s:219    .text:0000000000000134 .L0 
+     /tmp/ccet2IJ2.s:220    .text:0000000000000138 .L0 
+     /tmp/ccet2IJ2.s:224    .text:0000000000000144 .L0 
+     /tmp/ccet2IJ2.s:225    .text:0000000000000144 .L0 
+     /tmp/ccet2IJ2.s:226    .text:0000000000000144 .L0 
+     /tmp/ccet2IJ2.s:228    .text:0000000000000148 .L0 
+     /tmp/ccet2IJ2.s:230    .text:0000000000000148 .L0 
+     /tmp/ccet2IJ2.s:231    .text:0000000000000148 .L0 
+        src/trap.cpp:39     .text:0000000000000148 .L0 
+     /tmp/ccet2IJ2.s:238    .text:000000000000014c .L0 
+     /tmp/ccet2IJ2.s:239    .text:000000000000014c .L0 
+        src/trap.cpp:44     .text:000000000000014c .L0 
+     /tmp/ccet2IJ2.s:244    .text:0000000000000150 .L0 
+     /tmp/ccet2IJ2.s:246    .text:0000000000000150 .L0 
+     /tmp/ccet2IJ2.s:249    .text:0000000000000154 .L0 
+     /tmp/ccet2IJ2.s:253    .text:000000000000015c .L0 
+     /tmp/ccet2IJ2.s:254    .text:000000000000015c .L0 
+        src/trap.cpp:56     .text:000000000000015c .L0 
+     /tmp/ccet2IJ2.s:261    .text:0000000000000160 .L0 
+     /tmp/ccet2IJ2.s:263    .text:0000000000000160 .L0 
+     /tmp/ccet2IJ2.s:266    .text:0000000000000164 .L0 
+        src/trap.cpp:58     .text:0000000000000164 .L0 
+     /tmp/ccet2IJ2.s:272    .text:0000000000000168 .L0 
+     /tmp/ccet2IJ2.s:273    .text:0000000000000168 .L0 
+        src/trap.cpp:62     .text:0000000000000168 .L0 
+     /tmp/ccet2IJ2.s:279    .text:000000000000016c .L0 
+        src/trap.cpp:63     .text:000000000000016c .L0 
+     /tmp/ccet2IJ2.s:285    .text:0000000000000170 .L0 
+     /tmp/ccet2IJ2.s:287    .text:0000000000000170 .L0 
+     /tmp/ccet2IJ2.s:290    .text:0000000000000178 .L0 
+     /tmp/ccet2IJ2.s:293    .text:0000000000000180 .L0 
+     /tmp/ccet2IJ2.s:296    .text:0000000000000188 .L0 
+     /tmp/ccet2IJ2.s:297    .text:0000000000000188 .L0 
+     /tmp/ccet2IJ2.s:302    .text:0000000000000194 .L0 
+        src/trap.cpp:94     .text:0000000000000194 .L0 
+     /tmp/ccet2IJ2.s:309    .text:0000000000000198 .L0 
+     /tmp/ccet2IJ2.s:310    .text:000000000000019c .L0 
+     /tmp/ccet2IJ2.s:311    .text:000000000000019c .L0 
+     /tmp/ccet2IJ2.s:313    .text:00000000000001a0 .L0 
+     /tmp/ccet2IJ2.s:314    .text:00000000000001a0 .L0 
+     /tmp/ccet2IJ2.s:316    .text:00000000000001a4 .L0 
+GAS LISTING /tmp/ccet2IJ2.s 			page 16
+
+
+     /tmp/ccet2IJ2.s:319    .text:00000000000001a8 .L0 
+     /tmp/ccet2IJ2.s:323    .text:00000000000001ac .L0 
+     /tmp/ccet2IJ2.s:325    .text:00000000000001ac .L0 
+     /tmp/ccet2IJ2.s:326    .text:00000000000001ac .L0 
+     /tmp/ccet2IJ2.s:330    .text:00000000000001bc .L0 
+     /tmp/ccet2IJ2.s:331    .text:00000000000001bc .L0 
+     /tmp/ccet2IJ2.s:336    .text:00000000000001c4 .L0 
+     /tmp/ccet2IJ2.s:337    .text:00000000000001c4 .L0 
+     /tmp/ccet2IJ2.s:338    .text:00000000000001c4 .L0 
+     /tmp/ccet2IJ2.s:339    .text:00000000000001c4 .L0 
+     /tmp/ccet2IJ2.s:343    .text:00000000000001d4 .L0 
+     /tmp/ccet2IJ2.s:344    .text:00000000000001d4 .L0 
+     /tmp/ccet2IJ2.s:348    .text:00000000000001e4 .L0 
+     /tmp/ccet2IJ2.s:349    .text:00000000000001e4 .L0 
+     /tmp/ccet2IJ2.s:353    .text:00000000000001f4 .L0 
+     /tmp/ccet2IJ2.s:354    .text:00000000000001f4 .L0 
+     /tmp/ccet2IJ2.s:358    .text:0000000000000200 .L0 
+     /tmp/ccet2IJ2.s:359    .text:0000000000000200 .L0 
+     /tmp/ccet2IJ2.s:363    .text:0000000000000210 .L0 
+     /tmp/ccet2IJ2.s:364    .text:0000000000000210 .L0 
+     /tmp/ccet2IJ2.s:367    .text:0000000000000218 .L0 
+     /tmp/ccet2IJ2.s:368    .text:0000000000000218 .L0 
+     /tmp/ccet2IJ2.s:376    .text:0000000000000224 .L0 
+     /tmp/ccet2IJ2.s:377    .text:0000000000000224 .L0 
+     /tmp/ccet2IJ2.s:386    .text:000000000000023c .L0 
+     /tmp/ccet2IJ2.s:387    .text:000000000000023c .L0 
+     /tmp/ccet2IJ2.s:398    .text:0000000000000254 .L0 
+     /tmp/ccet2IJ2.s:399    .text:0000000000000254 .L0 
+     /tmp/ccet2IJ2.s:400    .text:0000000000000254 .L0 
+     /tmp/ccet2IJ2.s:401    .text:0000000000000254 .L0 
+     /tmp/ccet2IJ2.s:405    .text:0000000000000264 .L0 
+     /tmp/ccet2IJ2.s:406    .text:0000000000000264 .L0 
+     /tmp/ccet2IJ2.s:410    .text:0000000000000274 .L0 
+     /tmp/ccet2IJ2.s:411    .text:0000000000000274 .L0 
+     /tmp/ccet2IJ2.s:415    .text:0000000000000284 .L0 
+     /tmp/ccet2IJ2.s:416    .text:0000000000000284 .L0 
+     /tmp/ccet2IJ2.s:420    .text:0000000000000290 .L0 
+     /tmp/ccet2IJ2.s:421    .text:0000000000000290 .L0 
+     /tmp/ccet2IJ2.s:425    .text:00000000000002a0 .L0 
+     /tmp/ccet2IJ2.s:426    .text:00000000000002a0 .L0 
+     /tmp/ccet2IJ2.s:429    .text:00000000000002a8 .L0 
+     /tmp/ccet2IJ2.s:430    .text:00000000000002a8 .L0 
+     /tmp/ccet2IJ2.s:435    .text:00000000000002b0 .L0 
+     /tmp/ccet2IJ2.s:437    .text:00000000000002b8 .L0 
+     /tmp/ccet2IJ2.s:446    .bss:0000000000000000 gTimer
+     /tmp/ccet2IJ2.s:443    .bss:0000000000000000 .LANCHOR0
+     /tmp/ccet2IJ2.s:453    .text:00000000000002b8 .L0 
+     /tmp/ccet2IJ2.s:36     .rodata.str1.8:0000000000000000 .LC0
+     /tmp/ccet2IJ2.s:130    .text:0000000000000064 .L0 
+     /tmp/ccet2IJ2.s:39     .rodata.str1.8:0000000000000028 .LC1
+     /tmp/ccet2IJ2.s:135    .text:0000000000000074 .L0 
+     /tmp/ccet2IJ2.s:42     .rodata.str1.8:0000000000000038 .LC2
+     /tmp/ccet2IJ2.s:140    .text:0000000000000084 .L0 
+     /tmp/ccet2IJ2.s:45     .rodata.str1.8:0000000000000048 .LC3
+     /tmp/ccet2IJ2.s:150    .text:00000000000000a0 .L0 
+     /tmp/ccet2IJ2.s:168    .text:00000000000000c4 .L0 
+     /tmp/ccet2IJ2.s:176    .text:00000000000000d8 .L0 
+GAS LISTING /tmp/ccet2IJ2.s 			page 17
+
+
+     /tmp/ccet2IJ2.s:48     .rodata.str1.8:0000000000000068 .LC4
+     /tmp/ccet2IJ2.s:184    .text:00000000000000f0 .L0 
+     /tmp/ccet2IJ2.s:189    .text:0000000000000100 .L0 
+     /tmp/ccet2IJ2.s:51     .rodata.str1.8:0000000000000070 .LC5
+     /tmp/ccet2IJ2.s:196    .text:0000000000000118 .L0 
+     /tmp/ccet2IJ2.s:209    .rodata.str1.8:0000000000000078 .LC6
+     /tmp/ccet2IJ2.s:326    .text:00000000000001ac .L0 
+     /tmp/ccet2IJ2.s:339    .text:00000000000001c4 .L0 
+     /tmp/ccet2IJ2.s:344    .text:00000000000001d4 .L0 
+     /tmp/ccet2IJ2.s:349    .text:00000000000001e4 .L0 
+     /tmp/ccet2IJ2.s:359    .text:0000000000000200 .L0 
+     /tmp/ccet2IJ2.s:401    .text:0000000000000254 .L0 
+     /tmp/ccet2IJ2.s:406    .text:0000000000000264 .L0 
+     /tmp/ccet2IJ2.s:411    .text:0000000000000274 .L0 
+     /tmp/ccet2IJ2.s:421    .text:0000000000000290 .L0 
+     /tmp/ccet2IJ2.s:124    .text:0000000000000064 .L8
+     /tmp/ccet2IJ2.s:163    .text:00000000000000c4 .L9
+     /tmp/ccet2IJ2.s:92     .text:000000000000003c .L4
+     /tmp/ccet2IJ2.s:181    .text:00000000000000f0 .L10
+     /tmp/ccet2IJ2.s:105    .text:0000000000000048 .L5
+     /tmp/ccet2IJ2.s:173    .text:00000000000000d8 .L6
+     /tmp/ccet2IJ2.s:322    .text:00000000000001ac .L18
+     /tmp/ccet2IJ2.s:372    .text:0000000000000224 .L19
+     /tmp/ccet2IJ2.s:384    .text:000000000000023c .L20
+     /tmp/ccet2IJ2.s:394    .text:0000000000000254 .L16
+     /tmp/ccet2IJ2.s:251    .text:000000000000015c .L12
+     /tmp/ccet2IJ2.s:300    .text:0000000000000194 .L14
+     /tmp/ccet2IJ2.s:1215   .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+     /tmp/ccet2IJ2.s:2105   .debug_str:00000000000001a5 .LASF56
+     /tmp/ccet2IJ2.s:2141   .debug_str:0000000000000340 .LASF57
+     /tmp/ccet2IJ2.s:2053   .debug_str:0000000000000054 .LASF58
+     /tmp/ccet2IJ2.s:5      .text:0000000000000000 .Ltext0
+     /tmp/ccet2IJ2.s:449    .text:00000000000002b8 .Letext0
+     /tmp/ccet2IJ2.s:2041   .debug_line:0000000000000000 .Ldebug_line0
+     /tmp/ccet2IJ2.s:2115   .debug_str:0000000000000295 .LASF0
+     /tmp/ccet2IJ2.s:2093   .debug_str:0000000000000159 .LASF1
+     /tmp/ccet2IJ2.s:2083   .debug_str:0000000000000113 .LASF2
+     /tmp/ccet2IJ2.s:2059   .debug_str:000000000000007e .LASF4
+     /tmp/ccet2IJ2.s:2089   .debug_str:0000000000000137 .LASF3
+     /tmp/ccet2IJ2.s:2049   .debug_str:0000000000000033 .LASF5
+     /tmp/ccet2IJ2.s:2045   .debug_str:0000000000000006 .LASF6
+     /tmp/ccet2IJ2.s:2077   .debug_str:00000000000000e6 .LASF7
+     /tmp/ccet2IJ2.s:2125   .debug_str:00000000000002bc .LASF8
+     /tmp/ccet2IJ2.s:2055   .debug_str:0000000000000068 .LASF9
+     /tmp/ccet2IJ2.s:2167   .debug_str:00000000000003f2 .LASF10
+     /tmp/ccet2IJ2.s:2079   .debug_str:00000000000000f9 .LASF11
+     /tmp/ccet2IJ2.s:2157   .debug_str:00000000000003b1 .LASF12
+     /tmp/ccet2IJ2.s:2135   .debug_str:0000000000000308 .LASF13
+     /tmp/ccet2IJ2.s:2097   .debug_str:000000000000017d .LASF14
+     /tmp/ccet2IJ2.s:2069   .debug_str:00000000000000ab .LASF15
+     /tmp/ccet2IJ2.s:2129   .debug_str:00000000000002d2 .LASF16
+     /tmp/ccet2IJ2.s:2139   .debug_str:0000000000000337 .LASF26
+     /tmp/ccet2IJ2.s:2065   .debug_str:0000000000000093 .LASF25
+     /tmp/ccet2IJ2.s:2161   .debug_str:00000000000003e0 .LASF17
+     /tmp/ccet2IJ2.s:2043   .debug_str:0000000000000000 .LASF18
+     /tmp/ccet2IJ2.s:2163   .debug_str:00000000000003e6 .LASF19
+     /tmp/ccet2IJ2.s:2113   .debug_str:0000000000000290 .LASF20
+GAS LISTING /tmp/ccet2IJ2.s 			page 18
+
+
+     /tmp/ccet2IJ2.s:2159   .debug_str:00000000000003c1 .LASF27
+     /tmp/ccet2IJ2.s:2145   .debug_str:0000000000000356 .LASF59
+     /tmp/ccet2IJ2.s:2063   .debug_str:000000000000008a .LASF60
+     /tmp/ccet2IJ2.s:2143   .debug_str:000000000000034d .LASF21
+     /tmp/ccet2IJ2.s:2109   .debug_str:000000000000026e .LASF23
+     /tmp/ccet2IJ2.s:2057   .debug_str:0000000000000076 .LASF22
+     /tmp/ccet2IJ2.s:2071   .debug_str:00000000000000c1 .LASF24
+     /tmp/ccet2IJ2.s:2095   .debug_str:000000000000016c .LASF28
+     /tmp/ccet2IJ2.s:2119   .debug_str:00000000000002ad .LASF29
+     /tmp/ccet2IJ2.s:2099   .debug_str:0000000000000189 .LASF30
+     /tmp/ccet2IJ2.s:2051   .debug_str:000000000000003a .LASF31
+     /tmp/ccet2IJ2.s:2137   .debug_str:0000000000000318 .LASF32
+     /tmp/ccet2IJ2.s:216    .text:0000000000000134 .LFB6
+     /tmp/ccet2IJ2.s:438    .text:00000000000002b8 .LFE6
+     /tmp/ccet2IJ2.s:2075   .debug_str:00000000000000df .LASF33
+     /tmp/ccet2IJ2.s:1799   .debug_loc:0000000000000000 .LLST7
+     /tmp/ccet2IJ2.s:2127   .debug_str:00000000000002cc .LASF34
+     /tmp/ccet2IJ2.s:2123   .debug_str:00000000000002b7 .LASF35
+     /tmp/ccet2IJ2.s:1806   .debug_loc:0000000000000023 .LLST9
+     /tmp/ccet2IJ2.s:2107   .debug_str:0000000000000269 .LASF36
+     /tmp/ccet2IJ2.s:1813   .debug_loc:0000000000000046 .LLST10
+     /tmp/ccet2IJ2.s:2151   .debug_str:000000000000037a .LASF37
+     /tmp/ccet2IJ2.s:1832   .debug_loc:00000000000000a2 .LLST11
+     /tmp/ccet2IJ2.s:1843   .debug_loc:00000000000000d8 .LLST12
+     /tmp/ccet2IJ2.s:334    .text:00000000000001c4 .LBB12
+     /tmp/ccet2IJ2.s:374    .text:0000000000000224 .LBE12
+     /tmp/ccet2IJ2.s:1882   .debug_loc:0000000000000175 .LLST13
+     /tmp/ccet2IJ2.s:1891   .debug_loc:000000000000019a .LLST14
+     /tmp/ccet2IJ2.s:1900   .debug_loc:00000000000001c6 .LLST15
+     /tmp/ccet2IJ2.s:341    .text:00000000000001d4 .LVL31
+     /tmp/ccet2IJ2.s:346    .text:00000000000001e4 .LVL32
+     /tmp/ccet2IJ2.s:351    .text:00000000000001f4 .LVL33
+     /tmp/ccet2IJ2.s:356    .text:0000000000000200 .LVL34
+     /tmp/ccet2IJ2.s:361    .text:0000000000000210 .LVL35
+     /tmp/ccet2IJ2.s:365    .text:0000000000000218 .LVL36
+     /tmp/ccet2IJ2.s:369    .text:0000000000000220 .LVL37
+     /tmp/ccet2IJ2.s:396    .text:0000000000000254 .LBB14
+     /tmp/ccet2IJ2.s:433    .text:00000000000002b0 .LBE14
+     /tmp/ccet2IJ2.s:403    .text:0000000000000264 .LVL45
+     /tmp/ccet2IJ2.s:408    .text:0000000000000274 .LVL46
+     /tmp/ccet2IJ2.s:413    .text:0000000000000284 .LVL47
+     /tmp/ccet2IJ2.s:418    .text:0000000000000290 .LVL48
+     /tmp/ccet2IJ2.s:423    .text:00000000000002a0 .LVL49
+     /tmp/ccet2IJ2.s:427    .text:00000000000002a8 .LVL50
+     /tmp/ccet2IJ2.s:431    .text:00000000000002b0 .LVL51
+     /tmp/ccet2IJ2.s:299    .text:0000000000000194 .LVL26
+     /tmp/ccet2IJ2.s:328    .text:00000000000001bc .LVL29
+     /tmp/ccet2IJ2.s:332    .text:00000000000001c4 .LVL30
+     /tmp/ccet2IJ2.s:378    .text:000000000000022c .LVL39
+     /tmp/ccet2IJ2.s:381    .text:0000000000000238 .LVL40
+     /tmp/ccet2IJ2.s:388    .text:0000000000000244 .LVL42
+     /tmp/ccet2IJ2.s:391    .text:0000000000000250 .LVL43
+     /tmp/ccet2IJ2.s:2047   .debug_str:0000000000000019 .LASF38
+     /tmp/ccet2IJ2.s:2155   .debug_str:0000000000000392 .LASF39
+     /tmp/ccet2IJ2.s:58     .text:000000000000001c .LFB5
+     /tmp/ccet2IJ2.s:205    .text:0000000000000134 .LFE5
+     /tmp/ccet2IJ2.s:1908   .debug_loc:00000000000001ea .LLST1
+GAS LISTING /tmp/ccet2IJ2.s 			page 19
+
+
+     /tmp/ccet2IJ2.s:2117   .debug_str:00000000000002a2 .LASF40
+     /tmp/ccet2IJ2.s:1919   .debug_loc:0000000000000220 .LLST2
+     /tmp/ccet2IJ2.s:1946   .debug_loc:0000000000000266 .LLST3
+     /tmp/ccet2IJ2.s:86     .text:0000000000000038 .LBB4
+     /tmp/ccet2IJ2.s:2033   .debug_ranges:0000000000000000 .Ldebug_ranges0
+     /tmp/ccet2IJ2.s:1957   .debug_loc:000000000000029c .LLST4
+     /tmp/ccet2IJ2.s:1970   .debug_loc:00000000000002d4 .LLST5
+     /tmp/ccet2IJ2.s:1985   .debug_loc:000000000000031c .LLST6
+     /tmp/ccet2IJ2.s:132    .text:0000000000000074 .LVL8
+     /tmp/ccet2IJ2.s:137    .text:0000000000000084 .LVL9
+     /tmp/ccet2IJ2.s:142    .text:0000000000000094 .LVL10
+     /tmp/ccet2IJ2.s:147    .text:00000000000000a0 .LVL11
+     /tmp/ccet2IJ2.s:152    .text:00000000000000b0 .LVL12
+     /tmp/ccet2IJ2.s:156    .text:00000000000000b8 .LVL13
+     /tmp/ccet2IJ2.s:160    .text:00000000000000c0 .LVL14
+     /tmp/ccet2IJ2.s:109    .text:0000000000000050 .LVL5
+     /tmp/ccet2IJ2.s:186    .text:0000000000000100 .LVL16
+     /tmp/ccet2IJ2.s:193    .text:0000000000000118 .LVL17
+     /tmp/ccet2IJ2.s:198    .text:0000000000000128 .LVL18
+     /tmp/ccet2IJ2.s:202    .text:0000000000000130 .LVL19
+     /tmp/ccet2IJ2.s:2147   .debug_str:0000000000000369 .LASF61
+     /tmp/ccet2IJ2.s:2153   .debug_str:0000000000000385 .LASF62
+     /tmp/ccet2IJ2.s:10     .text:0000000000000000 .LFB4
+     /tmp/ccet2IJ2.s:32     .text:000000000000001c .LFE4
+     /tmp/ccet2IJ2.s:2006   .debug_loc:000000000000035c .LLST0
+     /tmp/ccet2IJ2.s:2149   .debug_str:0000000000000372 .LASF41
+     /tmp/ccet2IJ2.s:2131   .debug_str:00000000000002e8 .LASF42
+     /tmp/ccet2IJ2.s:2073   .debug_str:00000000000000d9 .LASF43
+     /tmp/ccet2IJ2.s:2101   .debug_str:0000000000000190 .LASF44
+     /tmp/ccet2IJ2.s:2121   .debug_str:00000000000002b2 .LASF45
+     /tmp/ccet2IJ2.s:2061   .debug_str:0000000000000085 .LASF46
+     /tmp/ccet2IJ2.s:2067   .debug_str:000000000000009b .LASF47
+     /tmp/ccet2IJ2.s:2111   .debug_str:0000000000000286 .LASF49
+     /tmp/ccet2IJ2.s:2081   .debug_str:0000000000000108 .LASF48
+     /tmp/ccet2IJ2.s:2165   .debug_str:00000000000003eb .LASF50
+     /tmp/ccet2IJ2.s:2133   .debug_str:00000000000002f8 .LASF51
+     /tmp/ccet2IJ2.s:2085   .debug_str:0000000000000121 .LASF52
+     /tmp/ccet2IJ2.s:2103   .debug_str:0000000000000195 .LASF53
+     /tmp/ccet2IJ2.s:2087   .debug_str:000000000000012c .LASF54
+     /tmp/ccet2IJ2.s:2091   .debug_str:0000000000000149 .LASF55
+     /tmp/ccet2IJ2.s:236    .text:000000000000014c .LVL20
+     /tmp/ccet2IJ2.s:247    .text:0000000000000154 .LVL21
+     /tmp/ccet2IJ2.s:259    .text:0000000000000160 .LVL22
+     /tmp/ccet2IJ2.s:277    .text:000000000000016c .LVL24
+     /tmp/ccet2IJ2.s:371    .text:0000000000000224 .LVL38
+     /tmp/ccet2IJ2.s:383    .text:000000000000023c .LVL41
+     /tmp/ccet2IJ2.s:393    .text:0000000000000254 .LVL44
+     /tmp/ccet2IJ2.s:283    .text:0000000000000170 .LVL25
+     /tmp/ccet2IJ2.s:317    .text:00000000000001a4 .LVL27
+     /tmp/ccet2IJ2.s:321    .text:00000000000001ac .LVL28
+     /tmp/ccet2IJ2.s:78     .text:0000000000000034 .LVL2
+     /tmp/ccet2IJ2.s:91     .text:000000000000003c .LVL4
+     /tmp/ccet2IJ2.s:123    .text:0000000000000064 .LVL7
+     /tmp/ccet2IJ2.s:84     .text:0000000000000038 .LVL3
+     /tmp/ccet2IJ2.s:119    .text:000000000000005c .LVL6
+     /tmp/ccet2IJ2.s:162    .text:00000000000000c4 .LVL15
+     /tmp/ccet2IJ2.s:14     .text:0000000000000000 .LVL0
+GAS LISTING /tmp/ccet2IJ2.s 			page 20
+
+
+     /tmp/ccet2IJ2.s:24     .text:0000000000000010 .LVL1
+     /tmp/ccet2IJ2.s:454    .debug_info:0000000000000000 .Ldebug_info0
+     /tmp/ccet2IJ2.s:94     .text:000000000000003c .LBE4
+     /tmp/ccet2IJ2.s:126    .text:0000000000000064 .LBB7
+     /tmp/ccet2IJ2.s:165    .text:00000000000000c4 .LBE7
+
+UNDEFINED SYMBOLS
+console_handler
+_Z9putStringPKc
+_Z6putInti
+_Z10putNewlinev
+_Z10stopKernelv
+_ZN8MemAlloc3getEv
+_ZN8MemAlloc8allocMemEm
+_ZN8MemAlloc7freeMemEPv

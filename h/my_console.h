@@ -1,22 +1,32 @@
-//
-// Created by os on 4/25/23.
-//
+#pragma once
 
-#ifndef PROJECT_BASE_V1_1_MY_CONSOLE_H
-#define PROJECT_BASE_V1_1_MY_CONSOLE_H
-
-#endif //PROJECT_BASE_V1_1_MY_CONSOLE_H
+#define __DEBUG_MODE
 
 #include "../lib/console.h"
 #include "../lib/hw.h"
+#include "../h/risc.h"
 
 void putString(const char* s);
 void putInt(int n);
 void putNewline();
 void putU64(uint64 n);
 void putBinary(uint64 n);
+void stopKernel();
 
-void _assert(bool valid, const char*, int);
+inline void _assert(bool valid, const char* file, int line) // MUST be inline
+{
+    if(valid)
+        return;
+
+    putString("===================== ASSERT file: ");
+    putString(file);
+    putString("    line: ");
+    putInt(line);
+    putString("   ===========================");
+    putNewline();
+
+    stopKernel();
+}
 
 // WARNING! DO NOT USE EXPRESSIONS IN "valid"
 #define assert(valid) _assert(valid, __FILE__, __LINE__)
