@@ -5,6 +5,7 @@
 
 extern "C" void trapRoutine();
 int gTimer = 0;
+void userMain();
 
 void main()
 {
@@ -17,17 +18,18 @@ void main()
 
     __asm__ volatile ("csrs sstatus, 0x02"); // sets the "sie" bit to 1 (s interupt enable)
 
-    MemAlloc* memAlloc = MemAlloc::get();
-    memAlloc->allocMem(10);
 
-    while(true)
-    {
+    __asm__ volatile ("li a0, 1");
+    __asm__ volatile ("li a1, 17");
+    __asm__ volatile ("ecall");
 
-    }
-
+//    userMain();
 }
 
-void cTrapRoutine() {
+void debugInterrupt(int, int);
+
+void cTrapRoutine()
+{
     uint64 scause;
     __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
 
@@ -36,35 +38,48 @@ void cTrapRoutine() {
 
     debugInterrupt(isExternal, cause);
 
-    if(isExternal == 1) {
-
+    if(isExternal == 1)
+    {
         __asm__ volatile ("csrc sip, 0xA"); // clears the 9th bit in register sip. (the bit signifies external interupt)
 
-        if (cause == 1 && gTimer % 50 == 0)
-        {
-            putString("Time: ");
-            putInt(gTimer / 50);
-            putString("s");
-            putNewline();
+        if (cause == 1) {
+            if (gTimer % 10 == 0) {
+                putString("Time: ");
+                putInt(gTimer / 10);
+                putString("s");
+                putNewline();
+            }
+            gTimer++;
         }
     }
-    else if (!isExternal)
+    else
     {
         __asm__ volatile ("csrc sip, 0x2"); // clears the 1st bit in register sip. (the bit signifies internal
         if(cause == 8 || cause == 9)
         {
             //dispatchSystemCall();
-            uint64 code, parameter1, parameter2;
-            __asm__ volatile ("ld %[name], a0" : [name] "=r"(code));
+            uint64 code, parameter1;
+            __asm__ volatile ("mv %[name], a0" : [name] "=r"(code));
+            __asm__ volatile ("mv %[name], a1" : [name] "=r"(parameter1));
+
+//            __putc('a');
+            gTimer+= 99;
+
+            putString("system call. Code=");
+            putU64(code);
+            putString( " parameter1=");
+            putU64(parameter1);
+            putNewline();
+
             assert(code != 0);
 
             if(code == 1)
             {
-                MemAlloc::get()->allocMem(parameter1);
+//                MemAlloc::get()->allocMem(parameter1);
             }
             else if (code == 2)
             {
-                MemAlloc::get()->mem_free(0);
+//                MemAlloc::get()->freeMem(nullptr);
                 assert(false);
             }
             else
@@ -73,14 +88,21 @@ void cTrapRoutine() {
             }
 
         }
-    }
 
+        __asm__ volatile ("csrc sip, 0x2");
+
+        uint64 a;
+        __asm__ volatile ("csrr %[name], sip" : [name] "=r"(a));
+        putString("EVO:");
+        putU64(a);
+    }
 
     console_handler();
 }
 
 void debugInterrupt(int isExternal, int cause)
 {
+//    assert(false);
     if (isExternal) {
         if (cause == 1)
         {

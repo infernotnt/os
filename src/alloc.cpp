@@ -28,8 +28,7 @@ void* MemAlloc::allocMem(size_t size)
     putString("Allocating at least ");
     putInt(size);
     putString(" bytes");
-
-//    __asm__ volatile ("ecall");
+    putNewline();
 
     if(size % MEM_BLOCK_SIZE != 0) // align size
     {
@@ -58,4 +57,8 @@ void* MemAlloc::allocMem(size_t size)
     return nullptr;
 }
 
-//int mem_free (void*);
+int MemAlloc::freeMem(void* p)
+{
+    assert(false);
+    return 0;
+}

@@ -1,0 +1,262 @@
+GAS LISTING /tmp/ccdjyAu8.s 			page 1
+
+
+   1              		.file	"app.cpp"
+   2              		.option pic
+   3              		.option norelax
+   4              		.text
+   5              	.Ltext0:
+   6              		.align	2
+   7              		.globl	_Z3fibi
+   9              	_Z3fibi:
+  10              	.LFB0:
+  11              		.file 1 "src/app.cpp"
+   1:src/app.cpp   **** #include "../h/my_console.h"
+   2:src/app.cpp   **** #include "../h/c_api.h"
+   3:src/app.cpp   **** 
+   4:src/app.cpp   **** int fib(int n)
+   5:src/app.cpp   **** {
+  12              		.loc 1 5 1
+  13              		.cfi_startproc
+  14              	.LVL0:
+  15 0000 130101FE 		addi	sp,sp,-32
+  16              		.cfi_def_cfa_offset 32
+  17 0004 233C1100 		sd	ra,24(sp)
+  18 0008 23388100 		sd	s0,16(sp)
+  19 000c 23349100 		sd	s1,8(sp)
+  20 0010 23302101 		sd	s2,0(sp)
+  21              		.cfi_offset 1, -8
+  22              		.cfi_offset 8, -16
+  23              		.cfi_offset 9, -24
+  24              		.cfi_offset 18, -32
+  25 0014 13040102 		addi	s0,sp,32
+  26              		.cfi_def_cfa 8, 0
+  27 0018 93040500 		mv	s1,a0
+   6:src/app.cpp   ****     if(n == 1)
+  28              		.loc 1 6 5
+  29 001c 93071000 		li	a5,1
+  30 0020 6304F500 		beq	a0,a5,.L2
+   7:src/app.cpp   ****         return 1;
+   8:src/app.cpp   ****     else if (n == 0)
+  31              		.loc 1 8 10
+  32 0024 63100502 		bnez	a0,.L4
+  33              	.LVL1:
+  34              	.L2:
+   9:src/app.cpp   ****         return 0;
+  10:src/app.cpp   ****     else return fib(n-1) + fib(n-2);
+  11:src/app.cpp   **** }
+  35              		.loc 1 11 1 is_stmt 0
+  36 0028 13850400 		mv	a0,s1
+  37 002c 83308101 		ld	ra,24(sp)
+  38              		.cfi_remember_state
+  39              		.cfi_restore 1
+  40 0030 03340101 		ld	s0,16(sp)
+  41              		.cfi_restore 8
+  42              		.cfi_def_cfa 2, 32
+  43 0034 83348100 		ld	s1,8(sp)
+  44              		.cfi_restore 9
+  45 0038 03390100 		ld	s2,0(sp)
+  46              		.cfi_restore 18
+  47 003c 13010102 		addi	sp,sp,32
+GAS LISTING /tmp/ccdjyAu8.s 			page 2
+
+
+  48              		.cfi_def_cfa_offset 0
+  49 0040 67800000 		jr	ra
+  50              	.LVL2:
+  51              	.L4:
+  52              		.cfi_restore_state
+  10:src/app.cpp   **** }
+  53              		.loc 1 10 10 is_stmt 1
+  10:src/app.cpp   **** }
+  54              		.loc 1 10 20 is_stmt 0
+  55 0044 1B05F5FF 		addiw	a0,a0,-1
+  56              	.LVL3:
+  57 0048 97000000 		call	_Z3fibi
+  57      E7800000 
+  58              	.LVL4:
+  59 0050 13090500 		mv	s2,a0
+  10:src/app.cpp   **** }
+  60              		.loc 1 10 31
+  61 0054 1B85E4FF 		addiw	a0,s1,-2
+  62 0058 97000000 		call	_Z3fibi
+  62      E7800000 
+  63              	.LVL5:
+  10:src/app.cpp   **** }
+  64              		.loc 1 10 35
+  65 0060 BB04A900 		addw	s1,s2,a0
+  66 0064 6FF05FFC 		j	.L2
+  67              		.cfi_endproc
+  68              	.LFE0:
+  70              		.section	.rodata.str1.8,"aMS",@progbits,1
+  71              		.align	3
+  72              	.LC0:
+  73 0000 4170706C 		.string	"Application started"
+  73      69636174 
+  73      696F6E20 
+  73      73746172 
+  73      74656400 
+  74              		.text
+  75              		.align	2
+  76              		.globl	_Z8userMainv
+  78              	_Z8userMainv:
+  79              	.LFB1:
+  12:src/app.cpp   **** 
+  13:src/app.cpp   **** void userMain()
+  14:src/app.cpp   **** {
+  80              		.loc 1 14 1 is_stmt 1
+  81              		.cfi_startproc
+  82 0068 130101FF 		addi	sp,sp,-16
+  83              		.cfi_def_cfa_offset 16
+  84 006c 23341100 		sd	ra,8(sp)
+  85 0070 23308100 		sd	s0,0(sp)
+  86              		.cfi_offset 1, -8
+  87              		.cfi_offset 8, -16
+  88 0074 13040101 		addi	s0,sp,16
+  89              		.cfi_def_cfa 8, 0
+  15:src/app.cpp   ****     putString("Application started");
+  90              		.loc 1 15 5
+  91              		.loc 1 15 14 is_stmt 0
+  92 0078 17050000 		lla	a0,.LC0
+GAS LISTING /tmp/ccdjyAu8.s 			page 3
+
+
+  92      13050500 
+  93 0080 97000000 		call	_Z9putStringPKc@plt
+  93      E7800000 
+  94              	.LVL6:
+  16:src/app.cpp   ****     putNewline();
+  95              		.loc 1 16 5 is_stmt 1
+  96              		.loc 1 16 15 is_stmt 0
+  97 0088 97000000 		call	_Z10putNewlinev@plt
+  97      E7800000 
+  98              	.LVL7:
+  17:src/app.cpp   **** 
+  18:src/app.cpp   ****     mem_alloc(6969);
+  99              		.loc 1 18 5 is_stmt 1
+ 100              		.loc 1 18 14 is_stmt 0
+ 101 0090 37250000 		li	a0,8192
+ 102 0094 130595B3 		addi	a0,a0,-1223
+ 103 0098 97000000 		call	_Z9mem_allocm@plt
+ 103      E7800000 
+ 104              	.LVL8:
+ 105              	.L6:
+  19:src/app.cpp   **** 
+  20:src/app.cpp   ****     while(true)
+ 106              		.loc 1 20 5 is_stmt 1 discriminator 1
+ 107              		.loc 1 20 5 discriminator 1
+ 108 00a0 6F000000 		j	.L6
+ 109              		.cfi_endproc
+ 110              	.LFE1:
+ 112              	.Letext0:
+ 113              		.file 2 "src/../h/../lib/hw.h"
+ 114              		.file 3 "src/../h/my_console.h"
+ 115              		.file 4 "src/../h/c_api.h"
+GAS LISTING /tmp/ccdjyAu8.s 			page 4
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 app.cpp
+     /tmp/ccdjyAu8.s:9      .text:0000000000000000 _Z3fibi
+     /tmp/ccdjyAu8.s:13     .text:0000000000000000 .L0 
+     /tmp/ccdjyAu8.s:15     .text:0000000000000000 .L0 
+     /tmp/ccdjyAu8.s:16     .text:0000000000000004 .L0 
+     /tmp/ccdjyAu8.s:21     .text:0000000000000014 .L0 
+     /tmp/ccdjyAu8.s:22     .text:0000000000000014 .L0 
+     /tmp/ccdjyAu8.s:23     .text:0000000000000014 .L0 
+     /tmp/ccdjyAu8.s:24     .text:0000000000000014 .L0 
+     /tmp/ccdjyAu8.s:26     .text:0000000000000018 .L0 
+     /tmp/ccdjyAu8.s:29     .text:000000000000001c .L0 
+     /tmp/ccdjyAu8.s:32     .text:0000000000000024 .L0 
+     /tmp/ccdjyAu8.s:36     .text:0000000000000028 .L0 
+     /tmp/ccdjyAu8.s:38     .text:0000000000000030 .L0 
+     /tmp/ccdjyAu8.s:39     .text:0000000000000030 .L0 
+     /tmp/ccdjyAu8.s:41     .text:0000000000000034 .L0 
+     /tmp/ccdjyAu8.s:42     .text:0000000000000034 .L0 
+     /tmp/ccdjyAu8.s:44     .text:0000000000000038 .L0 
+     /tmp/ccdjyAu8.s:46     .text:000000000000003c .L0 
+     /tmp/ccdjyAu8.s:48     .text:0000000000000040 .L0 
+     /tmp/ccdjyAu8.s:52     .text:0000000000000044 .L0 
+     /tmp/ccdjyAu8.s:54     .text:0000000000000044 .L0 
+     /tmp/ccdjyAu8.s:55     .text:0000000000000044 .L0 
+     /tmp/ccdjyAu8.s:61     .text:0000000000000054 .L0 
+     /tmp/ccdjyAu8.s:65     .text:0000000000000060 .L0 
+     /tmp/ccdjyAu8.s:67     .text:0000000000000068 .L0 
+     /tmp/ccdjyAu8.s:78     .text:0000000000000068 _Z8userMainv
+     /tmp/ccdjyAu8.s:81     .text:0000000000000068 .L0 
+     /tmp/ccdjyAu8.s:82     .text:0000000000000068 .L0 
+     /tmp/ccdjyAu8.s:83     .text:000000000000006c .L0 
+     /tmp/ccdjyAu8.s:86     .text:0000000000000074 .L0 
+     /tmp/ccdjyAu8.s:87     .text:0000000000000074 .L0 
+     /tmp/ccdjyAu8.s:89     .text:0000000000000078 .L0 
+     /tmp/ccdjyAu8.s:91     .text:0000000000000078 .L0 
+     /tmp/ccdjyAu8.s:92     .text:0000000000000078 .L0 
+     /tmp/ccdjyAu8.s:96     .text:0000000000000088 .L0 
+     /tmp/ccdjyAu8.s:97     .text:0000000000000088 .L0 
+     /tmp/ccdjyAu8.s:100    .text:0000000000000090 .L0 
+     /tmp/ccdjyAu8.s:101    .text:0000000000000090 .L0 
+     /tmp/ccdjyAu8.s:107    .text:00000000000000a0 .L0 
+     /tmp/ccdjyAu8.s:108    .text:00000000000000a0 .L0 
+     /tmp/ccdjyAu8.s:109    .text:00000000000000a4 .L0 
+     /tmp/ccdjyAu8.s:116    .text:00000000000000a4 .L0 
+     /tmp/ccdjyAu8.s:72     .rodata.str1.8:0000000000000000 .LC0
+     /tmp/ccdjyAu8.s:92     .text:0000000000000078 .L0 
+     /tmp/ccdjyAu8.s:34     .text:0000000000000028 .L2
+     /tmp/ccdjyAu8.s:51     .text:0000000000000044 .L4
+     /tmp/ccdjyAu8.s:105    .text:00000000000000a0 .L6
+     /tmp/ccdjyAu8.s:342    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+     /tmp/ccdjyAu8.s:690    .debug_str:0000000000000147 .LASF23
+     /tmp/ccdjyAu8.s:674    .debug_str:00000000000000c8 .LASF24
+     /tmp/ccdjyAu8.s:660    .debug_str:0000000000000063 .LASF25
+     /tmp/ccdjyAu8.s:5      .text:0000000000000000 .Ltext0
+     /tmp/ccdjyAu8.s:112    .text:00000000000000a4 .Letext0
+     /tmp/ccdjyAu8.s:644    .debug_line:0000000000000000 .Ldebug_line0
+     /tmp/ccdjyAu8.s:648    .debug_str:0000000000000010 .LASF0
+GAS LISTING /tmp/ccdjyAu8.s 			page 5
+
+
+     /tmp/ccdjyAu8.s:688    .debug_str:0000000000000134 .LASF1
+     /tmp/ccdjyAu8.s:670    .debug_str:00000000000000aa .LASF2
+     /tmp/ccdjyAu8.s:664    .debug_str:000000000000008a .LASF4
+     /tmp/ccdjyAu8.s:658    .debug_str:0000000000000051 .LASF3
+     /tmp/ccdjyAu8.s:654    .debug_str:000000000000003a .LASF5
+     /tmp/ccdjyAu8.s:662    .debug_str:0000000000000077 .LASF6
+     /tmp/ccdjyAu8.s:686    .debug_str:0000000000000121 .LASF7
+     /tmp/ccdjyAu8.s:696    .debug_str:0000000000000222 .LASF8
+     /tmp/ccdjyAu8.s:650    .debug_str:000000000000001d .LASF9
+     /tmp/ccdjyAu8.s:652    .debug_str:000000000000002b .LASF10
+     /tmp/ccdjyAu8.s:692    .debug_str:000000000000020b .LASF11
+     /tmp/ccdjyAu8.s:656    .debug_str:0000000000000041 .LASF12
+     /tmp/ccdjyAu8.s:700    .debug_str:000000000000023c .LASF13
+     /tmp/ccdjyAu8.s:668    .debug_str:000000000000009e .LASF14
+     /tmp/ccdjyAu8.s:680    .debug_str:00000000000000f3 .LASF15
+     /tmp/ccdjyAu8.s:676    .debug_str:00000000000000d4 .LASF16
+     /tmp/ccdjyAu8.s:678    .debug_str:00000000000000ea .LASF26
+     /tmp/ccdjyAu8.s:666    .debug_str:0000000000000091 .LASF27
+     /tmp/ccdjyAu8.s:79     .text:0000000000000068 .LFB1
+     /tmp/ccdjyAu8.s:110    .text:00000000000000a4 .LFE1
+     /tmp/ccdjyAu8.s:94     .text:0000000000000088 .LVL6
+     /tmp/ccdjyAu8.s:98     .text:0000000000000090 .LVL7
+     /tmp/ccdjyAu8.s:104    .text:00000000000000a0 .LVL8
+     /tmp/ccdjyAu8.s:694    .debug_str:000000000000021a .LASF28
+     /tmp/ccdjyAu8.s:10     .text:0000000000000000 .LFB0
+     /tmp/ccdjyAu8.s:68     .text:0000000000000068 .LFE0
+     /tmp/ccdjyAu8.s:606    .debug_loc:0000000000000000 .LLST0
+     /tmp/ccdjyAu8.s:58     .text:0000000000000050 .LVL4
+     /tmp/ccdjyAu8.s:63     .text:0000000000000060 .LVL5
+     /tmp/ccdjyAu8.s:672    .debug_str:00000000000000b8 .LASF17
+     /tmp/ccdjyAu8.s:682    .debug_str:0000000000000109 .LASF19
+     /tmp/ccdjyAu8.s:646    .debug_str:0000000000000000 .LASF18
+     /tmp/ccdjyAu8.s:702    .debug_str:000000000000024c .LASF20
+     /tmp/ccdjyAu8.s:684    .debug_str:0000000000000113 .LASF21
+     /tmp/ccdjyAu8.s:698    .debug_str:0000000000000232 .LASF22
+     /tmp/ccdjyAu8.s:14     .text:0000000000000000 .LVL0
+     /tmp/ccdjyAu8.s:33     .text:0000000000000028 .LVL1
+     /tmp/ccdjyAu8.s:50     .text:0000000000000044 .LVL2
+     /tmp/ccdjyAu8.s:56     .text:0000000000000048 .LVL3
+     /tmp/ccdjyAu8.s:117    .debug_info:0000000000000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_Z9putStringPKc
+_Z10putNewlinev
+_Z9mem_allocm

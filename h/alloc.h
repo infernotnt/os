@@ -27,8 +27,8 @@ public:
 
     MemNode freeHead;
 
-    void* allocMem(size_t size); // TODO: change unsigned_int to size_t
-    int mem_free (void*);
+    void* allocMem(size_t size);
+    int freeMem(void* p);
 
 private:
     // TODO: obrisati assignment operator, copy construktor, mozda move konstruktor

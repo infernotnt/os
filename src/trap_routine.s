@@ -1,3 +1,10 @@
+# 1 "src/trap_routine.S"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 31 "<command-line>"
+# 1 "/usr/riscv64-linux-gnu/include/stdc-predef.h" 1 3
+# 32 "<command-line>" 2
+# 1 "src/trap_routine.S"
 .global trapRoutine
 .extern _Z12cTrapRoutinev
 .align 4
