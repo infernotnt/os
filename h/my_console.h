@@ -1,10 +1,12 @@
 #pragma once
 
-#define __DEBUG_MODE
+#include "../h/risc.h"
 
 #include "../lib/console.h"
 #include "../lib/hw.h"
-#include "../h/risc.h"
+
+#define __DEBUG_MODE
+
 
 void putString(const char* s);
 void putInt(int n);

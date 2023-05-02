@@ -6,8 +6,11 @@
 extern "C" void trapRoutine();
 void userMain();
 
+
 void main()
 {
+    disableExternalInterrupts();
+
     // should be before changing sstatus 0x2 bit
     __asm__ volatile ("csrw stvec, %[vector]" : : [vector] "r" (&trapRoutine));
 
@@ -15,21 +18,8 @@ void main()
     __asm__ volatile ("csrs stvec, 0x1");
     __asm__ volatile ("csrc stvec, 0x2");
 
-    enableExternalInterrupts();
+    assert(sizeof(void*) == 8);
+    assert((((uint64)HEAP_END_ADDR - (uint64)HEAP_START_ADDR) / 1024 / 1024) == 127);
 
-    int i = 999;
-    while(i<3)
-    {
-        i++;
-        i++;
-        i++;
-        uint64 ret = (uint64)mem_alloc(i);
-        putString("ret= ");
-        putU64(ret);
-        putNewline();
-        putNewline();
-        putNewline();
-        putNewline();
-    }
     userMain();
 }

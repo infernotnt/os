@@ -45,7 +45,26 @@ void cInternalInterruptRoutine()
 
     if(cause != 8 && cause != 9)
     {
-        putString("Illegal instruction, terminating kernel.");
+        putString("=== EXCEPETION occured: ");
+        if(cause == 2)
+        {
+            putString(" Illegal instruction");
+        }
+        else if (cause == 5)
+        {
+            putString("Unallowed read adress");
+        }
+        else if (cause == 7)
+        {
+            putString("Unallowed write adress");
+        }
+        else
+        {
+            putString("UKNOWN EXCEPTION. ??????????????");
+            assert(false);
+        }
+        putNewline();
+        putString("Terminating kernel");
         putNewline();
         assert(false);
     }

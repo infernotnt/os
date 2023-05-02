@@ -29,16 +29,3 @@ int mem_free(void* ptr)
 {
     return helper1(2, (uint64)ptr);
 }
-
-
-/*
-    __asm__ volatile ("mv a1, %[name]" : : [name] "r" (size));
-    __asm__ volatile ("li a0, 1"); // WARNING: this instruction must be after the a1 instruction. Reason: if its before it can augment the argument
-
-    __asm__ volatile ("ecall");
-
-    uint64 ret;
-    __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
-
-    return (void*)ret;
-    */

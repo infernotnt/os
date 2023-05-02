@@ -11,7 +11,7 @@ void stopKernel()
     putNewline();
     putString("====== Stopping the kernel ======");
 
-    __asm__ volatile ("csrc sstatus, 0x02"); // disable external interupts (or all interupts?)
+    disableExternalInterrupts();
     while(true)
     {
 
