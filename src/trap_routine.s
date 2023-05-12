@@ -1,3 +1,10 @@
+# 1 "src/trap_routine.S"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 31 "<command-line>"
+# 1 "/usr/riscv64-linux-gnu/include/stdc-predef.h" 1 3
+# 32 "<command-line>" 2
+# 1 "src/trap_routine.S"
 .global trapRoutine
 .extern _Z25cInternalInterruptRoutinev
 .extern _Z25cExternalInterruptRoutinev
@@ -7,16 +14,16 @@
 
 .align 4
 trapRoutine:
-    jump newAsmTrap, x0                 # 0
-    jump externalInterruptRoutine, x0   # 1
-    nop                                 # 2
-    nop                                 # 3
-    nop                                 # 4
-    nop                                 # 5
-    nop                                 # 6
-    nop                                 # 7
-    nop                                 # 8
-    jump externalInterruptRoutine, x0   # 9
+    jump newAsmTrap, x0 # 0
+    jump externalInterruptRoutine, x0 # 1
+    nop # 2
+    nop # 3
+    nop # 4
+    nop # 5
+    nop # 6
+    nop # 7
+    nop # 8
+    jump externalInterruptRoutine, x0 # 9
 
 newAsmTrap:
 
@@ -40,7 +47,7 @@ newAsmTrap:
 
     call _Z25cInternalInterruptRoutinev
 
-    #  x1 = Thread::pRunning->context
+    # x1 = Thread::pRunning->context
     ld x1, _ZN6Thread15pRunningContextE
 
     # x2 "=" thread->sepc, sepc = x2
@@ -59,23 +66,23 @@ newAsmTrap:
 
 
 #internalInterruptRoutine:
-#    addi sp, sp, -256 # -256 = 32 * 8, to store all the registers
-#
-#    # intentionaly missing x10
-#    .irp index 1,2,3,4,5,6,7,8,9,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
-#    sd x\index, \index * 8(sp)
-#    .endr
-#
-#    call _Z25cInternalInterruptRoutinev
-#
-#    # intentionaly missing x10
-#    .irp index 1,2,3,4,5,6,7,8,9,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
-#    ld x\index, \index * 8(sp)
-#    .endr
-#
-#    addi sp, sp, 256
-#
-#    sret
+# addi sp, sp, -256 # -256 = 32 * 8, to store all the registers
+
+# # intentionaly missing x10
+# .irp index 1,2,3,4,5,6,7,8,9,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
+# sd x\index, \index * 8(sp)
+# .endr
+
+# call _Z25cInternalInterruptRoutinev
+
+# # intentionaly missing x10
+# .irp index 1,2,3,4,5,6,7,8,9,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
+# ld x\index, \index * 8(sp)
+# .endr
+
+# addi sp, sp, 256
+
+# sret
 
 
 externalInterruptRoutine:
@@ -94,7 +101,3 @@ externalInterruptRoutine:
     addi sp, sp, 256
 
     sret
-
-
-
-

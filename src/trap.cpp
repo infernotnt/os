@@ -1,4 +1,6 @@
 #include "../h/trap.h"
+#include "../h/thread.h"
+#include "../h/scheduler.h"
 
 int gTimer = 0;
 
@@ -19,18 +21,40 @@ void cExternalInterruptRoutine()
 
     __asm__ volatile ("csrc sip, 0xA"); // clears the 9th bit in register sip. (the bit signifies external interupt)
 
+    if(&(Thread::pRunning->context[0]) != Thread::pRunningContext)
+    {
+        assert(false);
+    }
+
     if (cause == 1)
     {
-        if (gTimer % 10 == 0) {
+        Thread::timeSliceCounter++;
+        gTimer++;
+
+        if (gTimer % 10 == 0)
+        {
             putString("Time: ");
             putInt(gTimer / 10);
             putString("s");
             putNewline();
         }
-        gTimer++;
-    }
 
-    console_handler();
+//        if (Thread::timeSliceCounter >= Thread::pRunning->getTimeSlice())
+//        {
+//            Thread::timeSliceCounter = 0;
+//            Scheduler::dispatchToNext();
+//        }
+    }
+    else if (cause == 9)
+    {
+        console_handler();
+    }
+    else
+    {
+        putString("=== Error: unknown external interrupt");
+        putNewline();
+        assert(false);
+    }
 }
 
 void cInternalInterruptRoutine()
@@ -39,56 +63,46 @@ void cInternalInterruptRoutine()
     __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
 
 //    int isExternal = (scause & (0x1UL << 63)) != 0;
-    int cause = scause & (~(1UL << 63));
+//    int cause = scause & (~(1UL << 63));
 
-    __asm__ volatile ("csrc sip, 0x2"); // clears the 1st bit in register sip. (the bit signifies internal
+    __asm__ volatile ("csrc sip, 0x2"); // clears the 1st bit in register sip. (the bit signifies internal)
 
-    if(cause != 8 && cause != 9)
-    {
-        putString("=== EXCEPETION occured: ");
-        if(cause == 2)
-        {
-            putString(" Illegal instruction");
-        }
-        else if (cause == 5)
-        {
-            putString("Unallowed read adress");
-        }
-        else if (cause == 7)
-        {
-            putString("Unallowed write adress");
-        }
-        else
-        {
-            putString("UKNOWN EXCEPTION. ??????????????");
-            assert(false);
-        }
-        putNewline();
-        putString("Terminating kernel");
-        putNewline();
-        assert(false);
-    }
-
-    // if we are here it means it was a system call that caused the trap handler
-
-    uint64 sepc;
-    __asm__ volatile ("csrr %[name], sepc" : [name] "=r"(sepc));
-    sepc += 4;
-    __asm__ volatile ("csrw sepc, %[name]" : : [name] "r" (sepc));
-
-    //dispatchSystemCall();
     uint64 code, parameter1;
     __asm__ volatile ("mv %[name], a0" : [name] "=r"(code));
     __asm__ volatile ("mv %[name], a1" : [name] "=r"(parameter1));
 
-//    putString("=== system call. code= ");
-//    putU64(code);
-//    putString( " parameter1= ");
-//    putU64(parameter1);
-//    putNewline();
-//
-//    assert(code != 0);
-//    assert(sizeof(void*) == 8);
+
+//    if(&(Thread::pRunning->context[0]) != Thread::pRunningContext)
+//    {
+//        assert(false);
+//    }
+
+//    if(cause != 8 && cause != 9)
+//    {
+//        putString("=== EXCEPETION occured: ");
+//        if(cause == 2)
+//        {
+//            putString(" Illegal instruction");
+//        }
+//        else if (cause == 5)
+//        {
+//            putString("Unallowed read adress");
+//        }
+//        else if (cause == 7)
+//        {
+//            putString("Unallowed write adress");
+//        }
+//        else
+//        {
+//            putString("UKNOWN EXCEPTION. ??????????????");
+//            assert(false);
+//        }
+//        putNewline();
+//        putString("Terminating kernel");
+//        putNewline();
+//        assert(false);
+//    }
+
 
     uint64 ret = -1;
     if(code == 1)
@@ -98,6 +112,17 @@ void cInternalInterruptRoutine()
     else if (code == 2)
     {
         ret = (uint64)MemAlloc::get()->freeMem((void*)parameter1);
+    }
+    else if (code == 0x12)
+    {
+        ret = Thread::exit();
+    }
+    else if (code == 0x13)
+    {
+//        if(Thread::userThreadExists)
+//        {
+//            Scheduler::dispatchToNext();
+//        }
     }
 #ifdef __DEBUG_MODE
     else if (code == 3) // Test call
@@ -110,8 +135,22 @@ void cInternalInterruptRoutine()
         assert(false); // unknown code
     }
 
-    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (ret));
+    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (ret)); // upaliti ovo dole umesto ovoga (ovo obrisati)
 
-//    assert(1);
-//    assert(isExternal == 0);
+//    bool normalCallWithReturn = (code == 0x1 || code == 0x2 || code == 0x11 || code == 0x12 || code == 0x21 || code == 0x22 || code == 0x23 || code == 0x24 || code == 0x31 || code == 0x41);
+//    bool customCallWithReturn = (code == 0x3);
+//    bool normalCallWithoutReturn = (code == 0x13 && code != 0x14 && code != 0x42);
+//    if(normalCallWithReturn || customCallWithReturn)
+//    { // system call with a return (not necessariliy 64bit)
+//        __asm__ volatile ("mv a0, %[name]" : : [name] "r" (ret));
+//    }
+//    else if(normalCallWithoutReturn) // this exists for safety reasons
+//    {
+//        ;
+//    }
+//    else
+//    {
+//        assert(false);
+//    }
+
 }

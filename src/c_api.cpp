@@ -1,7 +1,15 @@
 #include "../h/c_api.h"
 #include "../h/my_console.h"
 
-static uint64 helper1(uint64 code, uint64 parameter1)
+//static void helperP164(uint64 code, uint64 parameter1) // returns 64bit and takes a 64bit parameter
+//{
+//    __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+//    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be after the a1 instruction. Reason: if its before it can augment the argument
+//
+//    __asm__ volatile ("ecall");
+//}
+
+static uint64 helperRet64P164(uint64 code, uint64 parameter1) // returns 64bit and takes a 64bit parameter
 {
     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be after the a1 instruction. Reason: if its before it can augment the argument
@@ -14,18 +22,51 @@ static uint64 helper1(uint64 code, uint64 parameter1)
     return ret;
 }
 
-void* mem_alloc(size_t size)
+static uint64 helperRet32(uint64 code) // returns 64bit and takes no params
 {
-    return (void*)helper1(1, size);
+    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code));
 
+    __asm__ volatile ("ecall");
+
+    uint64 ret;
+    __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+
+    return ret;
 }
 
-uint64 test_call(uint64 n)
+static void helper(uint64 code) // returns nothing and takes no parameters (eg thread_dispatch)
 {
-    return helper1(3, n);
+    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code));
+    __asm__ volatile ("ecall");
+}
+
+void* mem_alloc(size_t size)
+{
+    return (void*) helperRet64P164(1, size);
+
 }
 
 int mem_free(void* ptr)
 {
-    return helper1(2, (uint64)ptr);
+    return helperRet64P164(2, (uint64) ptr);
+}
+
+void thread_dispatch()
+{
+    helper(0x13);
+}
+
+int thread_exit()
+{
+    return helperRet32(0x12);
+}
+
+//void thread_join(thread_t handle)
+//{
+//    helperP164(0x14, handle);
+//}
+
+uint64 test_call(uint64 n)
+{
+    return helperRet64P164(3, n);
 }
