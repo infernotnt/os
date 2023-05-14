@@ -7,7 +7,7 @@
 
 #define NR_MAX_THREADS 10
 #define NR_REGISTERS 32
-#define ACTUAL_STACK_SIZE 4096*2
+#define ACTUAL_STACK_SIZE 4096*10
 
 class Thread;
 typedef Thread* thread_t;
@@ -20,7 +20,7 @@ public:
         RUNNING = 0, SUSPENDED, READY, INITIALIZING, TERMINATING, NONEXISTENT
     };
     typedef void(*Body)(void*);
-    typedef uint64 Context[NR_REGISTERS+1]; // the +1 is for the sepc
+    typedef uint64 Context[50+1]; // the +1 is for the sepc // temp 50
 
     static Thread** getAllThreads()
     {
@@ -37,14 +37,23 @@ public:
         return allThreads;
     }
 
-    static bool userThreadExists;
-    static Thread* pRunning;
     static uint64* pRunningContext;
+    static bool userThreadExists;
     static uint64 timeSliceCounter;
+
+    static Thread* getPRunning()
+    {
+        return pRunning;
+    }
+
+    static void setPRunning(Thread* p)
+    {
+        pRunning = p;
+        pRunningContext = &(p->context[0]);
+    }
 
     static int createThread(thread_t* handle, Body body, void* arg, void* pStartOfStack = nullptr);
     static int exit(); // exit the currently running thread
-    static void setPRunning(Thread* pNew);
 
     State state;
 //    bool started;
@@ -61,6 +70,7 @@ public:
     Thread() = default; // move to private?
 private:
     Thread(Body body, void* arg, void* pStartOfStack = nullptr); // threads can only be made with createThread. Maybe Thread() = delete;?
+    static Thread* pRunning;
 };
 
 inline uint64 Thread::getTimeSlice()

@@ -4,10 +4,45 @@
 
 int gTimer = 0;
 
+uint64 fib(uint64 n);
+
 uint64 testCall(uint64 n)
 {
-    return n * 2;
+    return fib(n);
 }
+/*
+   const int N = 1;
+    int a, b;
+    a = b = N*37;
+    while(a < N*39)
+    {
+        a++;
+        b++;
+        assert(a == b);
+
+        if(a % N == 0) {
+            int out = fib(a/N);
+//            putString("fib(");
+//            putInt(a/N);
+//            putString(") = ");
+//            putInt(out);
+//            putNewline();
+
+            if(a/N == 38)
+            {
+                assert(out == 39088169);
+            }
+
+//            putString("ret= ");
+//            putU64(ret);
+//            putNewline();
+//            putNewline();
+
+        }
+    }
+    return fib(a / N);
+//    return n * 2;
+ */
 
 void cExternalInterruptRoutine()
 {
@@ -21,7 +56,7 @@ void cExternalInterruptRoutine()
 
     __asm__ volatile ("csrc sip, 0xA"); // clears the 9th bit in register sip. (the bit signifies external interupt)
 
-    if(&(Thread::pRunning->context[0]) != Thread::pRunningContext)
+    if(&(Thread::getPRunning()->context[0]) != Thread::pRunningContext)
     {
         assert(false);
     }
@@ -63,7 +98,7 @@ void cInternalInterruptRoutine()
     __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
 
 //    int isExternal = (scause & (0x1UL << 63)) != 0;
-//    int cause = scause & (~(1UL << 63));
+    int cause = scause & (~(1UL << 63));
 
     __asm__ volatile ("csrc sip, 0x2"); // clears the 1st bit in register sip. (the bit signifies internal)
 
@@ -72,36 +107,37 @@ void cInternalInterruptRoutine()
     __asm__ volatile ("mv %[name], a1" : [name] "=r"(parameter1));
 
 
-//    if(&(Thread::pRunning->context[0]) != Thread::pRunningContext)
+//    if(&(Thread::pRunning->context[0]) != Thread::pRunningContext) // temp, maybe changes registers?
 //    {
+//        __asm__ volatile ("mv x10, x10");
 //        assert(false);
 //    }
 
-//    if(cause != 8 && cause != 9)
-//    {
-//        putString("=== EXCEPETION occured: ");
-//        if(cause == 2)
-//        {
-//            putString(" Illegal instruction");
-//        }
-//        else if (cause == 5)
-//        {
-//            putString("Unallowed read adress");
-//        }
-//        else if (cause == 7)
-//        {
-//            putString("Unallowed write adress");
-//        }
-//        else
-//        {
-//            putString("UKNOWN EXCEPTION. ??????????????");
-//            assert(false);
-//        }
-//        putNewline();
-//        putString("Terminating kernel");
-//        putNewline();
-//        assert(false);
-//    }
+    if(cause != 8 && cause != 9)
+    {
+        putString("=== EXCEPETION occured: ");
+        if(cause == 2)
+        {
+            putString(" Illegal instruction");
+        }
+        else if (cause == 5)
+        {
+            putString("Unallowed read adress");
+        }
+        else if (cause == 7)
+        {
+            putString("Unallowed write adress");
+        }
+        else
+        {
+            putString("UKNOWN EXCEPTION. ??????????????");
+            assert(false);
+        }
+        putNewline();
+        putString("Terminating kernel");
+        putNewline();
+        assert(false);
+    }
 
 
     uint64 ret = -1;
@@ -132,6 +168,9 @@ void cInternalInterruptRoutine()
 #endif
     else
     {
+        assert(false); // unknown code
+        assert(false); // unknown code
+        assert(false); // unknown code
         assert(false); // unknown code
     }
 

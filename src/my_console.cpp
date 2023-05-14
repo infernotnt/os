@@ -6,15 +6,17 @@
 
 //inline void _assert(bool valid, const char* file, int line)
 
-void stopKernel()
+[[noreturn]] void stopKernel()
 {
     putNewline();
     putString("====== Stopping the kernel ======");
 
     disableExternalInterrupts();
+
+    volatile int a = 1;
     while(true)
     {
-
+        a++;
     }
 }
 

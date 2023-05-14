@@ -1,10 +1,10 @@
 #include "../h/scheduler.h"
 
-void Scheduler::dispatchToNext()
+void Scheduler::dispatchToNext() // WARNING: different than sys. call dispatch()
 {
-    assert(Thread::pRunning->context == Thread::pRunningContext);
+    assert(&(Thread::getPRunning()->context[0]) == Thread::pRunningContext);
 
-    Thread *pOld = Thread::pRunning;
+    Thread *pOld = Thread::getPRunning();
     Thread *pNew = Scheduler::getNext();
 
     Scheduler::put(pOld);

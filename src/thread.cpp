@@ -7,11 +7,11 @@ Thread* Thread::pRunning = nullptr;
 uint64* Thread::pRunningContext = nullptr;
 bool Thread::userThreadExists = false;
 
-void Thread::setPRunning(Thread* pNew)
-{
-    pRunning = pNew;
-    pRunningContext = &(pRunning->context[0]);
-}
+//void Thread::setPRunning(Thread* pNew)
+//{
+//    pRunning = pNew;
+//    pRunningContext = &(pRunning->context[0]);
+//}
 
 void* allocStack(void* pStartOfStack)
 {

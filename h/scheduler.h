@@ -11,7 +11,7 @@ public:
         return &instance;
     }
 
-    static void dispatchToNext();
+    static void dispatchToNext(); // WARNING: different than sys. call dispatch()
     static Thread* getNext();
     static void put(Thread*);
 

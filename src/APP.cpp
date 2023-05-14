@@ -2,7 +2,7 @@
 #include "../h/c_api.h"
 #include "../h/alloc.h"
 
-int fib(int n)
+uint64 fib(uint64 n)
 {
     if(n == 1)
         return 1;
@@ -13,6 +13,9 @@ int fib(int n)
 
 void testSystemCalls()
 {
+    putString("=== Testing \"testSystemCalls\"");
+    putNewline();
+
     const int n = 1000000;
     int a, b;
     a = b = n*37;
@@ -43,12 +46,17 @@ void testSystemCalls()
 
             assert(ret == (uint64)(a/n * 2));
         }
-
     }
+
+    assert(MemAlloc::get()->getUserlandUsage() == 0);
+    putString("====== Done testing system calls");
+    putNewline();
 }
 
 void testMemoryAllocator()
 {
+    putString("=== Testing \"testMemoryAllocator\"");
+    putNewline();
     int n = 1000;
     int **a;
     a = (int**)mem_alloc(n * sizeof(void*));
@@ -81,6 +89,8 @@ void testMemoryAllocator()
     assert(t == 0);
 
     MemAlloc::get()->printUserlandUsage();
+    putString("=== Done testing memory allocator");
+    putNewline();
 }
 
 void userMain()
@@ -89,13 +99,7 @@ void userMain()
     putNewline();
     assert(MemAlloc::get()->getUserlandUsage() == 0);
 
-    putString("=== Testing \"testSystemCalls\"");
-    putNewline();
     testSystemCalls();
-    assert(MemAlloc::get()->getUserlandUsage() == 0);
-
-    putString("=== Testing \"testMemoryAllocator\"");
-    putNewline();
     testMemoryAllocator();
 
     assert(MemAlloc::get()->getUserlandUsage() == 0);

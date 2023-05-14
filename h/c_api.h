@@ -5,7 +5,7 @@
 void* mem_alloc(size_t size);
 int mem_free(void*);
 
-void thread_dispatch();
+void thread_dispatch(); // WARNING: different than Scheduler::dispatchToNext
 int thread_exit();
 //void thread_join(thread_t handle);
 

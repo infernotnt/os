@@ -11,51 +11,50 @@ void doB(void*);
 void doInitialAsserts();
 void initInterruptVector();
 
+uint64 fib(uint64 n);
+
 Thread kernelThread;
 char kernelStack[ACTUAL_STACK_SIZE + 16];
 
-void initializeKernelThread(Thread* p)
-{
-    p->pStackStart = (uint64*)((char*)kernelStack + ACTUAL_STACK_SIZE);
-    if((uint64)p->pStackStart % 16 != 0)
-    {
-        p->pStackStart = (uint64*)(((char*)p->pStackStart) - (((uint64)p->pStackStart) % 16));
-    }
-    assert((uint64)p->pStackStart % 16 == 0);
-
-    // sets context
-    //p->context[1] = (uint64)&thread_exit;
-    p->context[2] = (uint64)p->pStackStart;
-    p->context[NR_REGISTERS] = (uint64)p->body;
-
-    Thread::setPRunning(p);
-}
-
 int main()
 {
-    uint64* kernelStackPointer = (uint64*)((char*)kernelStack + ACTUAL_STACK_SIZE);
-    if((uint64)kernelStackPointer % 16 != 0)
-    {
-        kernelStackPointer = (uint64*)(((char*)kernelStackPointer) - (((uint64)kernelStackPointer) % 16));
-    }
-    __asm__ volatile ("mv sp, %[a]" : : [a] "r"(kernelStackPointer));
-//    __asm__ volatile ("mv %[name], a0" : [name] "=r"(code));
-    assert(((uint64)kernelStackPointer) % 16 == 0);
-
-    initializeKernelThread(&kernelThread); // treba posle disableExternal...
-
+    __asm__ volatile ("mv %[name], sp" : [name] "=r"(kernelThread.pStackStart)); // mozda netacno
     disableExternalInterrupts();
-    enableExternalInterrupts();
-
     initInterruptVector();
+    Thread::setPRunning(&kernelThread);
     doInitialAsserts();
 
-    putString("Test call (ret=64)");
+    putString("Prvi");
     putNewline();
-    uint64 a = test_call(32);
-    putString("Test: ");
-    putU64((uint64)a);
+    uint64 a = test_call(1);
+    putString("Drugi about to be executed");
     putNewline();
+
+    uint64 b = test_call(1);
+    putString("======== Drugi gotov");
+//    assert(c == 1);
+
+    assert(a == 1);
+    assert(b == 1);
+
+    assert(false);
+
+    for(int i=1; i<5; i++)
+    {
+        uint64 called = test_call(i);
+        uint64 actual = fib(i);
+        if(called != actual)
+        {
+            putString("test_call() error. i=");
+            putInt(i);
+            putString(" fib(i)=");
+            putU64(actual);
+            putString(" test_call(i)=");
+            putU64(called);
+            putNewline();
+            assert(false);
+        }
+    }
 
     putString("Calling mem_alloc");
     putNewline();
@@ -64,10 +63,9 @@ int main()
     putU64((uint64)p);
     putNewline();
 
+//    userMain();
 
-
-    enableExternalInterrupts(); // temp location for debug
-
+//    enableExternalInterrupts(); // temp location for debug
 
     thread_t t1;
     int Aarg = 3;

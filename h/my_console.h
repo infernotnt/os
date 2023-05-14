@@ -13,7 +13,8 @@ void putInt(int n);
 void putNewline();
 void putU64(uint64 n);
 void putBinary(uint64 n);
-void stopKernel();
+
+[[noreturn]] void stopKernel();
 
 inline void _assert(bool valid, const char* file, int line) // MUST be inline
 {
