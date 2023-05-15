@@ -1,20 +1,30 @@
 #include "../h/c_api.h"
 #include "../h/my_console.h"
-
-//static void helperP164(uint64 code, uint64 parameter1) // returns 64bit and takes a 64bit parameter
-//{
-//    __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
-//    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be after the a1 instruction. Reason: if its before it can augment the argument
-//
-//    __asm__ volatile ("ecall");
-//}
+#include "../h/thread.h"
 
 uint64 fib(uint64);
+
+int helperRet32P164P264P364(uint64 code, uint64 parameter1, uint64 parameter2, uint64 parameter3)
+{
+    __asm__ volatile ("mv a3, %[name]" : : [name] "r" (parameter3));
+    __asm__ volatile ("mv a2, %[name]" : : [name] "r" (parameter2));
+    __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be after the a1 instruction. Reason: if its before it can augment the argument
+
+    __asm__ volatile ("ecall");
+
+    __asm__ volatile("mv x10, x10");
+
+    uint64 ret;
+    __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+
+    return *((int*)&ret);
+}
 
 static uint64 helperRet64P164(uint64 code, uint64 parameter1) // returns 64bit and takes a 64bit parameter
 {
     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
-    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (3)); // WARNING: this instruction must be after the a1 instruction. Reason: if its before it can augment the argument
+    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be after the a1 instruction. Reason: if its before it can augment the argument
 
     __asm__ volatile ("ecall");
 
@@ -26,7 +36,7 @@ static uint64 helperRet64P164(uint64 code, uint64 parameter1) // returns 64bit a
     return ret;
 }
 
-static uint64 helperRet32(uint64 code) // returns 64bit and takes no params
+static int helperRet32(uint64 code) // returns 64bit and takes no params
 {
     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code));
 
@@ -35,13 +45,14 @@ static uint64 helperRet32(uint64 code) // returns 64bit and takes no params
     uint64 ret;
     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
 
-    return ret;
+    return *((int*)&ret);
 }
 
 static void helper(uint64 code) // returns nothing and takes no parameters (eg thread_dispatch)
 {
     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code));
     __asm__ volatile ("ecall");
+
 }
 
 void* mem_alloc(size_t size)
@@ -62,6 +73,11 @@ void thread_dispatch() // WARNING: different than Scheduler::dispatchToNext()
 int thread_exit()
 {
     return helperRet32(0x12);
+}
+
+int thread_create(thread_t* handle, void(*start_routine)(void*), void*arg)
+{
+    return helperRet32P164P264P364(0x11, (uint64)handle, (uint64)start_routine, (uint64)arg);
 }
 
 //void thread_join(thread_t handle)

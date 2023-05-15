@@ -1,5 +1,30 @@
 #include "../h/scheduler.h"
 
+void Scheduler::printState()
+{
+    putU64(Thread::getPRunning()->id);
+    putString(":  ");
+
+    Thread* pCur = get()->pHead;
+    while(pCur)
+    {
+        putU64(pCur->id);
+
+        if(pCur->pNext)
+        {
+            putString("->");
+        }
+        else
+        {
+            break;
+        }
+
+        pCur = pCur->pNext;
+    }
+
+    putNewline();
+}
+
 void Scheduler::dispatchToNext() // WARNING: different than sys. call dispatch()
 {
     assert(&(Thread::getPRunning()->context[0]) == Thread::pRunningContext);
@@ -7,15 +32,30 @@ void Scheduler::dispatchToNext() // WARNING: different than sys. call dispatch()
     Thread *pOld = Thread::getPRunning();
     Thread *pNew = Scheduler::getNext();
 
-    Scheduler::put(pOld);
+    assert(pNew->state == Thread::READY);
+
     Thread::setPRunning(pNew);
-    //__asm__ volatile ("csrw scratch, %[name]" : : [name] "r" (Thread::pRunning->context));
+
+    if(pOld != pNew) // split into two cases for safety
+    {
+        pNew->state = Thread::RUNNING;
+    }
+    else
+    {
+        pNew->state = Thread::RUNNING;
+    }
 }
 
 void Scheduler::put(Thread* p)
 {
-    if(!p) return;
-    assert(p->state == Thread::State::READY);
+    if(!p)
+    {
+        assert(false);
+    }
+
+    assert(p->state == Thread::READY);
+
+    p->pNext = nullptr; // ensure no thread is after this one (and ensure no random pointers)
 
     if(!(get()->pHead))
     {

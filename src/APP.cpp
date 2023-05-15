@@ -16,36 +16,30 @@ void testSystemCalls()
     putString("=== Testing \"testSystemCalls\"");
     putNewline();
 
-    const int n = 1000000;
-    int a, b;
-    a = b = n*37;
-    while(a < n*39)
+    int a = 0;
+    int b = 0;
+
+    for(int i=1; i<10; i++)
     {
         a++;
         b++;
-        assert(a == b);
 
-        if(a % n == 0) {
-            int out = fib(a/n);
-            putString("fib(");
-            putInt(a/n);
-            putString(") = ");
-            putInt(out);
+        uint64 called = test_call(i);
+        uint64 actual = fib(i);
+
+        if(called != actual)
+        {
+            putString("test_call() error. i=");
+            putInt(i);
+            putString(" fib(i)=");
+            putU64(actual);
+            putString(" test_call(i)=");
+            putU64(called);
             putNewline();
-
-            if(a/n == 38)
-            {
-                assert(out == 39088169);
-            }
-
-            uint64 ret = (uint64)test_call(a / n);
-            putString("ret= ");
-            putU64(ret);
-            putNewline();
-            putNewline();
-
-            assert(ret == (uint64)(a/n * 2));
+            assert(false);
         }
+
+        assert(a == b);
     }
 
     assert(MemAlloc::get()->getUserlandUsage() == 0);
@@ -72,23 +66,36 @@ void testMemoryAllocator()
         result += *a[i];
     }
 
-    MemAlloc::get()->printUserlandUsage();
+//    uint64 vau = n * sizeof(void*);
+//    if(n % MEM_BLOCK_SIZE != 0)
+//        vau +=  MEM_BLOCK_SIZE - ((sizeof(int)* n) % MEM_BLOCK_SIZE);
+//    vau += MEM_BLOCK_SIZE * n;
+//    assert(MemAlloc::get()->getUserlandUsage() == vau);
 
-    putInt(result);
-    putNewline();
+//    putInt(result);
+//    putNewline();
+
     assert(result == (n-1) * n / 2);
+
+//    uint64 oldTaken = MemAlloc::get()->getUserlandUsage();
+//    uint64 newTaken;
 
     int t;
     for(int i=0; i<n; i++)
     {
         t = mem_free(a[i]);
         assert(t == 0);
+
+//        newTaken = MemAlloc::get()->getUserlandUsage();
+//        assert(oldTaken - newTaken == MEM_BLOCK_SIZE);
     }
+
+//    assert(MemAlloc::get()->getUserlandUsage() == MEM_BLOCK_SIZE);
 
     t = mem_free(a);
     assert(t == 0);
 
-    MemAlloc::get()->printUserlandUsage();
+    assert(MemAlloc::get()->getUserlandUsage() == 0);
     putString("=== Done testing memory allocator");
     putNewline();
 }
@@ -100,6 +107,7 @@ void userMain()
     assert(MemAlloc::get()->getUserlandUsage() == 0);
 
     testSystemCalls();
+
     testMemoryAllocator();
 
     assert(MemAlloc::get()->getUserlandUsage() == 0);

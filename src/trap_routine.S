@@ -7,7 +7,7 @@
 
 .align 4
 trapRoutine:
-    j pcbBasedInternalInterruptRoutine
+    j stackBasedInternalInterruptRoutine
     j externalInterruptRoutine
     nop
     nop
@@ -18,7 +18,50 @@ trapRoutine:
     nop
     j externalInterruptRoutine
 
+stackBasedInternalInterruptRoutine:
+
+    addi sp, sp, -34*8 # 34 because we need 33 but 33 is not divisible by 16
+
+    # intentionaly missing x10, x0, x2
+    .irp index 1,3,4,5,6,7,8,9,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
+    sd x\index, \index * 8(sp)
+    .endr
+
+    # store sepc on stack
+    csrr x1, sepc
+    addi x1, x1, 4
+    sd x1, 32*8(sp)
+
+    # store sp in PCB
+    ld x1, _ZN6Thread15pRunningContextE
+    addi x1, x1, 2*8
+    sd sp, 0(x1)                                 #??
+
+    call _Z25cInternalInterruptRoutinev
+
+    # restore sp from PCB
+    ld x1, _ZN6Thread15pRunningContextE
+    addi x1, x1, 8*2
+    ld x1, 0(x1)                                  #??
+    mv sp, x1
+
+    # restore sepc from stack
+    ld x1, 32*8(sp)
+    csrw sepc, x1
+
+    # intentionaly missing x10, x0, x2
+    .irp index 1,3,4,5,6,7,8,9,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
+    ld x\index, \index * 8(sp)
+    .endr
+
+    addi sp, sp, 34*8
+
+    sret
+
+
 pcbBasedInternalInterruptRoutine:
+
+    UNIMP # throw exception
 
     csrw sscratch, x1
     ld x1, _ZN6Thread15pRunningContextE

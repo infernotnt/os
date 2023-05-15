@@ -1,9 +1,9 @@
 #include "../h/alloc.h"
 #include "../h/c_api.h"
 #include "../h/thread.h"
+#include "../h/scheduler.h"
 
 extern "C" void trapRoutine();
-extern "C" void newAsmTrap();
 
 void userMain();
 void doA(void*);
@@ -18,96 +18,79 @@ char kernelStack[ACTUAL_STACK_SIZE + 16];
 
 int main()
 {
-    __asm__ volatile ("mv %[name], sp" : [name] "=r"(kernelThread.pStackStart)); // mozda netacno
     disableExternalInterrupts();
     initInterruptVector();
     Thread::setPRunning(&kernelThread);
     doInitialAsserts();
 
-    putString("Prvi");
-    putNewline();
-    uint64 a = test_call(1);
-    putString("Drugi about to be executed");
-    putNewline();
-
-    uint64 b = test_call(1);
-    putString("======== Drugi gotov");
-//    assert(c == 1);
-
-    assert(a == 1);
-    assert(b == 1);
-
-    assert(false);
-
-    for(int i=1; i<5; i++)
-    {
-        uint64 called = test_call(i);
-        uint64 actual = fib(i);
-        if(called != actual)
-        {
-            putString("test_call() error. i=");
-            putInt(i);
-            putString(" fib(i)=");
-            putU64(actual);
-            putString(" test_call(i)=");
-            putU64(called);
-            putNewline();
-            assert(false);
-        }
-    }
-
-    putString("Calling mem_alloc");
-    putNewline();
-    void* p = mem_alloc(32);
-    putString("ret of mem_alloc: ");
-    putU64((uint64)p);
-    putNewline();
+//    enableExternalInterrupts(); // should not be here but rather incorporated into user thread
+    disableExternalInterrupts(); // temp
+    kernelThread.id = 0;
+    Thread::pAllThreads[0] = &kernelThread;
 
 //    userMain();
 
-//    enableExternalInterrupts(); // temp location for debug
+    assert(fib(3) == 2);
 
-    thread_t t1;
-    int Aarg = 3;
+    int argA = 69;
+    int argB = 420;
+    thread_t a;
+    thread_t b;
+    thread_create(&a, doA, &argA);
+    thread_create(&b, doB, &argB);
+    thread_dispatch();
+    assert(Thread::pAllThreads[a]->id == 1);
+    assert(Thread::pAllThreads[b]->id == 2);
 
-    putString("Creating thread");
-    putNewline();
-    Thread::createThread(&t1, &doA, &Aarg);
 
-    putString("Thread created");
-    putNewline();
-    //Thread::createThread(&t2, &doB, &Aarg);
-
-    putString("Going into the loop");
-    putNewline();
-    int i=0;
-    while(1)
-    {
-//        thread_dispatch();
-        i++;
-    };
-
-    disableExternalInterrupts();
+    disableExternalInterrupts(); // shouldnt be here but rather should be implicit
     return 0;
 }
 
 void doA(void* p)
 {
-    while(1)
+    assert(*((int*)p) == 69);
+
+    for(int i=0; ; i++)
     {
-        putString("inside doA()");
+        putString("A i=");
+        putU64(i);
         putNewline();
+
+        assert(fib(i) == test_call(i));
+        if(i == 10)
+        {
+            break;
+            assert(false);
+        }
         thread_dispatch();
     }
 }
 
 void doB(void* p)
 {
-    while(1)
+    assert(*((int*)p) == 420);
+    for(int i=0; ; i++)
     {
-        putString("B");
+        putString("B i=");
+        putU64(i);
         putNewline();
+
+        assert(fib(i) == test_call(i));
         thread_dispatch();
+    }
+}
+
+
+void test1(void* p)
+{
+    uint64 i=4;
+    while(true)
+    {
+        uint64 a = fib(i);
+        uint64 b = test_call(i);
+        assert(a == b);
+        i++;
     }
 }
 
@@ -119,6 +102,8 @@ void doInitialAsserts()
     assert(DEFAULT_TIME_SLICE == 2);
     assert(sizeof(char) == 1);
     assert(sizeof(Thread) < 1000);
+    assert(sizeof(int) == 4);
+    assert(sizeof(uint64) == 8);
 }
 
 void initInterruptVector()
@@ -131,3 +116,15 @@ void initInterruptVector()
     __asm__ volatile ("csrs stvec, 0x1");
     __asm__ volatile ("csrc stvec, 0x2");
 }
+
+//void doA(void* p)
+//{
+//    while(1)
+//    {
+//        assert(fib(1) == 1);
+////        userMain();
+////        putString("inside doA()");
+////        putNewline();
+//        thread_dispatch();
+//    }
+//}

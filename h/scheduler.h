@@ -14,6 +14,7 @@ public:
     static void dispatchToNext(); // WARNING: different than sys. call dispatch()
     static Thread* getNext();
     static void put(Thread*);
+    static void printState();
 
     Thread* pHead; // points to the one that is the next to be run
 
