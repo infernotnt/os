@@ -93,6 +93,13 @@ int Thread::exit()
 
     MemAlloc::get()->freeMem(t->pStackStart);
 //    t->signalDone();
+
+    if(Scheduler::get()->pHead == nullptr)
+    {
+        putString("NO MORE THREADS EXIST, IDK WHAT TO RUN");
+        putNewline();
+        assert(false);
+    }
     Scheduler::dispatchToNext();
 
     return 0;

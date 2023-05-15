@@ -13,7 +13,7 @@ int helperRet32P164P264P364(uint64 code, uint64 parameter1, uint64 parameter2, u
 
     __asm__ volatile ("ecall");
 
-    __asm__ volatile("mv x10, x10");
+    __asm__ volatile("mv x10, x10"); // temp
 
     uint64 ret;
     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));

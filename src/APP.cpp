@@ -1,6 +1,101 @@
 #include "../h/my_console.h"
 #include "../h/c_api.h"
 #include "../h/alloc.h"
+#include "../h/thread.h"
+
+void testSystemCalls();
+void testMemoryAllocator();
+void testSyncCall();
+uint64 fib(uint64);
+
+void userMain()
+{
+    putString("App started");
+    putNewline();
+    assert(MemAlloc::get()->getUserlandUsage() == 0);
+
+    testSystemCalls();
+
+    testMemoryAllocator();
+
+    testSyncCall();
+
+    assert(MemAlloc::get()->getUserlandUsage() == 0);
+    putString("App ended");
+    putNewline();
+}
+
+void testSyncCall()
+{
+    disableExternalInterrupts();
+
+    assert(MemAlloc::get()->getUserlandUsage() == 0);
+
+    putString("=== Testing \"testSyncCall\"");
+
+    void doA(void*);
+    void doB(void*);
+
+    int argA = 69;
+    int argB = 420;
+    thread_t a;
+    thread_t b;
+    thread_create(&a, doA, &argA);
+    thread_create(&b, doB, &argB);
+    thread_dispatch();
+
+    assert(Thread::pAllThreads[a]->id == Thread::pAllThreads[b]->id-1);
+    assert(MemAlloc::get()->getUserlandUsage() == 0);
+
+    enableExternalInterrupts();
+}
+
+
+void doA(void* p)
+{
+    assert(*((int*)p) == 69);
+
+    for(int i=0; ; i++)
+    {
+        putString("A i=");
+        putU64(i);
+        putNewline();
+
+        assert(fib(i) == test_call(i));
+        if(i == 5)
+        {
+            break;
+            assert(false);
+        }
+        thread_dispatch();
+    }
+}
+
+void doB(void* p)
+{
+    assert(*((int*)p) == 420);
+    for(int i=0; ; i++)
+    {
+        putString("B i=");
+        putU64(i);
+        putNewline();
+
+        assert(fib(i) == test_call(i));
+        thread_dispatch();
+
+        if(i == 10)
+            break;
+    }
+}
+
+void callFromUserMode(void (*f)(void))
+{
+    assert(false); // disabled because it gives an error after void main() finishes, idk why probably easy fix, pitaj na diskordu
+    __asm__ volatile ("csrc sstatus, 0x9"); // set spp (previous privilegde) bit to 0 signifieng user mode
+    __asm__ volatile ("csrc sstatus, 0x6"); // spie bit to 1 (enable interupts (idk if external or internal))
+    __asm__ volatile ("csrw sepc, %[name]" : : [name] "r" (f));
+    __asm__ volatile ("sret");
+}
 
 uint64 fib(uint64 n)
 {
@@ -98,28 +193,4 @@ void testMemoryAllocator()
     assert(MemAlloc::get()->getUserlandUsage() == 0);
     putString("=== Done testing memory allocator");
     putNewline();
-}
-
-void userMain()
-{
-    putString("App started");
-    putNewline();
-    assert(MemAlloc::get()->getUserlandUsage() == 0);
-
-    testSystemCalls();
-
-    testMemoryAllocator();
-
-    assert(MemAlloc::get()->getUserlandUsage() == 0);
-    putString("App ended");
-    putNewline();
-}
-
-void callFromUserMode(void (*f)(void))
-{
-    assert(false); // disabled because it gives an error after void main() finishes, idk why probably easy fix, pitaj na diskordu
-    __asm__ volatile ("csrc sstatus, 0x9"); // set spp (previous privilegde) bit to 0 signifieng user mode
-    __asm__ volatile ("csrc sstatus, 0x6"); // spie bit to 1 (enable interupts (idk if external or internal))
-    __asm__ volatile ("csrw sepc, %[name]" : : [name] "r" (f));
-    __asm__ volatile ("sret");
 }
