@@ -1,4 +1,4 @@
-GAS LISTING /tmp/cc1XBZ0z.s 			page 1
+GAS LISTING /tmp/cckfRW2a.s 			page 1
 
 
    1              		.file	"main.cpp"
@@ -29,82 +29,64 @@ GAS LISTING /tmp/cc1XBZ0z.s 			page 1
   16:src/main.cpp  **** void testAsyncCall();
   17:src/main.cpp  **** 
   18:src/main.cpp  **** Thread kernelThread;
-  19:src/main.cpp  **** char kernelStack[ACTUAL_STACK_SIZE + 16];
-  20:src/main.cpp  **** 
-  21:src/main.cpp  **** void userWrapper(void* p)
-  22:src/main.cpp  **** {
-  23:src/main.cpp  ****     __asm__ volatile("mv x10, x10");
-  24:src/main.cpp  ****     plic_complete(10);
-  25:src/main.cpp  **** 
-  26:src/main.cpp  ****     plic_claim(); // temp
-  27:src/main.cpp  **** 
-  28:src/main.cpp  ****     assert(p == nullptr);
-  29:src/main.cpp  ****     assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
-  30:src/main.cpp  **** 
-  31:src/main.cpp  ****     plic_claim(); // temp
+  19:src/main.cpp  **** 
+  20:src/main.cpp  **** void userWrapper(void* p)
+  21:src/main.cpp  **** {
+  22:src/main.cpp  ****     assert(p == nullptr);
+  23:src/main.cpp  ****     assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
+  24:src/main.cpp  **** 
+  25:src/main.cpp  ****     enableExternalInterrupts();
+  26:src/main.cpp  **** 
+  27:src/main.cpp  **** //    myUserMain();
+  28:src/main.cpp  **** 
+  29:src/main.cpp  ****     for(int i=0; i<10; i++)
+  30:src/main.cpp  ****     {
+  31:src/main.cpp  ****         Console::get()->putc(i + '0');
   32:src/main.cpp  **** 
-  33:src/main.cpp  ****     enableExternalInterrupts();
-  34:src/main.cpp  **** 
-  35:src/main.cpp  ****     plic_claim(); // temp
-  36:src/main.cpp  **** 
-  37:src/main.cpp  ****     __asm__ volatile ("mv x10, x10");
+  33:src/main.cpp  ****         Console::get()->putc(' ');
+  34:src/main.cpp  ****         Console::get()->putc('b');
+  35:src/main.cpp  ****         Console::get()->putc('a');
+  36:src/main.cpp  ****         Console::get()->putc('b');
+  37:src/main.cpp  ****         Console::get()->putc('a');
   38:src/main.cpp  **** 
-  39:src/main.cpp  ****     plic_claim(); // temp
-  40:src/main.cpp  **** 
-  41:src/main.cpp  ****     myUserMain();
+  39:src/main.cpp  ****         Console::get()->putc('\n');
+  40:src/main.cpp  ****     }
+  41:src/main.cpp  **** }
   42:src/main.cpp  **** 
-  43:src/main.cpp  **** //    for(int i=0; i<10; i++)
-  44:src/main.cpp  **** //    {
-  45:src/main.cpp  **** //        Console::get()->putc(i + '0');
-  46:src/main.cpp  **** //
-  47:src/main.cpp  **** //        Console::get()->putc(' ');
-GAS LISTING /tmp/cc1XBZ0z.s 			page 2
+  43:src/main.cpp  **** int main()
+  44:src/main.cpp  **** {
+  45:src/main.cpp  ****     disableExternalInterrupts();
+  46:src/main.cpp  **** 
+  47:src/main.cpp  ****     initInterruptVector();
+GAS LISTING /tmp/cckfRW2a.s 			page 2
 
 
-  48:src/main.cpp  **** //        Console::get()->putc('b');
-  49:src/main.cpp  **** //        Console::get()->putc('a');
-  50:src/main.cpp  **** //        Console::get()->putc('b');
-  51:src/main.cpp  **** //        Console::get()->putc('a');
-  52:src/main.cpp  **** //
-  53:src/main.cpp  **** //        Console::get()->putc('\n');
-  54:src/main.cpp  **** //    }
-  55:src/main.cpp  **** }
-  56:src/main.cpp  **** 
-  57:src/main.cpp  **** int main()
-  58:src/main.cpp  **** {
-  59:src/main.cpp  ****     disableExternalInterrupts();
+  48:src/main.cpp  ****     doInitialAsserts();
+  49:src/main.cpp  **** 
+  50:src/main.cpp  ****     uint64* sp;
+  51:src/main.cpp  ****     __asm__ volatile ("mv %[name], sp" : [name] "=r"(sp));
+  52:src/main.cpp  ****     kernelThread.sp = sp;
+  53:src/main.cpp  ****     Thread::setPRunning(&kernelThread);
+  54:src/main.cpp  ****     assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
+  55:src/main.cpp  ****     kernelThread.id = 0;
+  56:src/main.cpp  ****     Thread::pAllThreads[0] = &kernelThread;
+  57:src/main.cpp  **** 
+  58:src/main.cpp  ****     thread_t t;
+  59:src/main.cpp  ****     thread_create(&t, &userWrapper, nullptr);
   60:src/main.cpp  **** 
-  61:src/main.cpp  ****     initInterruptVector();
-  62:src/main.cpp  ****     doInitialAsserts();
-  63:src/main.cpp  **** 
-  64:src/main.cpp  ****     uint64* sp;
-  65:src/main.cpp  ****     __asm__ volatile ("mv %[name], sp" : [name] "=r"(sp));
-  66:src/main.cpp  ****     kernelThread.sp = sp;
-  67:src/main.cpp  ****     Thread::setPRunning(&kernelThread);
-  68:src/main.cpp  ****     assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
-  69:src/main.cpp  ****     kernelThread.id = 0;
-  70:src/main.cpp  ****     Thread::pAllThreads[0] = &kernelThread;
-  71:src/main.cpp  **** 
-  72:src/main.cpp  ****     thread_t t;
-  73:src/main.cpp  ****     thread_create(&t, &userWrapper, nullptr);
-  74:src/main.cpp  **** 
-  75:src/main.cpp  ****     Thread::initialUserMemoryUsage = MemAlloc::get()->getUserlandUsage();
-  76:src/main.cpp  **** 
-  77:src/main.cpp  ****     plic_claim(); // temp
-  78:src/main.cpp  **** 
-  79:src/main.cpp  ****     plic_complete(10);
-  80:src/main.cpp  **** 
-  81:src/main.cpp  ****     __asm__ volatile ("li a0, 4"); // this is a system call that calls Thread::switchToUser()
-  82:src/main.cpp  ****     __asm__ volatile ("ecall");
-  83:src/main.cpp  **** 
-  84:src/main.cpp  ****     __asm__ volatile ("csrw sscratch, x0"); //TEST permissions
-  85:src/main.cpp  **** 
-  86:src/main.cpp  ****     return 0;
-  87:src/main.cpp  **** }
-  88:src/main.cpp  **** 
-  89:src/main.cpp  **** void doC(void* p)
-  90:src/main.cpp  **** {
-  12              		.loc 1 90 1
+  61:src/main.cpp  ****     Thread::initialUserMemoryUsage = MemAlloc::get()->getUserlandUsage();
+  62:src/main.cpp  **** 
+  63:src/main.cpp  ****     __asm__ volatile ("li a0, 4"); // this is a system call that calls Thread::switchToUser()
+  64:src/main.cpp  ****     __asm__ volatile ("ecall");
+  65:src/main.cpp  **** 
+  66:src/main.cpp  ****     __asm__ volatile ("csrw sscratch, x0"); //TEST permissions
+  67:src/main.cpp  **** 
+  68:src/main.cpp  ****     return 0;
+  69:src/main.cpp  **** }
+  70:src/main.cpp  **** 
+  71:src/main.cpp  **** void doC(void* p)
+  72:src/main.cpp  **** {
+  12              		.loc 1 72 1
   13              		.cfi_startproc
   14              	.LVL0:
   15 0000 130101FE 		addi	sp,sp,-32
@@ -113,139 +95,136 @@ GAS LISTING /tmp/cc1XBZ0z.s 			page 1
   18              		.cfi_offset 8, -8
   19 0008 13040102 		addi	s0,sp,32
   20              		.cfi_def_cfa 8, 0
-  91:src/main.cpp  ****     volatile uint64 i=0;
-  21              		.loc 1 91 5
-  22              		.loc 1 91 21 is_stmt 0
+  73:src/main.cpp  ****     volatile uint64 i=0;
+  21              		.loc 1 73 5
+  22              		.loc 1 73 21 is_stmt 0
   23 000c 233404FE 		sd	zero,-24(s0)
-  92:src/main.cpp  ****     extern uint64 gTimer;
-GAS LISTING /tmp/cc1XBZ0z.s 			page 3
-
-
-  24              		.loc 1 92 5 is_stmt 1
-  93:src/main.cpp  ****     uint64 oldTimer = gTimer;
-  25              		.loc 1 93 5
-  26              		.loc 1 93 12 is_stmt 0
+  74:src/main.cpp  ****     extern uint64 gTimer;
+  24              		.loc 1 74 5 is_stmt 1
+  75:src/main.cpp  ****     uint64 oldTimer = gTimer;
+  25              		.loc 1 75 5
+  26              		.loc 1 75 12 is_stmt 0
   27 0010 97070000 		la	a5,gTimer
   27      83B70700 
   28 0018 83B70700 		ld	a5,0(a5)
   29              	.LVL1:
   30 001c 6F000002 		j	.L3
   31              	.L5:
-  94:src/main.cpp  ****     while(i>=0)
-  95:src/main.cpp  ****     {
-  96:src/main.cpp  ****         if(gTimer != oldTimer)
-  97:src/main.cpp  ****         {
-  98:src/main.cpp  ****             __asm__ volatile ("mv x1, x1");
-  32              		.loc 1 98 13 is_stmt 1
-  33              		.loc 1 98 43 is_stmt 0
+  76:src/main.cpp  ****     while(i>=0)
+  77:src/main.cpp  ****     {
+  78:src/main.cpp  ****         if(gTimer != oldTimer)
+  79:src/main.cpp  ****         {
+  80:src/main.cpp  ****             __asm__ volatile ("mv x1, x1");
+  32              		.loc 1 80 13 is_stmt 1
+  33              		.loc 1 80 43 is_stmt 0
   34              	#APP
-  35              	# 98 "src/main.cpp" 1
-  99              	        }
+GAS LISTING /tmp/cckfRW2a.s 			page 3
+
+
+  35              	# 80 "src/main.cpp" 1
+  81              	        }
   36              		mv x1, x1
   37              	# 0 "" 2
   38              	#NO_APP
   39              	.L2:
- 100:src/main.cpp  ****         i++;
-  40              		.loc 1 100 9 is_stmt 1
-  41              		.loc 1 100 10 is_stmt 0
+  82:src/main.cpp  ****         i++;
+  40              		.loc 1 82 9 is_stmt 1
+  41              		.loc 1 82 10 is_stmt 0
   42 0024 833784FE 		ld	a5,-24(s0)
   43              	.LVL2:
   44 0028 93871700 		addi	a5,a5,1
   45 002c 2334F4FE 		sd	a5,-24(s0)
- 101:src/main.cpp  ****         oldTimer = gTimer;
-  46              		.loc 1 101 9 is_stmt 1
-  47              		.loc 1 101 18 is_stmt 0
+  83:src/main.cpp  ****         oldTimer = gTimer;
+  46              		.loc 1 83 9 is_stmt 1
+  47              		.loc 1 83 18 is_stmt 0
   48 0030 97070000 		la	a5,gTimer
   48      83B70700 
   49              	.LVL3:
   50 0038 83B70700 		ld	a5,0(a5)
   51              	.LVL4:
   52              	.L3:
-  94:src/main.cpp  ****     while(i>=0)
-  53              		.loc 1 94 5 is_stmt 1
-  94:src/main.cpp  ****     while(i>=0)
-  54              		.loc 1 94 12
-  94:src/main.cpp  ****     while(i>=0)
-  55              		.loc 1 94 11 is_stmt 0
+  76:src/main.cpp  ****     while(i>=0)
+  53              		.loc 1 76 5 is_stmt 1
+  76:src/main.cpp  ****     while(i>=0)
+  54              		.loc 1 76 12
+  76:src/main.cpp  ****     while(i>=0)
+  55              		.loc 1 76 11 is_stmt 0
   56 003c 033784FE 		ld	a4,-24(s0)
-  96:src/main.cpp  ****         {
-  57              		.loc 1 96 9 is_stmt 1
-  96:src/main.cpp  ****         {
-  58              		.loc 1 96 19 is_stmt 0
+  78:src/main.cpp  ****         {
+  57              		.loc 1 78 9 is_stmt 1
+  78:src/main.cpp  ****         {
+  58              		.loc 1 78 19 is_stmt 0
   59 0040 17070000 		la	a4,gTimer
   59      03370700 
   60 0048 03370700 		ld	a4,0(a4)
-  96:src/main.cpp  ****         {
-  61              		.loc 1 96 9
+  78:src/main.cpp  ****         {
+  61              		.loc 1 78 9
   62 004c E31AF7FC 		bne	a4,a5,.L5
-GAS LISTING /tmp/cc1XBZ0z.s 			page 4
-
-
   63 0050 6FF05FFD 		j	.L2
   64              		.cfi_endproc
   65              	.LFE20:
   67              		.align	2
   69              	_Z41__static_initialization_and_destruction_0ii:
   70              	.LFB24:
- 102:src/main.cpp  ****     }
- 103:src/main.cpp  ****     __asm__ volatile ("mv x1, x1");
- 104:src/main.cpp  **** }
- 105:src/main.cpp  **** 
- 106:src/main.cpp  **** void testAsyncCall()
- 107:src/main.cpp  **** {
- 108:src/main.cpp  ****     enableExternalInterrupts();
- 109:src/main.cpp  **** 
- 110:src/main.cpp  ****     assert(MemAlloc::get()->getUserlandUsage() == 0);
- 111:src/main.cpp  **** 
- 112:src/main.cpp  **** //    void doB(void*);
- 113:src/main.cpp  **** 
- 114:src/main.cpp  ****     int argA = 69;
- 115:src/main.cpp  **** //    int argB = 420;
- 116:src/main.cpp  ****     thread_t a;
- 117:src/main.cpp  **** //    thread_t b;
- 118:src/main.cpp  ****     thread_create(&a, doC, &argA);
- 119:src/main.cpp  **** //    thread_create(&b, doB, &argB);
- 120:src/main.cpp  ****     thread_dispatch();
- 121:src/main.cpp  **** 
- 122:src/main.cpp  **** //    assert(Thread::pAllThreads[a]->id == Thread::pAllThreads[b]->id-1);
- 123:src/main.cpp  ****     assert(MemAlloc::get()->getUserlandUsage() == 0);
- 124:src/main.cpp  **** }
+  84:src/main.cpp  ****     }
+  85:src/main.cpp  ****     __asm__ volatile ("mv x1, x1");
+  86:src/main.cpp  **** }
+  87:src/main.cpp  **** 
+  88:src/main.cpp  **** void testAsyncCall()
+  89:src/main.cpp  **** {
+  90:src/main.cpp  ****     enableExternalInterrupts();
+  91:src/main.cpp  **** 
+  92:src/main.cpp  ****     assert(MemAlloc::get()->getUserlandUsage() == 0);
+  93:src/main.cpp  **** 
+  94:src/main.cpp  **** //    void doB(void*);
+  95:src/main.cpp  **** 
+GAS LISTING /tmp/cckfRW2a.s 			page 4
+
+
+  96:src/main.cpp  ****     int argA = 69;
+  97:src/main.cpp  **** //    int argB = 420;
+  98:src/main.cpp  ****     thread_t a;
+  99:src/main.cpp  **** //    thread_t b;
+ 100:src/main.cpp  ****     thread_create(&a, doC, &argA);
+ 101:src/main.cpp  **** //    thread_create(&b, doB, &argB);
+ 102:src/main.cpp  ****     thread_dispatch();
+ 103:src/main.cpp  **** 
+ 104:src/main.cpp  **** //    assert(Thread::pAllThreads[a]->id == Thread::pAllThreads[b]->id-1);
+ 105:src/main.cpp  ****     assert(MemAlloc::get()->getUserlandUsage() == 0);
+ 106:src/main.cpp  **** }
+ 107:src/main.cpp  **** 
+ 108:src/main.cpp  **** void doInitialAsserts()
+ 109:src/main.cpp  **** {
+ 110:src/main.cpp  ****     assert(sizeof(void*) == 8);
+ 111:src/main.cpp  ****     assert((((uint64)HEAP_END_ADDR - (uint64)HEAP_START_ADDR) / 1024 / 1024) == 127);
+ 112:src/main.cpp  ****     assert(DEFAULT_STACK_SIZE == 4096);
+ 113:src/main.cpp  ****     assert(DEFAULT_TIME_SLICE == 2);
+ 114:src/main.cpp  ****     assert(sizeof(char) == 1);
+ 115:src/main.cpp  ****     assert(sizeof(Thread) < 1000);
+ 116:src/main.cpp  ****     assert(sizeof(int) == 4);
+ 117:src/main.cpp  ****     assert(sizeof(uint64) == 8);
+ 118:src/main.cpp  **** }
+ 119:src/main.cpp  **** 
+ 120:src/main.cpp  **** void initInterruptVector()
+ 121:src/main.cpp  **** {
+ 122:src/main.cpp  **** 
+ 123:src/main.cpp  **** // should be before changing sstatus 0x2 bit
+ 124:src/main.cpp  ****     __asm__ volatile ("csrw stvec, %[vector]" : : [vector] "r"(&trapRoutine));
  125:src/main.cpp  **** 
- 126:src/main.cpp  **** void doInitialAsserts()
- 127:src/main.cpp  **** {
- 128:src/main.cpp  ****     assert(sizeof(void*) == 8);
- 129:src/main.cpp  ****     assert((((uint64)HEAP_END_ADDR - (uint64)HEAP_START_ADDR) / 1024 / 1024) == 127);
- 130:src/main.cpp  ****     assert(DEFAULT_STACK_SIZE == 4096);
- 131:src/main.cpp  ****     assert(DEFAULT_TIME_SLICE == 2);
- 132:src/main.cpp  ****     assert(sizeof(char) == 1);
- 133:src/main.cpp  ****     assert(sizeof(Thread) < 1000);
- 134:src/main.cpp  ****     assert(sizeof(int) == 4);
- 135:src/main.cpp  ****     assert(sizeof(uint64) == 8);
- 136:src/main.cpp  **** }
- 137:src/main.cpp  **** 
- 138:src/main.cpp  **** void initInterruptVector()
- 139:src/main.cpp  **** {
- 140:src/main.cpp  **** 
- 141:src/main.cpp  **** // should be before changing sstatus 0x2 bit
- 142:src/main.cpp  ****     __asm__ volatile ("csrw stvec, %[vector]" : : [vector] "r"(&trapRoutine));
- 143:src/main.cpp  **** 
- 144:src/main.cpp  **** // set MODE to 1 - vector mode
- 145:src/main.cpp  ****     __asm__ volatile ("csrs stvec, 0x1");
- 146:src/main.cpp  ****     __asm__ volatile ("csrc stvec, 0x2");
- 147:src/main.cpp  **** }
-  71              		.loc 1 147 1 is_stmt 1
+ 126:src/main.cpp  **** // set MODE to 1 - vector mode
+ 127:src/main.cpp  ****     __asm__ volatile ("csrs stvec, 0x1");
+ 128:src/main.cpp  ****     __asm__ volatile ("csrc stvec, 0x2");
+ 129:src/main.cpp  **** }
+  71              		.loc 1 129 1 is_stmt 1
   72              		.cfi_startproc
   73              	.LVL5:
   74 0054 130101FF 		addi	sp,sp,-16
   75              		.cfi_def_cfa_offset 16
-GAS LISTING /tmp/cc1XBZ0z.s 			page 5
-
-
   76 0058 23348100 		sd	s0,8(sp)
   77              		.cfi_offset 8, -8
   78 005c 13040101 		addi	s0,sp,16
   79              		.cfi_def_cfa 8, 0
-  80              		.loc 1 147 1 is_stmt 0
+  80              		.loc 1 129 1 is_stmt 0
   81 0060 93071000 		li	a5,1
   82 0064 6308F500 		beq	a0,a5,.L9
   83              	.L6:
@@ -258,14 +237,17 @@ GAS LISTING /tmp/cc1XBZ0z.s 			page 1
   90 0070 67800000 		jr	ra
   91              	.L9:
   92              		.cfi_restore_state
-  93              		.loc 1 147 1 discriminator 1
+  93              		.loc 1 129 1 discriminator 1
+GAS LISTING /tmp/cckfRW2a.s 			page 5
+
+
   94 0074 B7070100 		li	a5,65536
   95 0078 9387F7FF 		addi	a5,a5,-1
   96 007c E396F5FE 		bne	a1,a5,.L6
   97              	.LVL6:
-  98              	.LBB19:
-  99              	.LBB20:
- 100              	.LBB21:
+  98              	.LBB58:
+  99              	.LBB59:
+ 100              	.LBB60:
  101              		.file 2 "src/../h/thread.h"
    1:src/../h/thread.h **** #pragma once
    2:src/../h/thread.h **** #include "../lib/hw.h"
@@ -298,9 +280,6 @@ GAS LISTING /tmp/cc1XBZ0z.s 			page 1
   29:src/../h/thread.h ****     static uint64 nrTotalThreads;
   30:src/../h/thread.h ****     static uint64 initialUserMemoryUsage;
   31:src/../h/thread.h **** 
-GAS LISTING /tmp/cc1XBZ0z.s 			page 6
-
-
   32:src/../h/thread.h ****     static  Thread*  getPRunning();
   33:src/../h/thread.h ****     static void setPRunning(Thread* p);
   34:src/../h/thread.h ****     static int createThread(uint64* id, Body body, void* arg);
@@ -319,6 +298,9 @@ GAS LISTING /tmp/cc1XBZ0z.s 			page 1
   47:src/../h/thread.h ****     bool done;
   48:src/../h/thread.h **** //    uint64** pSp;
   49:src/../h/thread.h **** 
+GAS LISTING /tmp/cckfRW2a.s 			page 6
+
+
   50:src/../h/thread.h ****     uint64* sp;
   51:src/../h/thread.h **** 
   52:src/../h/thread.h ****     Thread(Body body, void* arg);
@@ -329,10 +311,10 @@ GAS LISTING /tmp/cc1XBZ0z.s 			page 1
  104 0088 23BC0700 		sd	zero,24(a5)
  105 008c 23B80702 		sd	zero,48(a5)
  106              	.LVL7:
- 107              	.LBE21:
- 108              	.LBE20:
- 109              	.LBE19:
- 110              		.loc 1 147 1
+ 107              	.LBE60:
+ 108              	.LBE59:
+ 109              	.LBE58:
+ 110              		.loc 1 129 1
  111 0090 6FF09FFD 		j	.L6
  112              		.cfi_endproc
  113              	.LFE24:
@@ -358,9 +340,6 @@ GAS LISTING /tmp/cc1XBZ0z.s 			page 1
  125 0043 00000000 		.align	3
  125      00
  126              	.LC3:
-GAS LISTING /tmp/cc1XBZ0z.s 			page 7
-
-
  127 0048 2020203D 		.string	"   ==========================="
  127      3D3D3D3D 
  127      3D3D3D3D 
@@ -371,56 +350,31 @@ GAS LISTING /tmp/cc1XBZ0z.s 			page 1
  130              		.globl	_Z11userWrapperPv
  132              	_Z11userWrapperPv:
  133              	.LFB18:
-  22:src/main.cpp  ****     __asm__ volatile("mv x10, x10");
- 134              		.loc 1 22 1 is_stmt 1
+  21:src/main.cpp  ****     assert(p == nullptr);
+ 134              		.loc 1 21 1 is_stmt 1
  135              		.cfi_startproc
  136              	.LVL8:
  137 0094 130101FE 		addi	sp,sp,-32
  138              		.cfi_def_cfa_offset 32
  139 0098 233C1100 		sd	ra,24(sp)
  140 009c 23388100 		sd	s0,16(sp)
+GAS LISTING /tmp/cckfRW2a.s 			page 7
+
+
  141 00a0 23349100 		sd	s1,8(sp)
  142              		.cfi_offset 1, -8
  143              		.cfi_offset 8, -16
  144              		.cfi_offset 9, -24
  145 00a4 13040102 		addi	s0,sp,32
  146              		.cfi_def_cfa 8, 0
- 147 00a8 93040500 		mv	s1,a0
-  23:src/main.cpp  ****     plic_complete(10);
- 148              		.loc 1 23 5
-  23:src/main.cpp  ****     plic_complete(10);
- 149              		.loc 1 23 36 is_stmt 0
- 150              	#APP
- 151              	# 23 "src/main.cpp" 1
-  24:src/main.cpp  **** 
- 152              		mv x10, x10
- 153              	# 0 "" 2
- 154              		.loc 1 24 5 is_stmt 1
-  24:src/main.cpp  **** 
- 155              		.loc 1 24 18 is_stmt 0
- 156              	#NO_APP
- 157 00b0 1305A000 		li	a0,10
- 158              	.LVL9:
- 159 00b4 97000000 		call	plic_complete@plt
- 159      E7800000 
- 160              	.LVL10:
-  26:src/main.cpp  **** 
- 161              		.loc 1 26 5 is_stmt 1
-  26:src/main.cpp  **** 
- 162              		.loc 1 26 15 is_stmt 0
- 163 00bc 97000000 		call	plic_claim@plt
- 163      E7800000 
- 164              	.LVL11:
-  28:src/main.cpp  ****     assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
- 165              		.loc 1 28 5 is_stmt 1
- 166              	.LBB26:
- 167              	.LBB27:
- 168              		.file 3 "src/../h/../h/my_console.h"
+  22:src/main.cpp  ****     assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
+ 147              		.loc 1 22 5
+ 148              	.LVL9:
+ 149              	.LBB101:
+ 150              	.LBB102:
+ 151              		.file 3 "src/../h/../h/my_console.h"
    1:src/../h/../h/my_console.h **** #pragma once
    2:src/../h/../h/my_console.h **** 
-GAS LISTING /tmp/cc1XBZ0z.s 			page 8
-
-
    3:src/../h/../h/my_console.h **** #include "../h/risc.h"
    4:src/../h/../h/my_console.h **** 
    5:src/../h/../h/my_console.h **** #include "../lib/hw.h"
@@ -439,1660 +393,2126 @@ GAS LISTING /tmp/cc1XBZ0z.s 			page 1
   18:src/../h/../h/my_console.h **** inline void _assert(bool valid, const char* file, int line) // MUST be inline
   19:src/../h/../h/my_console.h **** {
   20:src/../h/../h/my_console.h ****     if(valid)
- 169              		.loc 3 20 5
- 170 00c4 63900406 		bnez	s1,.L14
+ 152              		.loc 3 20 5
+ 153 00a8 63180502 		bnez	a0,.L23
   21:src/../h/../h/my_console.h ****         return;
- 171              		.loc 3 21 9
- 172              	.LVL12:
- 173              	.LBE27:
- 174              	.LBE26:
-  29:src/main.cpp  **** 
- 175              		.loc 1 29 5
- 176 00c8 97000000 		call	_ZN6Thread11getPRunningEv@plt
- 176      E7800000 
- 177              	.LVL13:
- 178 00d0 13058504 		addi	a0,a0,72
- 179 00d4 97070000 		la	a5,_ZN6Thread10pRunningSpE
- 179      83B70700 
- 180 00dc 83B70700 		ld	a5,0(a5)
- 181              	.LVL14:
- 182              	.LBB29:
- 183              	.LBB30:
+ 154              		.loc 3 21 9
+ 155              	.LVL10:
+ 156              	.LBE102:
+ 157              	.LBE101:
+  23:src/main.cpp  **** 
+ 158              		.loc 1 23 5
+ 159 00ac 97000000 		call	_ZN6Thread11getPRunningEv@plt
+ 159      E7800000 
+ 160              	.LVL11:
+ 161 00b4 13058504 		addi	a0,a0,72
+ 162 00b8 97070000 		la	a5,_ZN6Thread10pRunningSpE
+ 162      83B70700 
+ 163 00c0 83B70700 		ld	a5,0(a5)
+ 164              	.LVL12:
+ 165              	.LBB104:
+ 166              	.LBB105:
   20:src/../h/../h/my_console.h ****         return;
- 184              		.loc 3 20 5
- 185 00e0 6390A70A 		bne	a5,a0,.L15
- 186              		.loc 3 21 9
- 187              	.LVL15:
- 188              	.LBE30:
- 189              	.LBE29:
-  31:src/main.cpp  **** 
- 190              		.loc 1 31 5
-  31:src/main.cpp  **** 
- 191              		.loc 1 31 15 is_stmt 0
- 192 00e4 97000000 		call	plic_claim@plt
- 192      E7800000 
- 193              	.LVL16:
-  33:src/main.cpp  **** 
- 194              		.loc 1 33 5 is_stmt 1
-  33:src/main.cpp  **** 
- 195              		.loc 1 33 29 is_stmt 0
- 196 00ec 97000000 		call	_Z24enableExternalInterruptsv@plt
- 196      E7800000 
-GAS LISTING /tmp/cc1XBZ0z.s 			page 9
+ 167              		.loc 3 20 5
+ 168 00c4 6398A706 		bne	a5,a0,.L24
+ 169              		.loc 3 21 9
+ 170              	.LVL13:
+ 171              	.LBE105:
+GAS LISTING /tmp/cckfRW2a.s 			page 8
 
 
- 197              	.LVL17:
-  35:src/main.cpp  **** 
- 198              		.loc 1 35 5 is_stmt 1
-  35:src/main.cpp  **** 
- 199              		.loc 1 35 15 is_stmt 0
- 200 00f4 97000000 		call	plic_claim@plt
- 200      E7800000 
- 201              	.LVL18:
-  37:src/main.cpp  **** 
- 202              		.loc 1 37 5 is_stmt 1
-  37:src/main.cpp  **** 
- 203              		.loc 1 37 37 is_stmt 0
- 204              	#APP
- 205              	# 37 "src/main.cpp" 1
-  39:src/main.cpp  **** 
- 206              		mv x10, x10
- 207              	# 0 "" 2
- 208              		.loc 1 39 5 is_stmt 1
-  39:src/main.cpp  **** 
- 209              		.loc 1 39 15 is_stmt 0
- 210              	#NO_APP
- 211 0100 97000000 		call	plic_claim@plt
- 211      E7800000 
- 212              	.LVL19:
-  41:src/main.cpp  **** 
- 213              		.loc 1 41 5 is_stmt 1
-  41:src/main.cpp  **** 
- 214              		.loc 1 41 15 is_stmt 0
- 215 0108 97000000 		call	_Z10myUserMainv@plt
- 215      E7800000 
- 216              	.LVL20:
-  55:src/main.cpp  **** 
- 217              		.loc 1 55 1
- 218 0110 83308101 		ld	ra,24(sp)
- 219              		.cfi_remember_state
- 220              		.cfi_restore 1
- 221 0114 03340101 		ld	s0,16(sp)
- 222              		.cfi_restore 8
- 223              		.cfi_def_cfa 2, 32
- 224 0118 83348100 		ld	s1,8(sp)
- 225              		.cfi_restore 9
- 226              	.LVL21:
- 227 011c 13010102 		addi	sp,sp,32
- 228              		.cfi_def_cfa_offset 0
- 229 0120 67800000 		jr	ra
- 230              	.LVL22:
- 231              	.L14:
- 232              		.cfi_restore_state
- 233              	.LBB32:
- 234              	.LBB28:
+ 172              	.LBE104:
+  25:src/main.cpp  **** 
+ 173              		.loc 1 25 5
+  25:src/main.cpp  **** 
+ 174              		.loc 1 25 29 is_stmt 0
+ 175 00c8 97000000 		call	_Z24enableExternalInterruptsv@plt
+ 175      E7800000 
+ 176              	.LVL14:
+  29:src/main.cpp  ****     {
+ 177              		.loc 1 29 5 is_stmt 1
+ 178              	.LBB107:
+  29:src/main.cpp  ****     {
+ 179              		.loc 1 29 13 is_stmt 0
+ 180 00d0 93040000 		li	s1,0
+ 181 00d4 6F00400D 		j	.L21
+ 182              	.LVL15:
+ 183              	.L23:
+ 184              	.LBE107:
+ 185              	.LBB145:
+ 186              	.LBB103:
   22:src/../h/../h/my_console.h **** 
   23:src/../h/../h/my_console.h ****     putString("===================== ASSERT file: ");
- 235              		.loc 3 23 5 is_stmt 1
- 236              		.loc 3 23 14 is_stmt 0
- 237 0124 17050000 		lla	a0,.LC0
- 237      13050500 
- 238 012c 97000000 		call	_Z9putStringPKc@plt
-GAS LISTING /tmp/cc1XBZ0z.s 			page 10
-
-
- 238      E7800000 
- 239              	.LVL23:
+ 187              		.loc 3 23 5 is_stmt 1
+ 188              		.loc 3 23 14 is_stmt 0
+ 189 00d8 17050000 		lla	a0,.LC0
+ 189      13050500 
+ 190              	.LVL16:
+ 191 00e0 97000000 		call	_Z9putStringPKc@plt
+ 191      E7800000 
+ 192              	.LVL17:
   24:src/../h/../h/my_console.h ****     putString(file);
- 240              		.loc 3 24 5 is_stmt 1
- 241              		.loc 3 24 14 is_stmt 0
- 242 0134 17050000 		lla	a0,.LC1
- 242      13050500 
- 243 013c 97000000 		call	_Z9putStringPKc@plt
- 243      E7800000 
- 244              	.LVL24:
+ 193              		.loc 3 24 5 is_stmt 1
+ 194              		.loc 3 24 14 is_stmt 0
+ 195 00e8 17050000 		lla	a0,.LC1
+ 195      13050500 
+ 196 00f0 97000000 		call	_Z9putStringPKc@plt
+ 196      E7800000 
+ 197              	.LVL18:
   25:src/../h/../h/my_console.h ****     putString("    line: ");
- 245              		.loc 3 25 5 is_stmt 1
- 246              		.loc 3 25 14 is_stmt 0
- 247 0144 17050000 		lla	a0,.LC2
- 247      13050500 
- 248 014c 97000000 		call	_Z9putStringPKc@plt
- 248      E7800000 
- 249              	.LVL25:
+ 198              		.loc 3 25 5 is_stmt 1
+ 199              		.loc 3 25 14 is_stmt 0
+ 200 00f8 17050000 		lla	a0,.LC2
+ 200      13050500 
+ 201 0100 97000000 		call	_Z9putStringPKc@plt
+ 201      E7800000 
+ 202              	.LVL19:
   26:src/../h/../h/my_console.h ****     putInt(line);
- 250              		.loc 3 26 5 is_stmt 1
- 251              		.loc 3 26 11 is_stmt 0
- 252 0154 1305C001 		li	a0,28
- 253 0158 97000000 		call	_Z6putInti@plt
- 253      E7800000 
- 254              	.LVL26:
+ 203              		.loc 3 26 5 is_stmt 1
+ 204              		.loc 3 26 11 is_stmt 0
+ 205 0108 13056001 		li	a0,22
+ 206 010c 97000000 		call	_Z6putInti@plt
+ 206      E7800000 
+ 207              	.LVL20:
   27:src/../h/../h/my_console.h ****     putString("   ===========================");
- 255              		.loc 3 27 5 is_stmt 1
- 256              		.loc 3 27 14 is_stmt 0
- 257 0160 17050000 		lla	a0,.LC3
- 257      13050500 
- 258 0168 97000000 		call	_Z9putStringPKc@plt
- 258      E7800000 
- 259              	.LVL27:
+ 208              		.loc 3 27 5 is_stmt 1
+ 209              		.loc 3 27 14 is_stmt 0
+ 210 0114 17050000 		lla	a0,.LC3
+GAS LISTING /tmp/cckfRW2a.s 			page 9
+
+
+ 210      13050500 
+ 211 011c 97000000 		call	_Z9putStringPKc@plt
+ 211      E7800000 
+ 212              	.LVL21:
   28:src/../h/../h/my_console.h ****     putNewline();
- 260              		.loc 3 28 5 is_stmt 1
- 261              		.loc 3 28 15 is_stmt 0
- 262 0170 97000000 		call	_Z10putNewlinev@plt
- 262      E7800000 
- 263              	.LVL28:
+ 213              		.loc 3 28 5 is_stmt 1
+ 214              		.loc 3 28 15 is_stmt 0
+ 215 0124 97000000 		call	_Z10putNewlinev@plt
+ 215      E7800000 
+ 216              	.LVL22:
   29:src/../h/../h/my_console.h **** 
   30:src/../h/../h/my_console.h ****     stopKernel();
- 264              		.loc 3 30 5 is_stmt 1
- 265              		.loc 3 30 15 is_stmt 0
- 266 0178 97000000 		call	_Z10stopKernelv@plt
- 266      E7800000 
- 267              	.LVL29:
- 268              	.L15:
- 269              	.LBE28:
- 270              	.LBE32:
- 271              	.LBB33:
- 272              	.LBB31:
+ 217              		.loc 3 30 5 is_stmt 1
+ 218              		.loc 3 30 15 is_stmt 0
+ 219 012c 97000000 		call	_Z10stopKernelv@plt
+ 219      E7800000 
+ 220              	.LVL23:
+ 221              	.L24:
+ 222              	.LBE103:
+ 223              	.LBE145:
+ 224              	.LBB146:
+ 225              	.LBB106:
   23:src/../h/../h/my_console.h ****     putString(file);
- 273              		.loc 3 23 5 is_stmt 1
+ 226              		.loc 3 23 5 is_stmt 1
   23:src/../h/../h/my_console.h ****     putString(file);
- 274              		.loc 3 23 14 is_stmt 0
- 275 0180 17050000 		lla	a0,.LC0
- 275      13050500 
-GAS LISTING /tmp/cc1XBZ0z.s 			page 11
+ 227              		.loc 3 23 14 is_stmt 0
+ 228 0134 17050000 		lla	a0,.LC0
+ 228      13050500 
+ 229              	.LVL24:
+ 230 013c 97000000 		call	_Z9putStringPKc@plt
+ 230      E7800000 
+ 231              	.LVL25:
+  24:src/../h/../h/my_console.h ****     putString("    line: ");
+ 232              		.loc 3 24 5 is_stmt 1
+  24:src/../h/../h/my_console.h ****     putString("    line: ");
+ 233              		.loc 3 24 14 is_stmt 0
+ 234 0144 17050000 		lla	a0,.LC1
+ 234      13050500 
+ 235 014c 97000000 		call	_Z9putStringPKc@plt
+ 235      E7800000 
+ 236              	.LVL26:
+  25:src/../h/../h/my_console.h ****     putInt(line);
+ 237              		.loc 3 25 5 is_stmt 1
+  25:src/../h/../h/my_console.h ****     putInt(line);
+ 238              		.loc 3 25 14 is_stmt 0
+ 239 0154 17050000 		lla	a0,.LC2
+ 239      13050500 
+ 240 015c 97000000 		call	_Z9putStringPKc@plt
+ 240      E7800000 
+ 241              	.LVL27:
+  26:src/../h/../h/my_console.h ****     putString("   ===========================");
+ 242              		.loc 3 26 5 is_stmt 1
+  26:src/../h/../h/my_console.h ****     putString("   ===========================");
+ 243              		.loc 3 26 11 is_stmt 0
+ 244 0164 13057001 		li	a0,23
+ 245 0168 97000000 		call	_Z6putInti@plt
+ 245      E7800000 
+GAS LISTING /tmp/cckfRW2a.s 			page 10
 
 
- 276              	.LVL30:
- 277 0188 97000000 		call	_Z9putStringPKc@plt
- 277      E7800000 
- 278              	.LVL31:
-  24:src/../h/../h/my_console.h ****     putString("    line: ");
- 279              		.loc 3 24 5 is_stmt 1
-  24:src/../h/../h/my_console.h ****     putString("    line: ");
- 280              		.loc 3 24 14 is_stmt 0
- 281 0190 17050000 		lla	a0,.LC1
- 281      13050500 
- 282 0198 97000000 		call	_Z9putStringPKc@plt
- 282      E7800000 
- 283              	.LVL32:
-  25:src/../h/../h/my_console.h ****     putInt(line);
- 284              		.loc 3 25 5 is_stmt 1
-  25:src/../h/../h/my_console.h ****     putInt(line);
- 285              		.loc 3 25 14 is_stmt 0
- 286 01a0 17050000 		lla	a0,.LC2
- 286      13050500 
- 287 01a8 97000000 		call	_Z9putStringPKc@plt
- 287      E7800000 
- 288              	.LVL33:
-  26:src/../h/../h/my_console.h ****     putString("   ===========================");
- 289              		.loc 3 26 5 is_stmt 1
-  26:src/../h/../h/my_console.h ****     putString("   ===========================");
- 290              		.loc 3 26 11 is_stmt 0
- 291 01b0 1305D001 		li	a0,29
- 292 01b4 97000000 		call	_Z6putInti@plt
- 292      E7800000 
- 293              	.LVL34:
+ 246              	.LVL28:
   27:src/../h/../h/my_console.h ****     putNewline();
- 294              		.loc 3 27 5 is_stmt 1
+ 247              		.loc 3 27 5 is_stmt 1
   27:src/../h/../h/my_console.h ****     putNewline();
- 295              		.loc 3 27 14 is_stmt 0
- 296 01bc 17050000 		lla	a0,.LC3
- 296      13050500 
- 297 01c4 97000000 		call	_Z9putStringPKc@plt
- 297      E7800000 
+ 248              		.loc 3 27 14 is_stmt 0
+ 249 0170 17050000 		lla	a0,.LC3
+ 249      13050500 
+ 250 0178 97000000 		call	_Z9putStringPKc@plt
+ 250      E7800000 
+ 251              	.LVL29:
+  28:src/../h/../h/my_console.h **** 
+ 252              		.loc 3 28 5 is_stmt 1
+  28:src/../h/../h/my_console.h **** 
+ 253              		.loc 3 28 15 is_stmt 0
+ 254 0180 97000000 		call	_Z10putNewlinev@plt
+ 254      E7800000 
+ 255              	.LVL30:
+ 256              		.loc 3 30 5 is_stmt 1
+ 257              		.loc 3 30 15 is_stmt 0
+ 258 0188 97000000 		call	_Z10stopKernelv@plt
+ 258      E7800000 
+ 259              	.LVL31:
+ 260              	.L20:
+ 261              	.LBE106:
+ 262              	.LBE146:
+ 263              	.LBB147:
+ 264              	.LBB108:
+ 265              	.LBB109:
+ 266              		.file 4 "src/../h/0_console.h"
+   1:src/../h/0_console.h **** #pragma once
+   2:src/../h/0_console.h **** 
+   3:src/../h/0_console.h **** #include "../lib/hw.h"
+   4:src/../h/0_console.h **** 
+   5:src/../h/0_console.h **** #define PUT_BUFFER_SIZE 1000
+   6:src/../h/0_console.h **** 
+   7:src/../h/0_console.h **** class Console // singleton class
+   8:src/../h/0_console.h **** {
+   9:src/../h/0_console.h **** public:
+  10:src/../h/0_console.h ****     static Console* get()
+  11:src/../h/0_console.h ****     {
+  12:src/../h/0_console.h ****         static Console instance;
+  13:src/../h/0_console.h ****         return &instance;
+ 267              		.loc 4 13 9 is_stmt 1
+ 268              	.LBE109:
+ 269              	.LBE108:
+  39:src/main.cpp  ****     }
+ 270              		.loc 1 39 29 is_stmt 0
+ 271 0190 9305A000 		li	a1,10
+ 272 0194 17050000 		lla	a0,_ZZN7Console3getEvE8instance
+ 272      13050500 
+ 273 019c 97000000 		call	_ZN7Console4putcEc@plt
+ 273      E7800000 
+ 274              	.LVL32:
+  29:src/main.cpp  ****     {
+ 275              		.loc 1 29 5 is_stmt 1
+ 276 01a4 9B841400 		addiw	s1,s1,1
+ 277              	.LVL33:
+GAS LISTING /tmp/cckfRW2a.s 			page 11
+
+
+ 278              	.L21:
+  29:src/main.cpp  ****     {
+ 279              		.loc 1 29 19 discriminator 3
+ 280 01a8 93079000 		li	a5,9
+ 281 01ac 63CC971A 		bgt	s1,a5,.L10
+  31:src/main.cpp  **** 
+ 282              		.loc 1 31 9
+ 283              	.LBB114:
+ 284              	.LBB115:
+  12:src/../h/0_console.h ****         return &instance;
+ 285              		.loc 4 12 9
+  12:src/../h/0_console.h ****         return &instance;
+ 286              		.loc 4 12 24 is_stmt 0
+ 287 01b0 97070000 		lbu	a5,_ZGVZN7Console3getEvE8instance
+ 287      83C70700 
+ 288 01b8 63920702 		bnez	a5,.L14
+ 289              	.LVL34:
+ 290              	.LBB116:
+ 291              	.LBB117:
+ 292              	.LBB118:
+  14:src/../h/0_console.h ****     }
+  15:src/../h/0_console.h **** 
+  16:src/../h/0_console.h ****     uint64 putBufferHead, putBufferTail;
+  17:src/../h/0_console.h ****     char putBuffer[PUT_BUFFER_SIZE];
+  18:src/../h/0_console.h ****     uint64 putBufferItems;
+  19:src/../h/0_console.h **** 
+  20:src/../h/0_console.h ****     void putc(char c);
+  21:src/../h/0_console.h ****     char getc();
+  22:src/../h/0_console.h ****     void consoleHandler();
+  23:src/../h/0_console.h **** 
+  24:src/../h/0_console.h **** private:
+  25:src/../h/0_console.h ****     Console()
+  26:src/../h/0_console.h ****         : putBufferHead(0), putBufferTail(0), putBufferItems(0)
+ 293              		.loc 4 26 63
+ 294 01bc 97070000 		lla	a5,_ZZN7Console3getEvE8instance
+ 294      93870700 
+ 295 01c4 23B00700 		sd	zero,0(a5)
+ 296 01c8 23B40700 		sd	zero,8(a5)
+ 297 01cc 23BC073E 		sd	zero,1016(a5)
  298              	.LVL35:
-  28:src/../h/../h/my_console.h **** 
- 299              		.loc 3 28 5 is_stmt 1
-  28:src/../h/../h/my_console.h **** 
- 300              		.loc 3 28 15 is_stmt 0
- 301 01cc 97000000 		call	_Z10putNewlinev@plt
- 301      E7800000 
- 302              	.LVL36:
- 303              		.loc 3 30 5 is_stmt 1
- 304              		.loc 3 30 15 is_stmt 0
- 305 01d4 97000000 		call	_Z10stopKernelv@plt
- 305      E7800000 
- 306              	.LVL37:
- 307              	.LBE31:
- 308              	.LBE33:
- 309              		.cfi_endproc
- 310              	.LFE18:
- 312              		.section	.text._Z7_assertbPKci,"axG",@progbits,_Z7_assertbPKci,comdat
- 313              		.align	2
-GAS LISTING /tmp/cc1XBZ0z.s 			page 12
+ 299              	.LBE118:
+ 300              	.LBE117:
+ 301              	.LBE116:
+  12:src/../h/0_console.h ****         return &instance;
+ 302              		.loc 4 12 24
+ 303 01d0 93071000 		li	a5,1
+ 304 01d4 17070000 		sb	a5,_ZGVZN7Console3getEvE8instance,a4
+ 304      2300F700 
+ 305              	.L14:
+  13:src/../h/0_console.h ****     }
+ 306              		.loc 4 13 9 is_stmt 1
+ 307              	.LBE115:
+ 308              	.LBE114:
+  31:src/main.cpp  **** 
+ 309              		.loc 1 31 29 is_stmt 0
+ 310 01dc 9B850403 		addiw	a1,s1,48
+ 311 01e0 93F5F50F 		andi	a1,a1,0xff
+GAS LISTING /tmp/cckfRW2a.s 			page 12
 
 
- 314              		.weak	_Z7_assertbPKci
- 316              	_Z7_assertbPKci:
- 317              	.LFB0:
+ 312 01e4 17050000 		lla	a0,_ZZN7Console3getEvE8instance
+ 312      13050500 
+ 313 01ec 97000000 		call	_ZN7Console4putcEc@plt
+ 313      E7800000 
+ 314              	.LVL36:
+  33:src/main.cpp  ****         Console::get()->putc('b');
+ 315              		.loc 1 33 9 is_stmt 1
+ 316              	.LBB119:
+ 317              	.LBB120:
+  12:src/../h/0_console.h ****         return &instance;
+ 318              		.loc 4 12 9
+  12:src/../h/0_console.h ****         return &instance;
+ 319              		.loc 4 12 24 is_stmt 0
+ 320 01f4 97070000 		lbu	a5,_ZGVZN7Console3getEvE8instance
+ 320      83C70700 
+ 321 01fc 63920702 		bnez	a5,.L15
+ 322              	.LVL37:
+ 323              	.LBB121:
+ 324              	.LBB122:
+ 325              	.LBB123:
+ 326              		.loc 4 26 63
+ 327 0200 97070000 		lla	a5,_ZZN7Console3getEvE8instance
+ 327      93870700 
+ 328 0208 23B00700 		sd	zero,0(a5)
+ 329 020c 23B40700 		sd	zero,8(a5)
+ 330 0210 23BC073E 		sd	zero,1016(a5)
+ 331              	.LVL38:
+ 332              	.LBE123:
+ 333              	.LBE122:
+ 334              	.LBE121:
+  12:src/../h/0_console.h ****         return &instance;
+ 335              		.loc 4 12 24
+ 336 0214 93071000 		li	a5,1
+ 337 0218 17070000 		sb	a5,_ZGVZN7Console3getEvE8instance,a4
+ 337      2300F700 
+ 338              	.L15:
+  13:src/../h/0_console.h ****     }
+ 339              		.loc 4 13 9 is_stmt 1
+ 340              	.LBE120:
+ 341              	.LBE119:
+  33:src/main.cpp  ****         Console::get()->putc('b');
+ 342              		.loc 1 33 29 is_stmt 0
+ 343 0220 93050002 		li	a1,32
+ 344 0224 17050000 		lla	a0,_ZZN7Console3getEvE8instance
+ 344      13050500 
+ 345 022c 97000000 		call	_ZN7Console4putcEc@plt
+ 345      E7800000 
+ 346              	.LVL39:
+  34:src/main.cpp  ****         Console::get()->putc('a');
+ 347              		.loc 1 34 9 is_stmt 1
+ 348              	.LBB124:
+ 349              	.LBB125:
+  12:src/../h/0_console.h ****         return &instance;
+ 350              		.loc 4 12 9
+  12:src/../h/0_console.h ****         return &instance;
+ 351              		.loc 4 12 24 is_stmt 0
+ 352 0234 97070000 		lbu	a5,_ZGVZN7Console3getEvE8instance
+GAS LISTING /tmp/cckfRW2a.s 			page 13
+
+
+ 352      83C70700 
+ 353 023c 63920702 		bnez	a5,.L16
+ 354              	.LVL40:
+ 355              	.LBB126:
+ 356              	.LBB127:
+ 357              	.LBB128:
+ 358              		.loc 4 26 63
+ 359 0240 97070000 		lla	a5,_ZZN7Console3getEvE8instance
+ 359      93870700 
+ 360 0248 23B00700 		sd	zero,0(a5)
+ 361 024c 23B40700 		sd	zero,8(a5)
+ 362 0250 23BC073E 		sd	zero,1016(a5)
+ 363              	.LVL41:
+ 364              	.LBE128:
+ 365              	.LBE127:
+ 366              	.LBE126:
+  12:src/../h/0_console.h ****         return &instance;
+ 367              		.loc 4 12 24
+ 368 0254 93071000 		li	a5,1
+ 369 0258 17070000 		sb	a5,_ZGVZN7Console3getEvE8instance,a4
+ 369      2300F700 
+ 370              	.L16:
+  13:src/../h/0_console.h ****     }
+ 371              		.loc 4 13 9 is_stmt 1
+ 372              	.LBE125:
+ 373              	.LBE124:
+  34:src/main.cpp  ****         Console::get()->putc('a');
+ 374              		.loc 1 34 29 is_stmt 0
+ 375 0260 93052006 		li	a1,98
+ 376 0264 17050000 		lla	a0,_ZZN7Console3getEvE8instance
+ 376      13050500 
+ 377 026c 97000000 		call	_ZN7Console4putcEc@plt
+ 377      E7800000 
+ 378              	.LVL42:
+  35:src/main.cpp  ****         Console::get()->putc('b');
+ 379              		.loc 1 35 9 is_stmt 1
+ 380              	.LBB129:
+ 381              	.LBB130:
+  12:src/../h/0_console.h ****         return &instance;
+ 382              		.loc 4 12 9
+  12:src/../h/0_console.h ****         return &instance;
+ 383              		.loc 4 12 24 is_stmt 0
+ 384 0274 97070000 		lbu	a5,_ZGVZN7Console3getEvE8instance
+ 384      83C70700 
+ 385 027c 63920702 		bnez	a5,.L17
+ 386              	.LVL43:
+ 387              	.LBB131:
+ 388              	.LBB132:
+ 389              	.LBB133:
+ 390              		.loc 4 26 63
+ 391 0280 97070000 		lla	a5,_ZZN7Console3getEvE8instance
+ 391      93870700 
+ 392 0288 23B00700 		sd	zero,0(a5)
+ 393 028c 23B40700 		sd	zero,8(a5)
+ 394 0290 23BC073E 		sd	zero,1016(a5)
+ 395              	.LVL44:
+ 396              	.LBE133:
+GAS LISTING /tmp/cckfRW2a.s 			page 14
+
+
+ 397              	.LBE132:
+ 398              	.LBE131:
+  12:src/../h/0_console.h ****         return &instance;
+ 399              		.loc 4 12 24
+ 400 0294 93071000 		li	a5,1
+ 401 0298 17070000 		sb	a5,_ZGVZN7Console3getEvE8instance,a4
+ 401      2300F700 
+ 402              	.L17:
+  13:src/../h/0_console.h ****     }
+ 403              		.loc 4 13 9 is_stmt 1
+ 404              	.LBE130:
+ 405              	.LBE129:
+  35:src/main.cpp  ****         Console::get()->putc('b');
+ 406              		.loc 1 35 29 is_stmt 0
+ 407 02a0 93051006 		li	a1,97
+ 408 02a4 17050000 		lla	a0,_ZZN7Console3getEvE8instance
+ 408      13050500 
+ 409 02ac 97000000 		call	_ZN7Console4putcEc@plt
+ 409      E7800000 
+ 410              	.LVL45:
+  36:src/main.cpp  ****         Console::get()->putc('a');
+ 411              		.loc 1 36 9 is_stmt 1
+ 412              	.LBB134:
+ 413              	.LBB135:
+  12:src/../h/0_console.h ****         return &instance;
+ 414              		.loc 4 12 9
+  12:src/../h/0_console.h ****         return &instance;
+ 415              		.loc 4 12 24 is_stmt 0
+ 416 02b4 97070000 		lbu	a5,_ZGVZN7Console3getEvE8instance
+ 416      83C70700 
+ 417 02bc 63920702 		bnez	a5,.L18
+ 418              	.LVL46:
+ 419              	.LBB136:
+ 420              	.LBB137:
+ 421              	.LBB138:
+ 422              		.loc 4 26 63
+ 423 02c0 97070000 		lla	a5,_ZZN7Console3getEvE8instance
+ 423      93870700 
+ 424 02c8 23B00700 		sd	zero,0(a5)
+ 425 02cc 23B40700 		sd	zero,8(a5)
+ 426 02d0 23BC073E 		sd	zero,1016(a5)
+ 427              	.LVL47:
+ 428              	.LBE138:
+ 429              	.LBE137:
+ 430              	.LBE136:
+  12:src/../h/0_console.h ****         return &instance;
+ 431              		.loc 4 12 24
+ 432 02d4 93071000 		li	a5,1
+ 433 02d8 17070000 		sb	a5,_ZGVZN7Console3getEvE8instance,a4
+ 433      2300F700 
+ 434              	.L18:
+  13:src/../h/0_console.h ****     }
+ 435              		.loc 4 13 9 is_stmt 1
+ 436              	.LBE135:
+ 437              	.LBE134:
+  36:src/main.cpp  ****         Console::get()->putc('a');
+ 438              		.loc 1 36 29 is_stmt 0
+GAS LISTING /tmp/cckfRW2a.s 			page 15
+
+
+ 439 02e0 93052006 		li	a1,98
+ 440 02e4 17050000 		lla	a0,_ZZN7Console3getEvE8instance
+ 440      13050500 
+ 441 02ec 97000000 		call	_ZN7Console4putcEc@plt
+ 441      E7800000 
+ 442              	.LVL48:
+  37:src/main.cpp  **** 
+ 443              		.loc 1 37 9 is_stmt 1
+ 444              	.LBB139:
+ 445              	.LBB140:
+  12:src/../h/0_console.h ****         return &instance;
+ 446              		.loc 4 12 9
+  12:src/../h/0_console.h ****         return &instance;
+ 447              		.loc 4 12 24 is_stmt 0
+ 448 02f4 97070000 		lbu	a5,_ZGVZN7Console3getEvE8instance
+ 448      83C70700 
+ 449 02fc 63920702 		bnez	a5,.L19
+ 450              	.LVL49:
+ 451              	.LBB141:
+ 452              	.LBB142:
+ 453              	.LBB143:
+ 454              		.loc 4 26 63
+ 455 0300 97070000 		lla	a5,_ZZN7Console3getEvE8instance
+ 455      93870700 
+ 456 0308 23B00700 		sd	zero,0(a5)
+ 457 030c 23B40700 		sd	zero,8(a5)
+ 458 0310 23BC073E 		sd	zero,1016(a5)
+ 459              	.LVL50:
+ 460              	.LBE143:
+ 461              	.LBE142:
+ 462              	.LBE141:
+  12:src/../h/0_console.h ****         return &instance;
+ 463              		.loc 4 12 24
+ 464 0314 93071000 		li	a5,1
+ 465 0318 17070000 		sb	a5,_ZGVZN7Console3getEvE8instance,a4
+ 465      2300F700 
+ 466              	.L19:
+  13:src/../h/0_console.h ****     }
+ 467              		.loc 4 13 9 is_stmt 1
+ 468              	.LBE140:
+ 469              	.LBE139:
+  37:src/main.cpp  **** 
+ 470              		.loc 1 37 29 is_stmt 0
+ 471 0320 93051006 		li	a1,97
+ 472 0324 17050000 		lla	a0,_ZZN7Console3getEvE8instance
+ 472      13050500 
+ 473 032c 97000000 		call	_ZN7Console4putcEc@plt
+ 473      E7800000 
+ 474              	.LVL51:
+  39:src/main.cpp  ****     }
+ 475              		.loc 1 39 9 is_stmt 1
+ 476              	.LBB144:
+ 477              	.LBB113:
+  12:src/../h/0_console.h ****         return &instance;
+ 478              		.loc 4 12 9
+  12:src/../h/0_console.h ****         return &instance;
+ 479              		.loc 4 12 24 is_stmt 0
+GAS LISTING /tmp/cckfRW2a.s 			page 16
+
+
+ 480 0334 97070000 		lbu	a5,_ZGVZN7Console3getEvE8instance
+ 480      83C70700 
+ 481 033c E39A07E4 		bnez	a5,.L20
+ 482              	.LVL52:
+ 483              	.LBB110:
+ 484              	.LBB111:
+ 485              	.LBB112:
+ 486              		.loc 4 26 63
+ 487 0340 97070000 		lla	a5,_ZZN7Console3getEvE8instance
+ 487      93870700 
+ 488 0348 23B00700 		sd	zero,0(a5)
+ 489 034c 23B40700 		sd	zero,8(a5)
+ 490 0350 23BC073E 		sd	zero,1016(a5)
+ 491              	.LVL53:
+ 492              	.LBE112:
+ 493              	.LBE111:
+ 494              	.LBE110:
+  12:src/../h/0_console.h ****         return &instance;
+ 495              		.loc 4 12 24
+ 496 0354 93071000 		li	a5,1
+ 497 0358 17070000 		sb	a5,_ZGVZN7Console3getEvE8instance,a4
+ 497      2300F700 
+ 498 0360 6FF01FE3 		j	.L20
+ 499              	.L10:
+ 500              	.LBE113:
+ 501              	.LBE144:
+ 502              	.LBE147:
+  41:src/main.cpp  **** 
+ 503              		.loc 1 41 1
+ 504 0364 83308101 		ld	ra,24(sp)
+ 505              		.cfi_restore 1
+ 506 0368 03340101 		ld	s0,16(sp)
+ 507              		.cfi_restore 8
+ 508              		.cfi_def_cfa 2, 32
+ 509 036c 83348100 		ld	s1,8(sp)
+ 510              		.cfi_restore 9
+ 511              	.LVL54:
+ 512 0370 13010102 		addi	sp,sp,32
+ 513              		.cfi_def_cfa_offset 0
+ 514 0374 67800000 		jr	ra
+ 515              		.cfi_endproc
+ 516              	.LFE18:
+ 518              		.section	.text._Z7_assertbPKci,"axG",@progbits,_Z7_assertbPKci,comdat
+ 519              		.align	2
+ 520              		.weak	_Z7_assertbPKci
+ 522              	_Z7_assertbPKci:
+ 523              	.LFB0:
   19:src/../h/../h/my_console.h ****     if(valid)
- 318              		.loc 3 19 1 is_stmt 1
- 319              		.cfi_startproc
- 320              	.LVL38:
+ 524              		.loc 3 19 1 is_stmt 1
+ 525              		.cfi_startproc
+ 526              	.LVL55:
   20:src/../h/../h/my_console.h ****         return;
- 321              		.loc 3 20 5
- 322 0000 63040500 		beqz	a0,.L22
- 323 0004 67800000 		ret
- 324              	.L22:
+ 527              		.loc 3 20 5
+ 528 0000 63040500 		beqz	a0,.L31
+ 529 0004 67800000 		ret
+ 530              	.L31:
   19:src/../h/../h/my_console.h ****     if(valid)
- 325              		.loc 3 19 1 is_stmt 0
- 326 0008 130101FE 		addi	sp,sp,-32
- 327              		.cfi_def_cfa_offset 32
- 328 000c 233C1100 		sd	ra,24(sp)
- 329 0010 23388100 		sd	s0,16(sp)
- 330 0014 23349100 		sd	s1,8(sp)
- 331 0018 23302101 		sd	s2,0(sp)
- 332              		.cfi_offset 1, -8
- 333              		.cfi_offset 8, -16
- 334              		.cfi_offset 9, -24
- 335              		.cfi_offset 18, -32
- 336 001c 13040102 		addi	s0,sp,32
- 337              		.cfi_def_cfa 8, 0
- 338 0020 13890500 		mv	s2,a1
- 339 0024 93040600 		mv	s1,a2
+GAS LISTING /tmp/cckfRW2a.s 			page 17
+
+
+ 531              		.loc 3 19 1 is_stmt 0
+ 532 0008 130101FE 		addi	sp,sp,-32
+ 533              		.cfi_def_cfa_offset 32
+ 534 000c 233C1100 		sd	ra,24(sp)
+ 535 0010 23388100 		sd	s0,16(sp)
+ 536 0014 23349100 		sd	s1,8(sp)
+ 537 0018 23302101 		sd	s2,0(sp)
+ 538              		.cfi_offset 1, -8
+ 539              		.cfi_offset 8, -16
+ 540              		.cfi_offset 9, -24
+ 541              		.cfi_offset 18, -32
+ 542 001c 13040102 		addi	s0,sp,32
+ 543              		.cfi_def_cfa 8, 0
+ 544 0020 13890500 		mv	s2,a1
+ 545 0024 93040600 		mv	s1,a2
   23:src/../h/../h/my_console.h ****     putString(file);
- 340              		.loc 3 23 5 is_stmt 1
+ 546              		.loc 3 23 5 is_stmt 1
   23:src/../h/../h/my_console.h ****     putString(file);
- 341              		.loc 3 23 14 is_stmt 0
- 342 0028 17050000 		lla	a0,.LC0
- 342      13050500 
- 343              	.LVL39:
- 344 0030 97000000 		call	_Z9putStringPKc@plt
- 344      E7800000 
- 345              	.LVL40:
+ 547              		.loc 3 23 14 is_stmt 0
+ 548 0028 17050000 		lla	a0,.LC0
+ 548      13050500 
+ 549              	.LVL56:
+ 550 0030 97000000 		call	_Z9putStringPKc@plt
+ 550      E7800000 
+ 551              	.LVL57:
   24:src/../h/../h/my_console.h ****     putString("    line: ");
- 346              		.loc 3 24 5 is_stmt 1
+ 552              		.loc 3 24 5 is_stmt 1
   24:src/../h/../h/my_console.h ****     putString("    line: ");
- 347              		.loc 3 24 14 is_stmt 0
- 348 0038 13050900 		mv	a0,s2
- 349 003c 97000000 		call	_Z9putStringPKc@plt
- 349      E7800000 
- 350              	.LVL41:
+ 553              		.loc 3 24 14 is_stmt 0
+ 554 0038 13050900 		mv	a0,s2
+ 555 003c 97000000 		call	_Z9putStringPKc@plt
+ 555      E7800000 
+ 556              	.LVL58:
   25:src/../h/../h/my_console.h ****     putInt(line);
- 351              		.loc 3 25 5 is_stmt 1
+ 557              		.loc 3 25 5 is_stmt 1
   25:src/../h/../h/my_console.h ****     putInt(line);
- 352              		.loc 3 25 14 is_stmt 0
- 353 0044 17050000 		lla	a0,.LC2
- 353      13050500 
- 354 004c 97000000 		call	_Z9putStringPKc@plt
- 354      E7800000 
- 355              	.LVL42:
+ 558              		.loc 3 25 14 is_stmt 0
+ 559 0044 17050000 		lla	a0,.LC2
+ 559      13050500 
+ 560 004c 97000000 		call	_Z9putStringPKc@plt
+ 560      E7800000 
+ 561              	.LVL59:
   26:src/../h/../h/my_console.h ****     putString("   ===========================");
- 356              		.loc 3 26 5 is_stmt 1
-GAS LISTING /tmp/cc1XBZ0z.s 			page 13
-
-
+ 562              		.loc 3 26 5 is_stmt 1
   26:src/../h/../h/my_console.h ****     putString("   ===========================");
- 357              		.loc 3 26 11 is_stmt 0
- 358 0054 13850400 		mv	a0,s1
- 359 0058 97000000 		call	_Z6putInti@plt
- 359      E7800000 
- 360              	.LVL43:
+ 563              		.loc 3 26 11 is_stmt 0
+ 564 0054 13850400 		mv	a0,s1
+ 565 0058 97000000 		call	_Z6putInti@plt
+ 565      E7800000 
+ 566              	.LVL60:
   27:src/../h/../h/my_console.h ****     putNewline();
- 361              		.loc 3 27 5 is_stmt 1
+ 567              		.loc 3 27 5 is_stmt 1
   27:src/../h/../h/my_console.h ****     putNewline();
- 362              		.loc 3 27 14 is_stmt 0
- 363 0060 17050000 		lla	a0,.LC3
- 363      13050500 
- 364 0068 97000000 		call	_Z9putStringPKc@plt
- 364      E7800000 
- 365              	.LVL44:
+ 568              		.loc 3 27 14 is_stmt 0
+ 569 0060 17050000 		lla	a0,.LC3
+ 569      13050500 
+ 570 0068 97000000 		call	_Z9putStringPKc@plt
+GAS LISTING /tmp/cckfRW2a.s 			page 18
+
+
+ 570      E7800000 
+ 571              	.LVL61:
   28:src/../h/../h/my_console.h **** 
- 366              		.loc 3 28 5 is_stmt 1
+ 572              		.loc 3 28 5 is_stmt 1
   28:src/../h/../h/my_console.h **** 
- 367              		.loc 3 28 15 is_stmt 0
- 368 0070 97000000 		call	_Z10putNewlinev@plt
- 368      E7800000 
- 369              	.LVL45:
- 370              		.loc 3 30 5 is_stmt 1
- 371              		.loc 3 30 15 is_stmt 0
- 372 0078 97000000 		call	_Z10stopKernelv@plt
- 372      E7800000 
- 373              	.LVL46:
- 374              		.cfi_endproc
- 375              	.LFE0:
- 377              		.text
- 378              		.align	2
- 379              		.globl	_Z13testAsyncCallv
- 381              	_Z13testAsyncCallv:
- 382              	.LFB21:
- 107:src/main.cpp  ****     enableExternalInterrupts();
- 383              		.loc 1 107 1 is_stmt 1
- 384              		.cfi_startproc
- 385 01dc 130101FE 		addi	sp,sp,-32
- 386              		.cfi_def_cfa_offset 32
- 387 01e0 233C1100 		sd	ra,24(sp)
- 388 01e4 23388100 		sd	s0,16(sp)
- 389              		.cfi_offset 1, -8
- 390              		.cfi_offset 8, -16
- 391 01e8 13040102 		addi	s0,sp,32
- 392              		.cfi_def_cfa 8, 0
- 108:src/main.cpp  **** 
- 393              		.loc 1 108 5
- 108:src/main.cpp  **** 
- 394              		.loc 1 108 29 is_stmt 0
- 395 01ec 97000000 		call	_Z24enableExternalInterruptsv@plt
- 395      E7800000 
- 396              	.LVL47:
- 110:src/main.cpp  **** 
- 397              		.loc 1 110 5 is_stmt 1
- 398 01f4 97000000 		call	_ZN8MemAlloc3getEv@plt
- 398      E7800000 
- 399              	.LVL48:
-GAS LISTING /tmp/cc1XBZ0z.s 			page 14
-
-
- 400 01fc 97000000 		call	_ZN8MemAlloc16getUserlandUsageEv@plt
- 400      E7800000 
- 401              	.LVL49:
- 402              	.LBB38:
- 403              	.LBB39:
-  20:src/../h/../h/my_console.h ****         return;
- 404              		.loc 3 20 5
- 405 0204 63180504 		bnez	a0,.L27
-  21:src/../h/../h/my_console.h **** 
- 406              		.loc 3 21 9
- 407              	.LVL50:
- 408              	.LBE39:
- 409              	.LBE38:
- 114:src/main.cpp  **** //    int argB = 420;
- 410              		.loc 1 114 5
- 114:src/main.cpp  **** //    int argB = 420;
- 411              		.loc 1 114 9 is_stmt 0
- 412 0208 93075004 		li	a5,69
- 413 020c 2326F4FE 		sw	a5,-20(s0)
- 116:src/main.cpp  **** //    thread_t b;
- 414              		.loc 1 116 5 is_stmt 1
- 118:src/main.cpp  **** //    thread_create(&b, doB, &argB);
- 415              		.loc 1 118 5
- 118:src/main.cpp  **** //    thread_create(&b, doB, &argB);
- 416              		.loc 1 118 18 is_stmt 0
- 417 0210 1306C4FE 		addi	a2,s0,-20
- 418 0214 97050000 		lla	a1,_Z3doCPv
- 418      93850500 
- 419 021c 130504FE 		addi	a0,s0,-32
- 420 0220 97000000 		call	_Z13thread_createPmPFvPvES0_@plt
- 420      E7800000 
- 421              	.LVL51:
- 120:src/main.cpp  **** 
- 422              		.loc 1 120 5 is_stmt 1
- 120:src/main.cpp  **** 
- 423              		.loc 1 120 20 is_stmt 0
- 424 0228 97000000 		call	_Z15thread_dispatchv@plt
- 424      E7800000 
- 425              	.LVL52:
- 123:src/main.cpp  **** }
- 426              		.loc 1 123 5 is_stmt 1
- 427 0230 97000000 		call	_ZN8MemAlloc3getEv@plt
- 427      E7800000 
- 428              	.LVL53:
- 429 0238 97000000 		call	_ZN8MemAlloc16getUserlandUsageEv@plt
- 429      E7800000 
- 430              	.LVL54:
- 431              	.LBB41:
- 432              	.LBB42:
-  20:src/../h/../h/my_console.h ****         return;
- 433              		.loc 3 20 5
- 434 0240 63180506 		bnez	a0,.L28
- 435              	.LBE42:
- 436              	.LBE41:
- 124:src/main.cpp  **** 
- 437              		.loc 1 124 1 is_stmt 0
- 438 0244 83308101 		ld	ra,24(sp)
-GAS LISTING /tmp/cc1XBZ0z.s 			page 15
-
-
- 439              		.cfi_remember_state
- 440              		.cfi_restore 1
- 441 0248 03340101 		ld	s0,16(sp)
- 442              		.cfi_restore 8
- 443              		.cfi_def_cfa 2, 32
- 444 024c 13010102 		addi	sp,sp,32
- 445              		.cfi_def_cfa_offset 0
- 446 0250 67800000 		jr	ra
- 447              	.LVL55:
- 448              	.L27:
- 449              		.cfi_restore_state
- 450              	.LBB44:
- 451              	.LBB40:
-  23:src/../h/../h/my_console.h ****     putString(file);
- 452              		.loc 3 23 5 is_stmt 1
-  23:src/../h/../h/my_console.h ****     putString(file);
- 453              		.loc 3 23 14 is_stmt 0
- 454 0254 17050000 		lla	a0,.LC0
- 454      13050500 
- 455              	.LVL56:
- 456 025c 97000000 		call	_Z9putStringPKc@plt
- 456      E7800000 
- 457              	.LVL57:
-  24:src/../h/../h/my_console.h ****     putString("    line: ");
- 458              		.loc 3 24 5 is_stmt 1
-  24:src/../h/../h/my_console.h ****     putString("    line: ");
- 459              		.loc 3 24 14 is_stmt 0
- 460 0264 17050000 		lla	a0,.LC1
- 460      13050500 
- 461 026c 97000000 		call	_Z9putStringPKc@plt
- 461      E7800000 
- 462              	.LVL58:
-  25:src/../h/../h/my_console.h ****     putInt(line);
- 463              		.loc 3 25 5 is_stmt 1
-  25:src/../h/../h/my_console.h ****     putInt(line);
- 464              		.loc 3 25 14 is_stmt 0
- 465 0274 17050000 		lla	a0,.LC2
- 465      13050500 
- 466 027c 97000000 		call	_Z9putStringPKc@plt
- 466      E7800000 
- 467              	.LVL59:
-  26:src/../h/../h/my_console.h ****     putString("   ===========================");
- 468              		.loc 3 26 5 is_stmt 1
-  26:src/../h/../h/my_console.h ****     putString("   ===========================");
- 469              		.loc 3 26 11 is_stmt 0
- 470 0284 1305E006 		li	a0,110
- 471 0288 97000000 		call	_Z6putInti@plt
- 471      E7800000 
- 472              	.LVL60:
-  27:src/../h/../h/my_console.h ****     putNewline();
- 473              		.loc 3 27 5 is_stmt 1
-  27:src/../h/../h/my_console.h ****     putNewline();
- 474              		.loc 3 27 14 is_stmt 0
- 475 0290 17050000 		lla	a0,.LC3
- 475      13050500 
- 476 0298 97000000 		call	_Z9putStringPKc@plt
- 476      E7800000 
-GAS LISTING /tmp/cc1XBZ0z.s 			page 16
-
-
- 477              	.LVL61:
-  28:src/../h/../h/my_console.h **** 
- 478              		.loc 3 28 5 is_stmt 1
-  28:src/../h/../h/my_console.h **** 
- 479              		.loc 3 28 15 is_stmt 0
- 480 02a0 97000000 		call	_Z10putNewlinev@plt
- 480      E7800000 
- 481              	.LVL62:
- 482              		.loc 3 30 5 is_stmt 1
- 483              		.loc 3 30 15 is_stmt 0
- 484 02a8 97000000 		call	_Z10stopKernelv@plt
- 484      E7800000 
- 485              	.LVL63:
- 486              	.L28:
- 487              	.LBE40:
- 488              	.LBE44:
- 489              	.LBB45:
- 490              	.LBB43:
-  23:src/../h/../h/my_console.h ****     putString(file);
- 491              		.loc 3 23 5 is_stmt 1
-  23:src/../h/../h/my_console.h ****     putString(file);
- 492              		.loc 3 23 14 is_stmt 0
- 493 02b0 17050000 		lla	a0,.LC0
- 493      13050500 
- 494              	.LVL64:
- 495 02b8 97000000 		call	_Z9putStringPKc@plt
- 495      E7800000 
- 496              	.LVL65:
-  24:src/../h/../h/my_console.h ****     putString("    line: ");
- 497              		.loc 3 24 5 is_stmt 1
-  24:src/../h/../h/my_console.h ****     putString("    line: ");
- 498              		.loc 3 24 14 is_stmt 0
- 499 02c0 17050000 		lla	a0,.LC1
- 499      13050500 
- 500 02c8 97000000 		call	_Z9putStringPKc@plt
- 500      E7800000 
- 501              	.LVL66:
-  25:src/../h/../h/my_console.h ****     putInt(line);
- 502              		.loc 3 25 5 is_stmt 1
-  25:src/../h/../h/my_console.h ****     putInt(line);
- 503              		.loc 3 25 14 is_stmt 0
- 504 02d0 17050000 		lla	a0,.LC2
- 504      13050500 
- 505 02d8 97000000 		call	_Z9putStringPKc@plt
- 505      E7800000 
- 506              	.LVL67:
-  26:src/../h/../h/my_console.h ****     putString("   ===========================");
- 507              		.loc 3 26 5 is_stmt 1
-  26:src/../h/../h/my_console.h ****     putString("   ===========================");
- 508              		.loc 3 26 11 is_stmt 0
- 509 02e0 1305B007 		li	a0,123
- 510 02e4 97000000 		call	_Z6putInti@plt
- 510      E7800000 
- 511              	.LVL68:
-  27:src/../h/../h/my_console.h ****     putNewline();
- 512              		.loc 3 27 5 is_stmt 1
-  27:src/../h/../h/my_console.h ****     putNewline();
-GAS LISTING /tmp/cc1XBZ0z.s 			page 17
-
-
- 513              		.loc 3 27 14 is_stmt 0
- 514 02ec 17050000 		lla	a0,.LC3
- 514      13050500 
- 515 02f4 97000000 		call	_Z9putStringPKc@plt
- 515      E7800000 
- 516              	.LVL69:
-  28:src/../h/../h/my_console.h **** 
- 517              		.loc 3 28 5 is_stmt 1
-  28:src/../h/../h/my_console.h **** 
- 518              		.loc 3 28 15 is_stmt 0
- 519 02fc 97000000 		call	_Z10putNewlinev@plt
- 519      E7800000 
- 520              	.LVL70:
- 521              		.loc 3 30 5 is_stmt 1
- 522              		.loc 3 30 15 is_stmt 0
- 523 0304 97000000 		call	_Z10stopKernelv@plt
- 523      E7800000 
- 524              	.LVL71:
- 525              	.LBE43:
- 526              	.LBE45:
- 527              		.cfi_endproc
- 528              	.LFE21:
- 530              		.align	2
- 531              		.globl	_Z16doInitialAssertsv
- 533              	_Z16doInitialAssertsv:
- 534              	.LFB22:
- 127:src/main.cpp  ****     assert(sizeof(void*) == 8);
- 535              		.loc 1 127 1 is_stmt 1
- 536              		.cfi_startproc
- 128:src/main.cpp  ****     assert((((uint64)HEAP_END_ADDR - (uint64)HEAP_START_ADDR) / 1024 / 1024) == 127);
- 537              		.loc 1 128 5
- 538              	.LVL72:
-  20:src/../h/../h/my_console.h ****         return;
- 539              		.loc 3 20 5
-  21:src/../h/../h/my_console.h **** 
- 540              		.loc 3 21 9
- 129:src/main.cpp  ****     assert(DEFAULT_STACK_SIZE == 4096);
- 541              		.loc 1 129 5
- 542 030c 97070000 		la	a5,HEAP_END_ADDR
- 542      83B70700 
- 543 0314 83B70700 		ld	a5,0(a5)
- 544 0318 17070000 		la	a4,HEAP_START_ADDR
- 544      03370700 
- 545 0320 03370700 		ld	a4,0(a4)
- 546 0324 B387E740 		sub	a5,a5,a4
- 547 0328 370710F8 		li	a4,-133169152
- 548 032c B387E700 		add	a5,a5,a4
- 549 0330 37071000 		li	a4,1048576
- 550              	.LVL73:
- 551              	.LBB48:
- 552              	.LBB49:
-  20:src/../h/../h/my_console.h ****         return;
- 553              		.loc 3 20 5
- 554 0334 63F4E700 		bgeu	a5,a4,.L34
- 555 0338 67800000 		ret
- 556              	.L34:
- 557              	.LBE49:
-GAS LISTING /tmp/cc1XBZ0z.s 			page 18
-
-
- 558              	.LBE48:
- 127:src/main.cpp  ****     assert(sizeof(void*) == 8);
- 559              		.loc 1 127 1 is_stmt 0
- 560 033c 130101FF 		addi	sp,sp,-16
- 561              		.cfi_def_cfa_offset 16
- 562 0340 23341100 		sd	ra,8(sp)
- 563 0344 23308100 		sd	s0,0(sp)
- 564              		.cfi_offset 1, -8
- 565              		.cfi_offset 8, -16
- 566 0348 13040101 		addi	s0,sp,16
- 567              		.cfi_def_cfa 8, 0
- 568              	.LBB51:
- 569              	.LBB50:
-  23:src/../h/../h/my_console.h ****     putString(file);
- 570              		.loc 3 23 5 is_stmt 1
-  23:src/../h/../h/my_console.h ****     putString(file);
- 571              		.loc 3 23 14 is_stmt 0
- 572 034c 17050000 		lla	a0,.LC0
- 572      13050500 
- 573 0354 97000000 		call	_Z9putStringPKc@plt
- 573      E7800000 
- 574              	.LVL74:
-  24:src/../h/../h/my_console.h ****     putString("    line: ");
- 575              		.loc 3 24 5 is_stmt 1
-  24:src/../h/../h/my_console.h ****     putString("    line: ");
- 576              		.loc 3 24 14 is_stmt 0
- 577 035c 17050000 		lla	a0,.LC1
- 577      13050500 
- 578 0364 97000000 		call	_Z9putStringPKc@plt
+ 573              		.loc 3 28 15 is_stmt 0
+ 574 0070 97000000 		call	_Z10putNewlinev@plt
+ 574      E7800000 
+ 575              	.LVL62:
+ 576              		.loc 3 30 5 is_stmt 1
+ 577              		.loc 3 30 15 is_stmt 0
+ 578 0078 97000000 		call	_Z10stopKernelv@plt
  578      E7800000 
- 579              	.LVL75:
-  25:src/../h/../h/my_console.h ****     putInt(line);
- 580              		.loc 3 25 5 is_stmt 1
-  25:src/../h/../h/my_console.h ****     putInt(line);
- 581              		.loc 3 25 14 is_stmt 0
- 582 036c 17050000 		lla	a0,.LC2
- 582      13050500 
- 583 0374 97000000 		call	_Z9putStringPKc@plt
- 583      E7800000 
- 584              	.LVL76:
-  26:src/../h/../h/my_console.h ****     putString("   ===========================");
- 585              		.loc 3 26 5 is_stmt 1
-  26:src/../h/../h/my_console.h ****     putString("   ===========================");
- 586              		.loc 3 26 11 is_stmt 0
- 587 037c 13051008 		li	a0,129
- 588 0380 97000000 		call	_Z6putInti@plt
- 588      E7800000 
- 589              	.LVL77:
-  27:src/../h/../h/my_console.h ****     putNewline();
- 590              		.loc 3 27 5 is_stmt 1
-  27:src/../h/../h/my_console.h ****     putNewline();
- 591              		.loc 3 27 14 is_stmt 0
- 592 0388 17050000 		lla	a0,.LC3
- 592      13050500 
- 593 0390 97000000 		call	_Z9putStringPKc@plt
- 593      E7800000 
- 594              	.LVL78:
-GAS LISTING /tmp/cc1XBZ0z.s 			page 19
-
-
-  28:src/../h/../h/my_console.h **** 
- 595              		.loc 3 28 5 is_stmt 1
-  28:src/../h/../h/my_console.h **** 
- 596              		.loc 3 28 15 is_stmt 0
- 597 0398 97000000 		call	_Z10putNewlinev@plt
- 597      E7800000 
- 598              	.LVL79:
- 599              		.loc 3 30 5 is_stmt 1
- 600              		.loc 3 30 15 is_stmt 0
- 601 03a0 97000000 		call	_Z10stopKernelv@plt
+ 579              	.LVL63:
+ 580              		.cfi_endproc
+ 581              	.LFE0:
+ 583              		.text
+ 584              		.align	2
+ 585              		.globl	_Z13testAsyncCallv
+ 587              	_Z13testAsyncCallv:
+ 588              	.LFB21:
+  89:src/main.cpp  ****     enableExternalInterrupts();
+ 589              		.loc 1 89 1 is_stmt 1
+ 590              		.cfi_startproc
+ 591 0378 130101FE 		addi	sp,sp,-32
+ 592              		.cfi_def_cfa_offset 32
+ 593 037c 233C1100 		sd	ra,24(sp)
+ 594 0380 23388100 		sd	s0,16(sp)
+ 595              		.cfi_offset 1, -8
+ 596              		.cfi_offset 8, -16
+ 597 0384 13040102 		addi	s0,sp,32
+ 598              		.cfi_def_cfa 8, 0
+  90:src/main.cpp  **** 
+ 599              		.loc 1 90 5
+  90:src/main.cpp  **** 
+ 600              		.loc 1 90 29 is_stmt 0
+ 601 0388 97000000 		call	_Z24enableExternalInterruptsv@plt
  601      E7800000 
- 602              	.LVL80:
- 603              	.LBE50:
- 604              	.LBE51:
- 605              		.cfi_endproc
- 606              	.LFE22:
- 608              		.align	2
- 609              		.globl	_Z19initInterruptVectorv
- 611              	_Z19initInterruptVectorv:
- 612              	.LFB23:
- 139:src/main.cpp  **** 
- 613              		.loc 1 139 1 is_stmt 1
- 614              		.cfi_startproc
- 615 03a8 130101FF 		addi	sp,sp,-16
- 616              		.cfi_def_cfa_offset 16
- 617 03ac 23348100 		sd	s0,8(sp)
- 618              		.cfi_offset 8, -8
- 619 03b0 13040101 		addi	s0,sp,16
- 620              		.cfi_def_cfa 8, 0
- 142:src/main.cpp  **** 
- 621              		.loc 1 142 5
- 142:src/main.cpp  **** 
- 622              		.loc 1 142 78 is_stmt 0
- 623 03b4 97070000 		la	a5,trapRoutine
- 623      83B70700 
- 624              	#APP
- 625              	# 142 "src/main.cpp" 1
- 145:src/main.cpp  ****     __asm__ volatile ("csrc stvec, 0x2");
- 626              		csrw stvec, a5
- 627              	# 0 "" 2
- 628              		.loc 1 145 5 is_stmt 1
- 145:src/main.cpp  ****     __asm__ volatile ("csrc stvec, 0x2");
- 629              		.loc 1 145 41 is_stmt 0
- 630              	# 145 "src/main.cpp" 1
- 146:src/main.cpp  **** }
- 631              		csrs stvec, 0x1
- 632              	# 0 "" 2
- 633              		.loc 1 146 5 is_stmt 1
- 146:src/main.cpp  **** }
- 634              		.loc 1 146 41 is_stmt 0
- 635              	# 146 "src/main.cpp" 1
- 636              		csrc stvec, 0x2
- 637              	# 0 "" 2
- 638              		.loc 1 147 1
- 639              	#NO_APP
- 640 03c8 03348100 		ld	s0,8(sp)
- 641              		.cfi_restore 8
-GAS LISTING /tmp/cc1XBZ0z.s 			page 20
+ 602              	.LVL64:
+  92:src/main.cpp  **** 
+ 603              		.loc 1 92 5 is_stmt 1
+ 604 0390 97000000 		call	_ZN8MemAlloc3getEv@plt
+ 604      E7800000 
+ 605              	.LVL65:
+ 606 0398 97000000 		call	_ZN8MemAlloc16getUserlandUsageEv@plt
+ 606      E7800000 
+ 607              	.LVL66:
+ 608              	.LBB152:
+ 609              	.LBB153:
+  20:src/../h/../h/my_console.h ****         return;
+ 610              		.loc 3 20 5
+ 611 03a0 63180504 		bnez	a0,.L36
+  21:src/../h/../h/my_console.h **** 
+ 612              		.loc 3 21 9
+ 613              	.LVL67:
+ 614              	.LBE153:
+ 615              	.LBE152:
+GAS LISTING /tmp/cckfRW2a.s 			page 19
 
 
- 642              		.cfi_def_cfa 2, 16
- 643 03cc 13010101 		addi	sp,sp,16
- 644              		.cfi_def_cfa_offset 0
- 645 03d0 67800000 		jr	ra
- 646              		.cfi_endproc
- 647              	.LFE23:
- 649              		.align	2
- 650              		.globl	main
- 652              	main:
- 653              	.LFB19:
-  58:src/main.cpp  ****     disableExternalInterrupts();
- 654              		.loc 1 58 1 is_stmt 1
- 655              		.cfi_startproc
- 656 03d4 130101FD 		addi	sp,sp,-48
- 657              		.cfi_def_cfa_offset 48
- 658 03d8 23341102 		sd	ra,40(sp)
- 659 03dc 23308102 		sd	s0,32(sp)
- 660 03e0 233C9100 		sd	s1,24(sp)
- 661              		.cfi_offset 1, -8
- 662              		.cfi_offset 8, -16
- 663              		.cfi_offset 9, -24
- 664 03e4 13040103 		addi	s0,sp,48
- 665              		.cfi_def_cfa 8, 0
-  59:src/main.cpp  **** 
- 666              		.loc 1 59 5
-  59:src/main.cpp  **** 
- 667              		.loc 1 59 30 is_stmt 0
- 668 03e8 97000000 		call	_Z25disableExternalInterruptsv@plt
- 668      E7800000 
- 669              	.LVL81:
-  61:src/main.cpp  ****     doInitialAsserts();
- 670              		.loc 1 61 5 is_stmt 1
-  61:src/main.cpp  ****     doInitialAsserts();
- 671              		.loc 1 61 24 is_stmt 0
- 672 03f0 97000000 		call	_Z19initInterruptVectorv
+  96:src/main.cpp  **** //    int argB = 420;
+ 616              		.loc 1 96 5
+  96:src/main.cpp  **** //    int argB = 420;
+ 617              		.loc 1 96 9 is_stmt 0
+ 618 03a4 93075004 		li	a5,69
+ 619 03a8 2326F4FE 		sw	a5,-20(s0)
+  98:src/main.cpp  **** //    thread_t b;
+ 620              		.loc 1 98 5 is_stmt 1
+ 100:src/main.cpp  **** //    thread_create(&b, doB, &argB);
+ 621              		.loc 1 100 5
+ 100:src/main.cpp  **** //    thread_create(&b, doB, &argB);
+ 622              		.loc 1 100 18 is_stmt 0
+ 623 03ac 1306C4FE 		addi	a2,s0,-20
+ 624 03b0 97050000 		lla	a1,_Z3doCPv
+ 624      93850500 
+ 625 03b8 130504FE 		addi	a0,s0,-32
+ 626 03bc 97000000 		call	_Z13thread_createPmPFvPvES0_@plt
+ 626      E7800000 
+ 627              	.LVL68:
+ 102:src/main.cpp  **** 
+ 628              		.loc 1 102 5 is_stmt 1
+ 102:src/main.cpp  **** 
+ 629              		.loc 1 102 20 is_stmt 0
+ 630 03c4 97000000 		call	_Z15thread_dispatchv@plt
+ 630      E7800000 
+ 631              	.LVL69:
+ 105:src/main.cpp  **** }
+ 632              		.loc 1 105 5 is_stmt 1
+ 633 03cc 97000000 		call	_ZN8MemAlloc3getEv@plt
+ 633      E7800000 
+ 634              	.LVL70:
+ 635 03d4 97000000 		call	_ZN8MemAlloc16getUserlandUsageEv@plt
+ 635      E7800000 
+ 636              	.LVL71:
+ 637              	.LBB155:
+ 638              	.LBB156:
+  20:src/../h/../h/my_console.h ****         return;
+ 639              		.loc 3 20 5
+ 640 03dc 63180506 		bnez	a0,.L37
+ 641              	.LBE156:
+ 642              	.LBE155:
+ 106:src/main.cpp  **** 
+ 643              		.loc 1 106 1 is_stmt 0
+ 644 03e0 83308101 		ld	ra,24(sp)
+ 645              		.cfi_remember_state
+ 646              		.cfi_restore 1
+ 647 03e4 03340101 		ld	s0,16(sp)
+ 648              		.cfi_restore 8
+ 649              		.cfi_def_cfa 2, 32
+ 650 03e8 13010102 		addi	sp,sp,32
+ 651              		.cfi_def_cfa_offset 0
+ 652 03ec 67800000 		jr	ra
+ 653              	.LVL72:
+ 654              	.L36:
+ 655              		.cfi_restore_state
+ 656              	.LBB158:
+ 657              	.LBB154:
+GAS LISTING /tmp/cckfRW2a.s 			page 20
+
+
+  23:src/../h/../h/my_console.h ****     putString(file);
+ 658              		.loc 3 23 5 is_stmt 1
+  23:src/../h/../h/my_console.h ****     putString(file);
+ 659              		.loc 3 23 14 is_stmt 0
+ 660 03f0 17050000 		lla	a0,.LC0
+ 660      13050500 
+ 661              	.LVL73:
+ 662 03f8 97000000 		call	_Z9putStringPKc@plt
+ 662      E7800000 
+ 663              	.LVL74:
+  24:src/../h/../h/my_console.h ****     putString("    line: ");
+ 664              		.loc 3 24 5 is_stmt 1
+  24:src/../h/../h/my_console.h ****     putString("    line: ");
+ 665              		.loc 3 24 14 is_stmt 0
+ 666 0400 17050000 		lla	a0,.LC1
+ 666      13050500 
+ 667 0408 97000000 		call	_Z9putStringPKc@plt
+ 667      E7800000 
+ 668              	.LVL75:
+  25:src/../h/../h/my_console.h ****     putInt(line);
+ 669              		.loc 3 25 5 is_stmt 1
+  25:src/../h/../h/my_console.h ****     putInt(line);
+ 670              		.loc 3 25 14 is_stmt 0
+ 671 0410 17050000 		lla	a0,.LC2
+ 671      13050500 
+ 672 0418 97000000 		call	_Z9putStringPKc@plt
  672      E7800000 
- 673              	.LVL82:
-  62:src/main.cpp  **** 
- 674              		.loc 1 62 5 is_stmt 1
-  62:src/main.cpp  **** 
- 675              		.loc 1 62 21 is_stmt 0
- 676 03f8 97000000 		call	_Z16doInitialAssertsv
- 676      E7800000 
- 677              	.LVL83:
-  64:src/main.cpp  ****     __asm__ volatile ("mv %[name], sp" : [name] "=r"(sp));
- 678              		.loc 1 64 5 is_stmt 1
-  65:src/main.cpp  ****     kernelThread.sp = sp;
- 679              		.loc 1 65 5
-  65:src/main.cpp  ****     kernelThread.sp = sp;
- 680              		.loc 1 65 58 is_stmt 0
- 681              	#APP
- 682              	# 65 "src/main.cpp" 1
- 683              		mv a5, sp
- 684              	# 0 "" 2
- 685              	.LVL84:
-  66:src/main.cpp  ****     Thread::setPRunning(&kernelThread);
- 686              		.loc 1 66 5 is_stmt 1
-GAS LISTING /tmp/cc1XBZ0z.s 			page 21
+ 673              	.LVL76:
+  26:src/../h/../h/my_console.h ****     putString("   ===========================");
+ 674              		.loc 3 26 5 is_stmt 1
+  26:src/../h/../h/my_console.h ****     putString("   ===========================");
+ 675              		.loc 3 26 11 is_stmt 0
+ 676 0420 1305C005 		li	a0,92
+ 677 0424 97000000 		call	_Z6putInti@plt
+ 677      E7800000 
+ 678              	.LVL77:
+  27:src/../h/../h/my_console.h ****     putNewline();
+ 679              		.loc 3 27 5 is_stmt 1
+  27:src/../h/../h/my_console.h ****     putNewline();
+ 680              		.loc 3 27 14 is_stmt 0
+ 681 042c 17050000 		lla	a0,.LC3
+ 681      13050500 
+ 682 0434 97000000 		call	_Z9putStringPKc@plt
+ 682      E7800000 
+ 683              	.LVL78:
+  28:src/../h/../h/my_console.h **** 
+ 684              		.loc 3 28 5 is_stmt 1
+  28:src/../h/../h/my_console.h **** 
+ 685              		.loc 3 28 15 is_stmt 0
+ 686 043c 97000000 		call	_Z10putNewlinev@plt
+ 686      E7800000 
+ 687              	.LVL79:
+ 688              		.loc 3 30 5 is_stmt 1
+ 689              		.loc 3 30 15 is_stmt 0
+ 690 0444 97000000 		call	_Z10stopKernelv@plt
+ 690      E7800000 
+ 691              	.LVL80:
+GAS LISTING /tmp/cckfRW2a.s 			page 21
 
 
-  66:src/main.cpp  ****     Thread::setPRunning(&kernelThread);
- 687              		.loc 1 66 21 is_stmt 0
- 688              	#NO_APP
- 689 0404 97040000 		lla	s1,.LANCHOR0
- 689      93840400 
- 690 040c 23B4F404 		sd	a5,72(s1)
-  67:src/main.cpp  ****     assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
- 691              		.loc 1 67 5 is_stmt 1
-  67:src/main.cpp  ****     assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
- 692              		.loc 1 67 24 is_stmt 0
- 693 0410 13850400 		mv	a0,s1
- 694 0414 97000000 		call	_ZN6Thread11setPRunningEPS_@plt
- 694      E7800000 
- 695              	.LVL85:
-  68:src/main.cpp  ****     kernelThread.id = 0;
- 696              		.loc 1 68 5 is_stmt 1
- 697 041c 97000000 		call	_ZN6Thread11getPRunningEv@plt
- 697      E7800000 
- 698              	.LVL86:
- 699 0424 93078504 		addi	a5,a0,72
- 700 0428 17070000 		la	a4,_ZN6Thread10pRunningSpE
- 700      03370700 
- 701 0430 03350700 		ld	a0,0(a4)
- 702 0434 3305F540 		sub	a0,a0,a5
- 703 0438 13064004 		li	a2,68
- 704 043c 97050000 		lla	a1,.LC1
- 704      93850500 
- 705 0444 13351500 		seqz	a0,a0
- 706 0448 97000000 		call	_Z7_assertbPKci
+ 692              	.L37:
+ 693              	.LBE154:
+ 694              	.LBE158:
+ 695              	.LBB159:
+ 696              	.LBB157:
+  23:src/../h/../h/my_console.h ****     putString(file);
+ 697              		.loc 3 23 5 is_stmt 1
+  23:src/../h/../h/my_console.h ****     putString(file);
+ 698              		.loc 3 23 14 is_stmt 0
+ 699 044c 17050000 		lla	a0,.LC0
+ 699      13050500 
+ 700              	.LVL81:
+ 701 0454 97000000 		call	_Z9putStringPKc@plt
+ 701      E7800000 
+ 702              	.LVL82:
+  24:src/../h/../h/my_console.h ****     putString("    line: ");
+ 703              		.loc 3 24 5 is_stmt 1
+  24:src/../h/../h/my_console.h ****     putString("    line: ");
+ 704              		.loc 3 24 14 is_stmt 0
+ 705 045c 17050000 		lla	a0,.LC1
+ 705      13050500 
+ 706 0464 97000000 		call	_Z9putStringPKc@plt
  706      E7800000 
- 707              	.LVL87:
-  69:src/main.cpp  ****     Thread::pAllThreads[0] = &kernelThread;
- 708              		.loc 1 69 5
-  69:src/main.cpp  ****     Thread::pAllThreads[0] = &kernelThread;
- 709              		.loc 1 69 21 is_stmt 0
- 710 0450 23B40402 		sd	zero,40(s1)
-  70:src/main.cpp  **** 
- 711              		.loc 1 70 5 is_stmt 1
-  70:src/main.cpp  **** 
- 712              		.loc 1 70 28 is_stmt 0
- 713 0454 97070000 		la	a5,_ZN6Thread11pAllThreadsE
- 713      83B70700 
- 714 045c 23B09700 		sd	s1,0(a5)
-  72:src/main.cpp  ****     thread_create(&t, &userWrapper, nullptr);
- 715              		.loc 1 72 5 is_stmt 1
-  73:src/main.cpp  **** 
- 716              		.loc 1 73 5
-  73:src/main.cpp  **** 
- 717              		.loc 1 73 18 is_stmt 0
- 718 0460 13060000 		li	a2,0
- 719 0464 97050000 		lla	a1,_Z11userWrapperPv
- 719      93850500 
- 720 046c 130584FD 		addi	a0,s0,-40
- 721 0470 97000000 		call	_Z13thread_createPmPFvPvES0_@plt
+ 707              	.LVL83:
+  25:src/../h/../h/my_console.h ****     putInt(line);
+ 708              		.loc 3 25 5 is_stmt 1
+  25:src/../h/../h/my_console.h ****     putInt(line);
+ 709              		.loc 3 25 14 is_stmt 0
+ 710 046c 17050000 		lla	a0,.LC2
+ 710      13050500 
+ 711 0474 97000000 		call	_Z9putStringPKc@plt
+ 711      E7800000 
+ 712              	.LVL84:
+  26:src/../h/../h/my_console.h ****     putString("   ===========================");
+ 713              		.loc 3 26 5 is_stmt 1
+  26:src/../h/../h/my_console.h ****     putString("   ===========================");
+ 714              		.loc 3 26 11 is_stmt 0
+ 715 047c 13059006 		li	a0,105
+ 716 0480 97000000 		call	_Z6putInti@plt
+ 716      E7800000 
+ 717              	.LVL85:
+  27:src/../h/../h/my_console.h ****     putNewline();
+ 718              		.loc 3 27 5 is_stmt 1
+  27:src/../h/../h/my_console.h ****     putNewline();
+ 719              		.loc 3 27 14 is_stmt 0
+ 720 0488 17050000 		lla	a0,.LC3
+ 720      13050500 
+ 721 0490 97000000 		call	_Z9putStringPKc@plt
  721      E7800000 
- 722              	.LVL88:
-  75:src/main.cpp  **** 
-GAS LISTING /tmp/cc1XBZ0z.s 			page 22
-
-
- 723              		.loc 1 75 5 is_stmt 1
-  75:src/main.cpp  **** 
- 724              		.loc 1 75 71 is_stmt 0
- 725 0478 97000000 		call	_ZN8MemAlloc3getEv@plt
+ 722              	.LVL86:
+  28:src/../h/../h/my_console.h **** 
+ 723              		.loc 3 28 5 is_stmt 1
+  28:src/../h/../h/my_console.h **** 
+ 724              		.loc 3 28 15 is_stmt 0
+ 725 0498 97000000 		call	_Z10putNewlinev@plt
  725      E7800000 
- 726              	.LVL89:
- 727 0480 97000000 		call	_ZN8MemAlloc16getUserlandUsageEv@plt
- 727      E7800000 
- 728              	.LVL90:
-  75:src/main.cpp  **** 
- 729              		.loc 1 75 36
- 730 0488 97070000 		la	a5,_ZN6Thread22initialUserMemoryUsageE
- 730      83B70700 
- 731 0490 23B0A700 		sd	a0,0(a5)
-  77:src/main.cpp  **** 
- 732              		.loc 1 77 5 is_stmt 1
-  77:src/main.cpp  **** 
- 733              		.loc 1 77 15 is_stmt 0
- 734 0494 97000000 		call	plic_claim@plt
- 734      E7800000 
- 735              	.LVL91:
-  79:src/main.cpp  **** 
- 736              		.loc 1 79 5 is_stmt 1
-  79:src/main.cpp  **** 
- 737              		.loc 1 79 18 is_stmt 0
- 738 049c 1305A000 		li	a0,10
- 739 04a0 97000000 		call	plic_complete@plt
- 739      E7800000 
- 740              	.LVL92:
-  81:src/main.cpp  ****     __asm__ volatile ("ecall");
- 741              		.loc 1 81 5 is_stmt 1
-  81:src/main.cpp  ****     __asm__ volatile ("ecall");
- 742              		.loc 1 81 34 is_stmt 0
- 743              	#APP
- 744              	# 81 "src/main.cpp" 1
-  82:src/main.cpp  **** 
- 745              		li a0, 4
- 746              	# 0 "" 2
- 747              		.loc 1 82 5 is_stmt 1
-  82:src/main.cpp  **** 
- 748              		.loc 1 82 31 is_stmt 0
- 749              	# 82 "src/main.cpp" 1
-  84:src/main.cpp  **** 
- 750              		ecall
- 751              	# 0 "" 2
- 752              		.loc 1 84 5 is_stmt 1
-  84:src/main.cpp  **** 
- 753              		.loc 1 84 43 is_stmt 0
- 754              	# 84 "src/main.cpp" 1
-  86:src/main.cpp  **** }
- 755              		csrw sscratch, x0
- 756              	# 0 "" 2
- 757              		.loc 1 86 5 is_stmt 1
-  87:src/main.cpp  **** 
- 758              		.loc 1 87 1 is_stmt 0
- 759              	#NO_APP
- 760 04b4 13050000 		li	a0,0
-GAS LISTING /tmp/cc1XBZ0z.s 			page 23
+ 726              	.LVL87:
+GAS LISTING /tmp/cckfRW2a.s 			page 22
 
 
- 761 04b8 83308102 		ld	ra,40(sp)
- 762              		.cfi_restore 1
- 763 04bc 03340102 		ld	s0,32(sp)
- 764              		.cfi_restore 8
- 765              		.cfi_def_cfa 2, 48
- 766 04c0 83348101 		ld	s1,24(sp)
- 767              		.cfi_restore 9
- 768 04c4 13010103 		addi	sp,sp,48
- 769              		.cfi_def_cfa_offset 0
- 770 04c8 67800000 		jr	ra
- 771              		.cfi_endproc
- 772              	.LFE19:
- 774              		.align	2
- 776              	_GLOBAL__sub_I_kernelThread:
- 777              	.LFB25:
- 778              		.loc 1 147 1 is_stmt 1
- 779              		.cfi_startproc
- 780 04cc 130101FF 		addi	sp,sp,-16
- 781              		.cfi_def_cfa_offset 16
- 782 04d0 23341100 		sd	ra,8(sp)
- 783 04d4 23308100 		sd	s0,0(sp)
- 784              		.cfi_offset 1, -8
- 785              		.cfi_offset 8, -16
- 786 04d8 13040101 		addi	s0,sp,16
- 787              		.cfi_def_cfa 8, 0
- 788              		.loc 1 147 1 is_stmt 0
- 789 04dc B7050100 		li	a1,65536
- 790 04e0 9385F5FF 		addi	a1,a1,-1
- 791 04e4 13051000 		li	a0,1
- 792 04e8 97000000 		call	_Z41__static_initialization_and_destruction_0ii
- 792      E7800000 
- 793              	.LVL93:
- 794 04f0 83308100 		ld	ra,8(sp)
- 795              		.cfi_restore 1
- 796 04f4 03340100 		ld	s0,0(sp)
- 797              		.cfi_restore 8
- 798              		.cfi_def_cfa 2, 16
- 799 04f8 13010101 		addi	sp,sp,16
- 800              		.cfi_def_cfa_offset 0
- 801 04fc 67800000 		jr	ra
- 802              		.cfi_endproc
- 803              	.LFE25:
- 805              		.section	.init_array,"aw"
- 806              		.align	3
- 807 0000 00000000 		.dword	_GLOBAL__sub_I_kernelThread
- 807      00000000 
- 808              		.globl	kernelStack
- 809              		.globl	kernelThread
- 810              		.bss
- 811              		.align	3
- 812              		.set	.LANCHOR0,. + 0
- 815              	kernelThread:
- 816 0000 00000000 		.zero	80
- 816      00000000 
- 816      00000000 
- 816      00000000 
- 816      00000000 
-GAS LISTING /tmp/cc1XBZ0z.s 			page 24
+ 727              		.loc 3 30 5 is_stmt 1
+ 728              		.loc 3 30 15 is_stmt 0
+ 729 04a0 97000000 		call	_Z10stopKernelv@plt
+ 729      E7800000 
+ 730              	.LVL88:
+ 731              	.LBE157:
+ 732              	.LBE159:
+ 733              		.cfi_endproc
+ 734              	.LFE21:
+ 736              		.align	2
+ 737              		.globl	_Z16doInitialAssertsv
+ 739              	_Z16doInitialAssertsv:
+ 740              	.LFB22:
+ 109:src/main.cpp  ****     assert(sizeof(void*) == 8);
+ 741              		.loc 1 109 1 is_stmt 1
+ 742              		.cfi_startproc
+ 110:src/main.cpp  ****     assert((((uint64)HEAP_END_ADDR - (uint64)HEAP_START_ADDR) / 1024 / 1024) == 127);
+ 743              		.loc 1 110 5
+ 744              	.LVL89:
+  20:src/../h/../h/my_console.h ****         return;
+ 745              		.loc 3 20 5
+  21:src/../h/../h/my_console.h **** 
+ 746              		.loc 3 21 9
+ 111:src/main.cpp  ****     assert(DEFAULT_STACK_SIZE == 4096);
+ 747              		.loc 1 111 5
+ 748 04a8 97070000 		la	a5,HEAP_END_ADDR
+ 748      83B70700 
+ 749 04b0 83B70700 		ld	a5,0(a5)
+ 750 04b4 17070000 		la	a4,HEAP_START_ADDR
+ 750      03370700 
+ 751 04bc 03370700 		ld	a4,0(a4)
+ 752 04c0 B387E740 		sub	a5,a5,a4
+ 753 04c4 370710F8 		li	a4,-133169152
+ 754 04c8 B387E700 		add	a5,a5,a4
+ 755 04cc 37071000 		li	a4,1048576
+ 756              	.LVL90:
+ 757              	.LBB162:
+ 758              	.LBB163:
+  20:src/../h/../h/my_console.h ****         return;
+ 759              		.loc 3 20 5
+ 760 04d0 63F4E700 		bgeu	a5,a4,.L43
+ 761 04d4 67800000 		ret
+ 762              	.L43:
+ 763              	.LBE163:
+ 764              	.LBE162:
+ 109:src/main.cpp  ****     assert(sizeof(void*) == 8);
+ 765              		.loc 1 109 1 is_stmt 0
+ 766 04d8 130101FF 		addi	sp,sp,-16
+ 767              		.cfi_def_cfa_offset 16
+ 768 04dc 23341100 		sd	ra,8(sp)
+ 769 04e0 23308100 		sd	s0,0(sp)
+ 770              		.cfi_offset 1, -8
+ 771              		.cfi_offset 8, -16
+ 772 04e4 13040101 		addi	s0,sp,16
+ 773              		.cfi_def_cfa 8, 0
+ 774              	.LBB165:
+ 775              	.LBB164:
+GAS LISTING /tmp/cckfRW2a.s 			page 23
 
 
- 819              	kernelStack:
- 820 0050 00000000 		.zero	43696
- 820      00000000 
- 820      00000000 
- 820      00000000 
- 820      00000000 
- 821              		.text
- 822              	.Letext0:
- 823              		.file 4 "src/../h/../lib/hw.h"
- 824              		.file 5 "src/../h/alloc.h"
- 825              		.file 6 "src/../h/c_api.h"
- 826              		.file 7 "src/../h/../h/../h/risc.h"
-GAS LISTING /tmp/cc1XBZ0z.s 			page 25
+  23:src/../h/../h/my_console.h ****     putString(file);
+ 776              		.loc 3 23 5 is_stmt 1
+  23:src/../h/../h/my_console.h ****     putString(file);
+ 777              		.loc 3 23 14 is_stmt 0
+ 778 04e8 17050000 		lla	a0,.LC0
+ 778      13050500 
+ 779 04f0 97000000 		call	_Z9putStringPKc@plt
+ 779      E7800000 
+ 780              	.LVL91:
+  24:src/../h/../h/my_console.h ****     putString("    line: ");
+ 781              		.loc 3 24 5 is_stmt 1
+  24:src/../h/../h/my_console.h ****     putString("    line: ");
+ 782              		.loc 3 24 14 is_stmt 0
+ 783 04f8 17050000 		lla	a0,.LC1
+ 783      13050500 
+ 784 0500 97000000 		call	_Z9putStringPKc@plt
+ 784      E7800000 
+ 785              	.LVL92:
+  25:src/../h/../h/my_console.h ****     putInt(line);
+ 786              		.loc 3 25 5 is_stmt 1
+  25:src/../h/../h/my_console.h ****     putInt(line);
+ 787              		.loc 3 25 14 is_stmt 0
+ 788 0508 17050000 		lla	a0,.LC2
+ 788      13050500 
+ 789 0510 97000000 		call	_Z9putStringPKc@plt
+ 789      E7800000 
+ 790              	.LVL93:
+  26:src/../h/../h/my_console.h ****     putString("   ===========================");
+ 791              		.loc 3 26 5 is_stmt 1
+  26:src/../h/../h/my_console.h ****     putString("   ===========================");
+ 792              		.loc 3 26 11 is_stmt 0
+ 793 0518 1305F006 		li	a0,111
+ 794 051c 97000000 		call	_Z6putInti@plt
+ 794      E7800000 
+ 795              	.LVL94:
+  27:src/../h/../h/my_console.h ****     putNewline();
+ 796              		.loc 3 27 5 is_stmt 1
+  27:src/../h/../h/my_console.h ****     putNewline();
+ 797              		.loc 3 27 14 is_stmt 0
+ 798 0524 17050000 		lla	a0,.LC3
+ 798      13050500 
+ 799 052c 97000000 		call	_Z9putStringPKc@plt
+ 799      E7800000 
+ 800              	.LVL95:
+  28:src/../h/../h/my_console.h **** 
+ 801              		.loc 3 28 5 is_stmt 1
+  28:src/../h/../h/my_console.h **** 
+ 802              		.loc 3 28 15 is_stmt 0
+ 803 0534 97000000 		call	_Z10putNewlinev@plt
+ 803      E7800000 
+ 804              	.LVL96:
+ 805              		.loc 3 30 5 is_stmt 1
+ 806              		.loc 3 30 15 is_stmt 0
+ 807 053c 97000000 		call	_Z10stopKernelv@plt
+ 807      E7800000 
+ 808              	.LVL97:
+ 809              	.LBE164:
+GAS LISTING /tmp/cckfRW2a.s 			page 24
+
+
+ 810              	.LBE165:
+ 811              		.cfi_endproc
+ 812              	.LFE22:
+ 814              		.align	2
+ 815              		.globl	_Z19initInterruptVectorv
+ 817              	_Z19initInterruptVectorv:
+ 818              	.LFB23:
+ 121:src/main.cpp  **** 
+ 819              		.loc 1 121 1 is_stmt 1
+ 820              		.cfi_startproc
+ 821 0544 130101FF 		addi	sp,sp,-16
+ 822              		.cfi_def_cfa_offset 16
+ 823 0548 23348100 		sd	s0,8(sp)
+ 824              		.cfi_offset 8, -8
+ 825 054c 13040101 		addi	s0,sp,16
+ 826              		.cfi_def_cfa 8, 0
+ 124:src/main.cpp  **** 
+ 827              		.loc 1 124 5
+ 124:src/main.cpp  **** 
+ 828              		.loc 1 124 78 is_stmt 0
+ 829 0550 97070000 		la	a5,trapRoutine
+ 829      83B70700 
+ 830              	#APP
+ 831              	# 124 "src/main.cpp" 1
+ 127:src/main.cpp  ****     __asm__ volatile ("csrc stvec, 0x2");
+ 832              		csrw stvec, a5
+ 833              	# 0 "" 2
+ 834              		.loc 1 127 5 is_stmt 1
+ 127:src/main.cpp  ****     __asm__ volatile ("csrc stvec, 0x2");
+ 835              		.loc 1 127 41 is_stmt 0
+ 836              	# 127 "src/main.cpp" 1
+ 128:src/main.cpp  **** }
+ 837              		csrs stvec, 0x1
+ 838              	# 0 "" 2
+ 839              		.loc 1 128 5 is_stmt 1
+ 128:src/main.cpp  **** }
+ 840              		.loc 1 128 41 is_stmt 0
+ 841              	# 128 "src/main.cpp" 1
+ 842              		csrc stvec, 0x2
+ 843              	# 0 "" 2
+ 844              		.loc 1 129 1
+ 845              	#NO_APP
+ 846 0564 03348100 		ld	s0,8(sp)
+ 847              		.cfi_restore 8
+ 848              		.cfi_def_cfa 2, 16
+ 849 0568 13010101 		addi	sp,sp,16
+ 850              		.cfi_def_cfa_offset 0
+ 851 056c 67800000 		jr	ra
+ 852              		.cfi_endproc
+ 853              	.LFE23:
+ 855              		.align	2
+ 856              		.globl	main
+ 858              	main:
+ 859              	.LFB19:
+  44:src/main.cpp  ****     disableExternalInterrupts();
+ 860              		.loc 1 44 1 is_stmt 1
+ 861              		.cfi_startproc
+GAS LISTING /tmp/cckfRW2a.s 			page 25
+
+
+ 862 0570 130101FD 		addi	sp,sp,-48
+ 863              		.cfi_def_cfa_offset 48
+ 864 0574 23341102 		sd	ra,40(sp)
+ 865 0578 23308102 		sd	s0,32(sp)
+ 866 057c 233C9100 		sd	s1,24(sp)
+ 867              		.cfi_offset 1, -8
+ 868              		.cfi_offset 8, -16
+ 869              		.cfi_offset 9, -24
+ 870 0580 13040103 		addi	s0,sp,48
+ 871              		.cfi_def_cfa 8, 0
+  45:src/main.cpp  **** 
+ 872              		.loc 1 45 5
+  45:src/main.cpp  **** 
+ 873              		.loc 1 45 30 is_stmt 0
+ 874 0584 97000000 		call	_Z25disableExternalInterruptsv@plt
+ 874      E7800000 
+ 875              	.LVL98:
+  47:src/main.cpp  ****     doInitialAsserts();
+ 876              		.loc 1 47 5 is_stmt 1
+  47:src/main.cpp  ****     doInitialAsserts();
+ 877              		.loc 1 47 24 is_stmt 0
+ 878 058c 97000000 		call	_Z19initInterruptVectorv
+ 878      E7800000 
+ 879              	.LVL99:
+  48:src/main.cpp  **** 
+ 880              		.loc 1 48 5 is_stmt 1
+  48:src/main.cpp  **** 
+ 881              		.loc 1 48 21 is_stmt 0
+ 882 0594 97000000 		call	_Z16doInitialAssertsv
+ 882      E7800000 
+ 883              	.LVL100:
+  50:src/main.cpp  ****     __asm__ volatile ("mv %[name], sp" : [name] "=r"(sp));
+ 884              		.loc 1 50 5 is_stmt 1
+  51:src/main.cpp  ****     kernelThread.sp = sp;
+ 885              		.loc 1 51 5
+  51:src/main.cpp  ****     kernelThread.sp = sp;
+ 886              		.loc 1 51 58 is_stmt 0
+ 887              	#APP
+ 888              	# 51 "src/main.cpp" 1
+ 889              		mv a5, sp
+ 890              	# 0 "" 2
+ 891              	.LVL101:
+  52:src/main.cpp  ****     Thread::setPRunning(&kernelThread);
+ 892              		.loc 1 52 5 is_stmt 1
+  52:src/main.cpp  ****     Thread::setPRunning(&kernelThread);
+ 893              		.loc 1 52 21 is_stmt 0
+ 894              	#NO_APP
+ 895 05a0 97040000 		lla	s1,.LANCHOR0
+ 895      93840400 
+ 896 05a8 23B4F404 		sd	a5,72(s1)
+  53:src/main.cpp  ****     assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
+ 897              		.loc 1 53 5 is_stmt 1
+  53:src/main.cpp  ****     assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
+ 898              		.loc 1 53 24 is_stmt 0
+ 899 05ac 13850400 		mv	a0,s1
+ 900 05b0 97000000 		call	_ZN6Thread11setPRunningEPS_@plt
+ 900      E7800000 
+GAS LISTING /tmp/cckfRW2a.s 			page 26
+
+
+ 901              	.LVL102:
+  54:src/main.cpp  ****     kernelThread.id = 0;
+ 902              		.loc 1 54 5 is_stmt 1
+ 903 05b8 97000000 		call	_ZN6Thread11getPRunningEv@plt
+ 903      E7800000 
+ 904              	.LVL103:
+ 905 05c0 93078504 		addi	a5,a0,72
+ 906 05c4 17070000 		la	a4,_ZN6Thread10pRunningSpE
+ 906      03370700 
+ 907 05cc 03350700 		ld	a0,0(a4)
+ 908 05d0 3305F540 		sub	a0,a0,a5
+ 909 05d4 13066003 		li	a2,54
+ 910 05d8 97050000 		lla	a1,.LC1
+ 910      93850500 
+ 911 05e0 13351500 		seqz	a0,a0
+ 912 05e4 97000000 		call	_Z7_assertbPKci
+ 912      E7800000 
+ 913              	.LVL104:
+  55:src/main.cpp  ****     Thread::pAllThreads[0] = &kernelThread;
+ 914              		.loc 1 55 5
+  55:src/main.cpp  ****     Thread::pAllThreads[0] = &kernelThread;
+ 915              		.loc 1 55 21 is_stmt 0
+ 916 05ec 23B40402 		sd	zero,40(s1)
+  56:src/main.cpp  **** 
+ 917              		.loc 1 56 5 is_stmt 1
+  56:src/main.cpp  **** 
+ 918              		.loc 1 56 28 is_stmt 0
+ 919 05f0 97070000 		la	a5,_ZN6Thread11pAllThreadsE
+ 919      83B70700 
+ 920 05f8 23B09700 		sd	s1,0(a5)
+  58:src/main.cpp  ****     thread_create(&t, &userWrapper, nullptr);
+ 921              		.loc 1 58 5 is_stmt 1
+  59:src/main.cpp  **** 
+ 922              		.loc 1 59 5
+  59:src/main.cpp  **** 
+ 923              		.loc 1 59 18 is_stmt 0
+ 924 05fc 13060000 		li	a2,0
+ 925 0600 97050000 		lla	a1,_Z11userWrapperPv
+ 925      93850500 
+ 926 0608 130584FD 		addi	a0,s0,-40
+ 927 060c 97000000 		call	_Z13thread_createPmPFvPvES0_@plt
+ 927      E7800000 
+ 928              	.LVL105:
+  61:src/main.cpp  **** 
+ 929              		.loc 1 61 5 is_stmt 1
+  61:src/main.cpp  **** 
+ 930              		.loc 1 61 71 is_stmt 0
+ 931 0614 97000000 		call	_ZN8MemAlloc3getEv@plt
+ 931      E7800000 
+ 932              	.LVL106:
+ 933 061c 97000000 		call	_ZN8MemAlloc16getUserlandUsageEv@plt
+ 933      E7800000 
+ 934              	.LVL107:
+  61:src/main.cpp  **** 
+ 935              		.loc 1 61 36
+ 936 0624 97070000 		la	a5,_ZN6Thread22initialUserMemoryUsageE
+ 936      83B70700 
+GAS LISTING /tmp/cckfRW2a.s 			page 27
+
+
+ 937 062c 23B0A700 		sd	a0,0(a5)
+  63:src/main.cpp  ****     __asm__ volatile ("ecall");
+ 938              		.loc 1 63 5 is_stmt 1
+  63:src/main.cpp  ****     __asm__ volatile ("ecall");
+ 939              		.loc 1 63 34 is_stmt 0
+ 940              	#APP
+ 941              	# 63 "src/main.cpp" 1
+  64:src/main.cpp  **** 
+ 942              		li a0, 4
+ 943              	# 0 "" 2
+ 944              		.loc 1 64 5 is_stmt 1
+  64:src/main.cpp  **** 
+ 945              		.loc 1 64 31 is_stmt 0
+ 946              	# 64 "src/main.cpp" 1
+  66:src/main.cpp  **** 
+ 947              		ecall
+ 948              	# 0 "" 2
+ 949              		.loc 1 66 5 is_stmt 1
+  66:src/main.cpp  **** 
+ 950              		.loc 1 66 43 is_stmt 0
+ 951              	# 66 "src/main.cpp" 1
+  68:src/main.cpp  **** }
+ 952              		csrw sscratch, x0
+ 953              	# 0 "" 2
+ 954              		.loc 1 68 5 is_stmt 1
+  69:src/main.cpp  **** 
+ 955              		.loc 1 69 1 is_stmt 0
+ 956              	#NO_APP
+ 957 063c 13050000 		li	a0,0
+ 958 0640 83308102 		ld	ra,40(sp)
+ 959              		.cfi_restore 1
+ 960 0644 03340102 		ld	s0,32(sp)
+ 961              		.cfi_restore 8
+ 962              		.cfi_def_cfa 2, 48
+ 963 0648 83348101 		ld	s1,24(sp)
+ 964              		.cfi_restore 9
+ 965 064c 13010103 		addi	sp,sp,48
+ 966              		.cfi_def_cfa_offset 0
+ 967 0650 67800000 		jr	ra
+ 968              		.cfi_endproc
+ 969              	.LFE19:
+ 971              		.align	2
+ 973              	_GLOBAL__sub_I_kernelThread:
+ 974              	.LFB25:
+ 975              		.loc 1 129 1 is_stmt 1
+ 976              		.cfi_startproc
+ 977 0654 130101FF 		addi	sp,sp,-16
+ 978              		.cfi_def_cfa_offset 16
+ 979 0658 23341100 		sd	ra,8(sp)
+ 980 065c 23308100 		sd	s0,0(sp)
+ 981              		.cfi_offset 1, -8
+ 982              		.cfi_offset 8, -16
+ 983 0660 13040101 		addi	s0,sp,16
+ 984              		.cfi_def_cfa 8, 0
+ 985              		.loc 1 129 1 is_stmt 0
+ 986 0664 B7050100 		li	a1,65536
+ 987 0668 9385F5FF 		addi	a1,a1,-1
+GAS LISTING /tmp/cckfRW2a.s 			page 28
+
+
+ 988 066c 13051000 		li	a0,1
+ 989 0670 97000000 		call	_Z41__static_initialization_and_destruction_0ii
+ 989      E7800000 
+ 990              	.LVL108:
+ 991 0678 83308100 		ld	ra,8(sp)
+ 992              		.cfi_restore 1
+ 993 067c 03340100 		ld	s0,0(sp)
+ 994              		.cfi_restore 8
+ 995              		.cfi_def_cfa 2, 16
+ 996 0680 13010101 		addi	sp,sp,16
+ 997              		.cfi_def_cfa_offset 0
+ 998 0684 67800000 		jr	ra
+ 999              		.cfi_endproc
+ 1000              	.LFE25:
+ 1002              		.section	.init_array,"aw"
+ 1003              		.align	3
+ 1004 0000 00000000 		.dword	_GLOBAL__sub_I_kernelThread
+ 1004      00000000 
+ 1005              		.globl	kernelThread
+ 1006              		.weak	_ZGVZN7Console3getEvE8instance
+ 1007              		.section	.bss._ZGVZN7Console3getEvE8instance,"awG",@nobits,_ZGVZN7Console3getEvE8instance,comdat
+ 1008              		.align	3
+ 1011              	_ZGVZN7Console3getEvE8instance:
+ 1012 0000 00000000 		.zero	8
+ 1012      00000000 
+ 1013              		.weak	_ZZN7Console3getEvE8instance
+ 1014              		.section	.bss._ZZN7Console3getEvE8instance,"awG",@nobits,_ZZN7Console3getEvE8instance,comdat
+ 1015              		.align	3
+ 1018              	_ZZN7Console3getEvE8instance:
+ 1019 0000 00000000 		.zero	1024
+ 1019      00000000 
+ 1019      00000000 
+ 1019      00000000 
+ 1019      00000000 
+ 1020              		.bss
+ 1021              		.align	3
+ 1022              		.set	.LANCHOR0,. + 0
+ 1025              	kernelThread:
+ 1026 0000 00000000 		.zero	80
+ 1026      00000000 
+ 1026      00000000 
+ 1026      00000000 
+ 1026      00000000 
+ 1027              		.text
+ 1028              	.Letext0:
+ 1029              		.file 5 "src/../h/../lib/hw.h"
+ 1030              		.file 6 "src/../h/alloc.h"
+ 1031              		.file 7 "src/../h/c_api.h"
+ 1032              		.file 8 "src/../h/../h/../h/risc.h"
+GAS LISTING /tmp/cckfRW2a.s 			page 29
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 main.cpp
-     /tmp/cc1XBZ0z.s:9      .text:0000000000000000 _Z3doCPv
-     /tmp/cc1XBZ0z.s:13     .text:0000000000000000 .L0 
-     /tmp/cc1XBZ0z.s:15     .text:0000000000000000 .L0 
-     /tmp/cc1XBZ0z.s:16     .text:0000000000000004 .L0 
-     /tmp/cc1XBZ0z.s:18     .text:0000000000000008 .L0 
-     /tmp/cc1XBZ0z.s:20     .text:000000000000000c .L0 
-     /tmp/cc1XBZ0z.s:22     .text:000000000000000c .L0 
-     /tmp/cc1XBZ0z.s:23     .text:000000000000000c .L0 
-     /tmp/cc1XBZ0z.s:25     .text:0000000000000010 .L0 
-     /tmp/cc1XBZ0z.s:26     .text:0000000000000010 .L0 
-     /tmp/cc1XBZ0z.s:27     .text:0000000000000010 .L0 
-     /tmp/cc1XBZ0z.s:33     .text:0000000000000020 .L0 
-        src/main.cpp:98     .text:0000000000000020 .L0 
-     /tmp/cc1XBZ0z.s:41     .text:0000000000000024 .L0 
-     /tmp/cc1XBZ0z.s:42     .text:0000000000000024 .L0 
-     /tmp/cc1XBZ0z.s:47     .text:0000000000000030 .L0 
-     /tmp/cc1XBZ0z.s:48     .text:0000000000000030 .L0 
-     /tmp/cc1XBZ0z.s:54     .text:000000000000003c .L0 
-     /tmp/cc1XBZ0z.s:55     .text:000000000000003c .L0 
-     /tmp/cc1XBZ0z.s:56     .text:000000000000003c .L0 
-     /tmp/cc1XBZ0z.s:58     .text:0000000000000040 .L0 
-     /tmp/cc1XBZ0z.s:59     .text:0000000000000040 .L0 
-     /tmp/cc1XBZ0z.s:62     .text:000000000000004c .L0 
-     /tmp/cc1XBZ0z.s:64     .text:0000000000000054 .L0 
-     /tmp/cc1XBZ0z.s:69     .text:0000000000000054 _Z41__static_initialization_and_destruction_0ii
-     /tmp/cc1XBZ0z.s:72     .text:0000000000000054 .L0 
-     /tmp/cc1XBZ0z.s:74     .text:0000000000000054 .L0 
-     /tmp/cc1XBZ0z.s:75     .text:0000000000000058 .L0 
-     /tmp/cc1XBZ0z.s:77     .text:000000000000005c .L0 
-     /tmp/cc1XBZ0z.s:79     .text:0000000000000060 .L0 
-     /tmp/cc1XBZ0z.s:81     .text:0000000000000060 .L0 
-     /tmp/cc1XBZ0z.s:85     .text:000000000000006c .L0 
-     /tmp/cc1XBZ0z.s:86     .text:000000000000006c .L0 
-     /tmp/cc1XBZ0z.s:87     .text:000000000000006c .L0 
-     /tmp/cc1XBZ0z.s:89     .text:0000000000000070 .L0 
-     /tmp/cc1XBZ0z.s:92     .text:0000000000000074 .L0 
-     /tmp/cc1XBZ0z.s:94     .text:0000000000000074 .L0 
-     /tmp/cc1XBZ0z.s:103    .text:0000000000000080 .L0 
-     /tmp/cc1XBZ0z.s:111    .text:0000000000000090 .L0 
-     /tmp/cc1XBZ0z.s:112    .text:0000000000000094 .L0 
-     /tmp/cc1XBZ0z.s:132    .text:0000000000000094 _Z11userWrapperPv
-     /tmp/cc1XBZ0z.s:135    .text:0000000000000094 .L0 
-     /tmp/cc1XBZ0z.s:137    .text:0000000000000094 .L0 
-     /tmp/cc1XBZ0z.s:138    .text:0000000000000098 .L0 
-     /tmp/cc1XBZ0z.s:142    .text:00000000000000a4 .L0 
-     /tmp/cc1XBZ0z.s:143    .text:00000000000000a4 .L0 
-     /tmp/cc1XBZ0z.s:144    .text:00000000000000a4 .L0 
-     /tmp/cc1XBZ0z.s:146    .text:00000000000000a8 .L0 
-     /tmp/cc1XBZ0z.s:149    .text:00000000000000ac .L0 
-        src/main.cpp:23     .text:00000000000000ac .L0 
-     /tmp/cc1XBZ0z.s:155    .text:00000000000000b0 .L0 
-     /tmp/cc1XBZ0z.s:157    .text:00000000000000b0 .L0 
-     /tmp/cc1XBZ0z.s:162    .text:00000000000000bc .L0 
-     /tmp/cc1XBZ0z.s:163    .text:00000000000000bc .L0 
-     /tmp/cc1XBZ0z.s:169    .text:00000000000000c4 .L0 
-GAS LISTING /tmp/cc1XBZ0z.s 			page 26
+     /tmp/cckfRW2a.s:9      .text:0000000000000000 _Z3doCPv
+     /tmp/cckfRW2a.s:13     .text:0000000000000000 .L0 
+     /tmp/cckfRW2a.s:15     .text:0000000000000000 .L0 
+     /tmp/cckfRW2a.s:16     .text:0000000000000004 .L0 
+     /tmp/cckfRW2a.s:18     .text:0000000000000008 .L0 
+     /tmp/cckfRW2a.s:20     .text:000000000000000c .L0 
+     /tmp/cckfRW2a.s:22     .text:000000000000000c .L0 
+     /tmp/cckfRW2a.s:23     .text:000000000000000c .L0 
+     /tmp/cckfRW2a.s:25     .text:0000000000000010 .L0 
+     /tmp/cckfRW2a.s:26     .text:0000000000000010 .L0 
+     /tmp/cckfRW2a.s:27     .text:0000000000000010 .L0 
+     /tmp/cckfRW2a.s:33     .text:0000000000000020 .L0 
+        src/main.cpp:80     .text:0000000000000020 .L0 
+     /tmp/cckfRW2a.s:41     .text:0000000000000024 .L0 
+     /tmp/cckfRW2a.s:42     .text:0000000000000024 .L0 
+     /tmp/cckfRW2a.s:47     .text:0000000000000030 .L0 
+     /tmp/cckfRW2a.s:48     .text:0000000000000030 .L0 
+     /tmp/cckfRW2a.s:54     .text:000000000000003c .L0 
+     /tmp/cckfRW2a.s:55     .text:000000000000003c .L0 
+     /tmp/cckfRW2a.s:56     .text:000000000000003c .L0 
+     /tmp/cckfRW2a.s:58     .text:0000000000000040 .L0 
+     /tmp/cckfRW2a.s:59     .text:0000000000000040 .L0 
+     /tmp/cckfRW2a.s:62     .text:000000000000004c .L0 
+     /tmp/cckfRW2a.s:64     .text:0000000000000054 .L0 
+     /tmp/cckfRW2a.s:69     .text:0000000000000054 _Z41__static_initialization_and_destruction_0ii
+     /tmp/cckfRW2a.s:72     .text:0000000000000054 .L0 
+     /tmp/cckfRW2a.s:74     .text:0000000000000054 .L0 
+     /tmp/cckfRW2a.s:75     .text:0000000000000058 .L0 
+     /tmp/cckfRW2a.s:77     .text:000000000000005c .L0 
+     /tmp/cckfRW2a.s:79     .text:0000000000000060 .L0 
+     /tmp/cckfRW2a.s:81     .text:0000000000000060 .L0 
+     /tmp/cckfRW2a.s:85     .text:000000000000006c .L0 
+     /tmp/cckfRW2a.s:86     .text:000000000000006c .L0 
+     /tmp/cckfRW2a.s:87     .text:000000000000006c .L0 
+     /tmp/cckfRW2a.s:89     .text:0000000000000070 .L0 
+     /tmp/cckfRW2a.s:92     .text:0000000000000074 .L0 
+     /tmp/cckfRW2a.s:94     .text:0000000000000074 .L0 
+     /tmp/cckfRW2a.s:103    .text:0000000000000080 .L0 
+     /tmp/cckfRW2a.s:111    .text:0000000000000090 .L0 
+     /tmp/cckfRW2a.s:112    .text:0000000000000094 .L0 
+     /tmp/cckfRW2a.s:132    .text:0000000000000094 _Z11userWrapperPv
+     /tmp/cckfRW2a.s:135    .text:0000000000000094 .L0 
+     /tmp/cckfRW2a.s:137    .text:0000000000000094 .L0 
+     /tmp/cckfRW2a.s:138    .text:0000000000000098 .L0 
+     /tmp/cckfRW2a.s:142    .text:00000000000000a4 .L0 
+     /tmp/cckfRW2a.s:143    .text:00000000000000a4 .L0 
+     /tmp/cckfRW2a.s:144    .text:00000000000000a4 .L0 
+     /tmp/cckfRW2a.s:146    .text:00000000000000a8 .L0 
+     /tmp/cckfRW2a.s:152    .text:00000000000000a8 .L0 
+     /tmp/cckfRW2a.s:153    .text:00000000000000a8 .L0 
+     /tmp/cckfRW2a.s:158    .text:00000000000000ac .L0 
+     /tmp/cckfRW2a.s:159    .text:00000000000000ac .L0 
+     /tmp/cckfRW2a.s:168    .text:00000000000000c4 .L0 
+     /tmp/cckfRW2a.s:173    .text:00000000000000c8 .L0 
+     /tmp/cckfRW2a.s:174    .text:00000000000000c8 .L0 
+GAS LISTING /tmp/cckfRW2a.s 			page 30
 
 
-     /tmp/cc1XBZ0z.s:170    .text:00000000000000c4 .L0 
-     /tmp/cc1XBZ0z.s:175    .text:00000000000000c8 .L0 
-     /tmp/cc1XBZ0z.s:176    .text:00000000000000c8 .L0 
-     /tmp/cc1XBZ0z.s:185    .text:00000000000000e0 .L0 
-     /tmp/cc1XBZ0z.s:190    .text:00000000000000e4 .L0 
-     /tmp/cc1XBZ0z.s:191    .text:00000000000000e4 .L0 
-     /tmp/cc1XBZ0z.s:192    .text:00000000000000e4 .L0 
-     /tmp/cc1XBZ0z.s:195    .text:00000000000000ec .L0 
-     /tmp/cc1XBZ0z.s:196    .text:00000000000000ec .L0 
-     /tmp/cc1XBZ0z.s:199    .text:00000000000000f4 .L0 
-     /tmp/cc1XBZ0z.s:200    .text:00000000000000f4 .L0 
-     /tmp/cc1XBZ0z.s:203    .text:00000000000000fc .L0 
-        src/main.cpp:37     .text:00000000000000fc .L0 
-     /tmp/cc1XBZ0z.s:209    .text:0000000000000100 .L0 
-     /tmp/cc1XBZ0z.s:211    .text:0000000000000100 .L0 
-     /tmp/cc1XBZ0z.s:214    .text:0000000000000108 .L0 
-     /tmp/cc1XBZ0z.s:215    .text:0000000000000108 .L0 
-     /tmp/cc1XBZ0z.s:218    .text:0000000000000110 .L0 
-     /tmp/cc1XBZ0z.s:219    .text:0000000000000114 .L0 
-     /tmp/cc1XBZ0z.s:220    .text:0000000000000114 .L0 
-     /tmp/cc1XBZ0z.s:222    .text:0000000000000118 .L0 
-     /tmp/cc1XBZ0z.s:223    .text:0000000000000118 .L0 
-     /tmp/cc1XBZ0z.s:225    .text:000000000000011c .L0 
-     /tmp/cc1XBZ0z.s:228    .text:0000000000000120 .L0 
-     /tmp/cc1XBZ0z.s:232    .text:0000000000000124 .L0 
-     /tmp/cc1XBZ0z.s:236    .text:0000000000000124 .L0 
-     /tmp/cc1XBZ0z.s:237    .text:0000000000000124 .L0 
-     /tmp/cc1XBZ0z.s:241    .text:0000000000000134 .L0 
-     /tmp/cc1XBZ0z.s:242    .text:0000000000000134 .L0 
-     /tmp/cc1XBZ0z.s:246    .text:0000000000000144 .L0 
-     /tmp/cc1XBZ0z.s:247    .text:0000000000000144 .L0 
-     /tmp/cc1XBZ0z.s:251    .text:0000000000000154 .L0 
-     /tmp/cc1XBZ0z.s:252    .text:0000000000000154 .L0 
-     /tmp/cc1XBZ0z.s:256    .text:0000000000000160 .L0 
-     /tmp/cc1XBZ0z.s:257    .text:0000000000000160 .L0 
-     /tmp/cc1XBZ0z.s:261    .text:0000000000000170 .L0 
-     /tmp/cc1XBZ0z.s:262    .text:0000000000000170 .L0 
-     /tmp/cc1XBZ0z.s:265    .text:0000000000000178 .L0 
-     /tmp/cc1XBZ0z.s:266    .text:0000000000000178 .L0 
-     /tmp/cc1XBZ0z.s:274    .text:0000000000000180 .L0 
-     /tmp/cc1XBZ0z.s:275    .text:0000000000000180 .L0 
-     /tmp/cc1XBZ0z.s:280    .text:0000000000000190 .L0 
-     /tmp/cc1XBZ0z.s:281    .text:0000000000000190 .L0 
-     /tmp/cc1XBZ0z.s:285    .text:00000000000001a0 .L0 
-     /tmp/cc1XBZ0z.s:286    .text:00000000000001a0 .L0 
-     /tmp/cc1XBZ0z.s:290    .text:00000000000001b0 .L0 
-     /tmp/cc1XBZ0z.s:291    .text:00000000000001b0 .L0 
-     /tmp/cc1XBZ0z.s:295    .text:00000000000001bc .L0 
-     /tmp/cc1XBZ0z.s:296    .text:00000000000001bc .L0 
-     /tmp/cc1XBZ0z.s:300    .text:00000000000001cc .L0 
-     /tmp/cc1XBZ0z.s:301    .text:00000000000001cc .L0 
-     /tmp/cc1XBZ0z.s:304    .text:00000000000001d4 .L0 
-     /tmp/cc1XBZ0z.s:305    .text:00000000000001d4 .L0 
-     /tmp/cc1XBZ0z.s:309    .text:00000000000001dc .L0 
-     /tmp/cc1XBZ0z.s:316    .text._Z7_assertbPKci:0000000000000000 _Z7_assertbPKci
-     /tmp/cc1XBZ0z.s:319    .text._Z7_assertbPKci:0000000000000000 .L0 
-     /tmp/cc1XBZ0z.s:321    .text._Z7_assertbPKci:0000000000000000 .L0 
-GAS LISTING /tmp/cc1XBZ0z.s 			page 27
+     /tmp/cckfRW2a.s:175    .text:00000000000000c8 .L0 
+     /tmp/cckfRW2a.s:179    .text:00000000000000d0 .L0 
+     /tmp/cckfRW2a.s:180    .text:00000000000000d0 .L0 
+     /tmp/cckfRW2a.s:188    .text:00000000000000d8 .L0 
+     /tmp/cckfRW2a.s:189    .text:00000000000000d8 .L0 
+     /tmp/cckfRW2a.s:194    .text:00000000000000e8 .L0 
+     /tmp/cckfRW2a.s:195    .text:00000000000000e8 .L0 
+     /tmp/cckfRW2a.s:199    .text:00000000000000f8 .L0 
+     /tmp/cckfRW2a.s:200    .text:00000000000000f8 .L0 
+     /tmp/cckfRW2a.s:204    .text:0000000000000108 .L0 
+     /tmp/cckfRW2a.s:205    .text:0000000000000108 .L0 
+     /tmp/cckfRW2a.s:209    .text:0000000000000114 .L0 
+     /tmp/cckfRW2a.s:210    .text:0000000000000114 .L0 
+     /tmp/cckfRW2a.s:214    .text:0000000000000124 .L0 
+     /tmp/cckfRW2a.s:215    .text:0000000000000124 .L0 
+     /tmp/cckfRW2a.s:218    .text:000000000000012c .L0 
+     /tmp/cckfRW2a.s:219    .text:000000000000012c .L0 
+     /tmp/cckfRW2a.s:227    .text:0000000000000134 .L0 
+     /tmp/cckfRW2a.s:228    .text:0000000000000134 .L0 
+     /tmp/cckfRW2a.s:233    .text:0000000000000144 .L0 
+     /tmp/cckfRW2a.s:234    .text:0000000000000144 .L0 
+     /tmp/cckfRW2a.s:238    .text:0000000000000154 .L0 
+     /tmp/cckfRW2a.s:239    .text:0000000000000154 .L0 
+     /tmp/cckfRW2a.s:243    .text:0000000000000164 .L0 
+     /tmp/cckfRW2a.s:244    .text:0000000000000164 .L0 
+     /tmp/cckfRW2a.s:248    .text:0000000000000170 .L0 
+     /tmp/cckfRW2a.s:249    .text:0000000000000170 .L0 
+     /tmp/cckfRW2a.s:253    .text:0000000000000180 .L0 
+     /tmp/cckfRW2a.s:254    .text:0000000000000180 .L0 
+     /tmp/cckfRW2a.s:257    .text:0000000000000188 .L0 
+     /tmp/cckfRW2a.s:258    .text:0000000000000188 .L0 
+     /tmp/cckfRW2a.s:270    .text:0000000000000190 .L0 
+     /tmp/cckfRW2a.s:271    .text:0000000000000190 .L0 
+     /tmp/cckfRW2a.s:1018   .bss._ZZN7Console3getEvE8instance:0000000000000000 _ZZN7Console3getEvE8instance
+     /tmp/cckfRW2a.s:276    .text:00000000000001a4 .L0 
+     /tmp/cckfRW2a.s:280    .text:00000000000001a8 .L0 
+     /tmp/cckfRW2a.s:285    .text:00000000000001b0 .L0 
+     /tmp/cckfRW2a.s:286    .text:00000000000001b0 .L0 
+     /tmp/cckfRW2a.s:1011   .bss._ZGVZN7Console3getEvE8instance:0000000000000000 _ZGVZN7Console3getEvE8instance
+     /tmp/cckfRW2a.s:287    .text:00000000000001b0 .L0 
+     /tmp/cckfRW2a.s:294    .text:00000000000001bc .L0 
+     /tmp/cckfRW2a.s:303    .text:00000000000001d0 .L0 
+     /tmp/cckfRW2a.s:309    .text:00000000000001dc .L0 
+     /tmp/cckfRW2a.s:310    .text:00000000000001dc .L0 
+     /tmp/cckfRW2a.s:318    .text:00000000000001f4 .L0 
+     /tmp/cckfRW2a.s:319    .text:00000000000001f4 .L0 
+     /tmp/cckfRW2a.s:320    .text:00000000000001f4 .L0 
+     /tmp/cckfRW2a.s:327    .text:0000000000000200 .L0 
+     /tmp/cckfRW2a.s:336    .text:0000000000000214 .L0 
+     /tmp/cckfRW2a.s:342    .text:0000000000000220 .L0 
+     /tmp/cckfRW2a.s:343    .text:0000000000000220 .L0 
+     /tmp/cckfRW2a.s:350    .text:0000000000000234 .L0 
+     /tmp/cckfRW2a.s:351    .text:0000000000000234 .L0 
+     /tmp/cckfRW2a.s:352    .text:0000000000000234 .L0 
+     /tmp/cckfRW2a.s:359    .text:0000000000000240 .L0 
+     /tmp/cckfRW2a.s:368    .text:0000000000000254 .L0 
+     /tmp/cckfRW2a.s:374    .text:0000000000000260 .L0 
+GAS LISTING /tmp/cckfRW2a.s 			page 31
 
 
-     /tmp/cc1XBZ0z.s:322    .text._Z7_assertbPKci:0000000000000000 .L0 
-     /tmp/cc1XBZ0z.s:326    .text._Z7_assertbPKci:0000000000000008 .L0 
-     /tmp/cc1XBZ0z.s:327    .text._Z7_assertbPKci:000000000000000c .L0 
-     /tmp/cc1XBZ0z.s:332    .text._Z7_assertbPKci:000000000000001c .L0 
-     /tmp/cc1XBZ0z.s:333    .text._Z7_assertbPKci:000000000000001c .L0 
-     /tmp/cc1XBZ0z.s:334    .text._Z7_assertbPKci:000000000000001c .L0 
-     /tmp/cc1XBZ0z.s:335    .text._Z7_assertbPKci:000000000000001c .L0 
-     /tmp/cc1XBZ0z.s:337    .text._Z7_assertbPKci:0000000000000020 .L0 
-     /tmp/cc1XBZ0z.s:341    .text._Z7_assertbPKci:0000000000000028 .L0 
-     /tmp/cc1XBZ0z.s:342    .text._Z7_assertbPKci:0000000000000028 .L0 
-     /tmp/cc1XBZ0z.s:347    .text._Z7_assertbPKci:0000000000000038 .L0 
-     /tmp/cc1XBZ0z.s:348    .text._Z7_assertbPKci:0000000000000038 .L0 
-     /tmp/cc1XBZ0z.s:352    .text._Z7_assertbPKci:0000000000000044 .L0 
-     /tmp/cc1XBZ0z.s:353    .text._Z7_assertbPKci:0000000000000044 .L0 
-     /tmp/cc1XBZ0z.s:357    .text._Z7_assertbPKci:0000000000000054 .L0 
-     /tmp/cc1XBZ0z.s:358    .text._Z7_assertbPKci:0000000000000054 .L0 
-     /tmp/cc1XBZ0z.s:362    .text._Z7_assertbPKci:0000000000000060 .L0 
-     /tmp/cc1XBZ0z.s:363    .text._Z7_assertbPKci:0000000000000060 .L0 
-     /tmp/cc1XBZ0z.s:367    .text._Z7_assertbPKci:0000000000000070 .L0 
-     /tmp/cc1XBZ0z.s:368    .text._Z7_assertbPKci:0000000000000070 .L0 
-     /tmp/cc1XBZ0z.s:371    .text._Z7_assertbPKci:0000000000000078 .L0 
-     /tmp/cc1XBZ0z.s:372    .text._Z7_assertbPKci:0000000000000078 .L0 
-     /tmp/cc1XBZ0z.s:374    .text._Z7_assertbPKci:0000000000000080 .L0 
-     /tmp/cc1XBZ0z.s:381    .text:00000000000001dc _Z13testAsyncCallv
-     /tmp/cc1XBZ0z.s:384    .text:00000000000001dc .L0 
-     /tmp/cc1XBZ0z.s:385    .text:00000000000001dc .L0 
-     /tmp/cc1XBZ0z.s:386    .text:00000000000001e0 .L0 
-     /tmp/cc1XBZ0z.s:389    .text:00000000000001e8 .L0 
-     /tmp/cc1XBZ0z.s:390    .text:00000000000001e8 .L0 
-     /tmp/cc1XBZ0z.s:392    .text:00000000000001ec .L0 
-     /tmp/cc1XBZ0z.s:394    .text:00000000000001ec .L0 
-     /tmp/cc1XBZ0z.s:395    .text:00000000000001ec .L0 
-     /tmp/cc1XBZ0z.s:398    .text:00000000000001f4 .L0 
-     /tmp/cc1XBZ0z.s:405    .text:0000000000000204 .L0 
-     /tmp/cc1XBZ0z.s:410    .text:0000000000000208 .L0 
-     /tmp/cc1XBZ0z.s:411    .text:0000000000000208 .L0 
-     /tmp/cc1XBZ0z.s:412    .text:0000000000000208 .L0 
-     /tmp/cc1XBZ0z.s:415    .text:0000000000000210 .L0 
-     /tmp/cc1XBZ0z.s:416    .text:0000000000000210 .L0 
-     /tmp/cc1XBZ0z.s:417    .text:0000000000000210 .L0 
-     /tmp/cc1XBZ0z.s:423    .text:0000000000000228 .L0 
-     /tmp/cc1XBZ0z.s:424    .text:0000000000000228 .L0 
-     /tmp/cc1XBZ0z.s:427    .text:0000000000000230 .L0 
-     /tmp/cc1XBZ0z.s:434    .text:0000000000000240 .L0 
-     /tmp/cc1XBZ0z.s:438    .text:0000000000000244 .L0 
-     /tmp/cc1XBZ0z.s:439    .text:0000000000000248 .L0 
-     /tmp/cc1XBZ0z.s:440    .text:0000000000000248 .L0 
-     /tmp/cc1XBZ0z.s:442    .text:000000000000024c .L0 
-     /tmp/cc1XBZ0z.s:443    .text:000000000000024c .L0 
-     /tmp/cc1XBZ0z.s:445    .text:0000000000000250 .L0 
-     /tmp/cc1XBZ0z.s:449    .text:0000000000000254 .L0 
-     /tmp/cc1XBZ0z.s:453    .text:0000000000000254 .L0 
-     /tmp/cc1XBZ0z.s:454    .text:0000000000000254 .L0 
-     /tmp/cc1XBZ0z.s:459    .text:0000000000000264 .L0 
-     /tmp/cc1XBZ0z.s:460    .text:0000000000000264 .L0 
-     /tmp/cc1XBZ0z.s:464    .text:0000000000000274 .L0 
-     /tmp/cc1XBZ0z.s:465    .text:0000000000000274 .L0 
-GAS LISTING /tmp/cc1XBZ0z.s 			page 28
+     /tmp/cckfRW2a.s:375    .text:0000000000000260 .L0 
+     /tmp/cckfRW2a.s:382    .text:0000000000000274 .L0 
+     /tmp/cckfRW2a.s:383    .text:0000000000000274 .L0 
+     /tmp/cckfRW2a.s:384    .text:0000000000000274 .L0 
+     /tmp/cckfRW2a.s:391    .text:0000000000000280 .L0 
+     /tmp/cckfRW2a.s:400    .text:0000000000000294 .L0 
+     /tmp/cckfRW2a.s:406    .text:00000000000002a0 .L0 
+     /tmp/cckfRW2a.s:407    .text:00000000000002a0 .L0 
+     /tmp/cckfRW2a.s:414    .text:00000000000002b4 .L0 
+     /tmp/cckfRW2a.s:415    .text:00000000000002b4 .L0 
+     /tmp/cckfRW2a.s:416    .text:00000000000002b4 .L0 
+     /tmp/cckfRW2a.s:423    .text:00000000000002c0 .L0 
+     /tmp/cckfRW2a.s:432    .text:00000000000002d4 .L0 
+     /tmp/cckfRW2a.s:438    .text:00000000000002e0 .L0 
+     /tmp/cckfRW2a.s:439    .text:00000000000002e0 .L0 
+     /tmp/cckfRW2a.s:446    .text:00000000000002f4 .L0 
+     /tmp/cckfRW2a.s:447    .text:00000000000002f4 .L0 
+     /tmp/cckfRW2a.s:448    .text:00000000000002f4 .L0 
+     /tmp/cckfRW2a.s:455    .text:0000000000000300 .L0 
+     /tmp/cckfRW2a.s:464    .text:0000000000000314 .L0 
+     /tmp/cckfRW2a.s:470    .text:0000000000000320 .L0 
+     /tmp/cckfRW2a.s:471    .text:0000000000000320 .L0 
+     /tmp/cckfRW2a.s:478    .text:0000000000000334 .L0 
+     /tmp/cckfRW2a.s:479    .text:0000000000000334 .L0 
+     /tmp/cckfRW2a.s:480    .text:0000000000000334 .L0 
+     /tmp/cckfRW2a.s:487    .text:0000000000000340 .L0 
+     /tmp/cckfRW2a.s:496    .text:0000000000000354 .L0 
+     /tmp/cckfRW2a.s:504    .text:0000000000000364 .L0 
+     /tmp/cckfRW2a.s:505    .text:0000000000000368 .L0 
+     /tmp/cckfRW2a.s:507    .text:000000000000036c .L0 
+     /tmp/cckfRW2a.s:508    .text:000000000000036c .L0 
+     /tmp/cckfRW2a.s:510    .text:0000000000000370 .L0 
+     /tmp/cckfRW2a.s:513    .text:0000000000000374 .L0 
+     /tmp/cckfRW2a.s:515    .text:0000000000000378 .L0 
+     /tmp/cckfRW2a.s:522    .text._Z7_assertbPKci:0000000000000000 _Z7_assertbPKci
+     /tmp/cckfRW2a.s:525    .text._Z7_assertbPKci:0000000000000000 .L0 
+     /tmp/cckfRW2a.s:527    .text._Z7_assertbPKci:0000000000000000 .L0 
+     /tmp/cckfRW2a.s:528    .text._Z7_assertbPKci:0000000000000000 .L0 
+     /tmp/cckfRW2a.s:532    .text._Z7_assertbPKci:0000000000000008 .L0 
+     /tmp/cckfRW2a.s:533    .text._Z7_assertbPKci:000000000000000c .L0 
+     /tmp/cckfRW2a.s:538    .text._Z7_assertbPKci:000000000000001c .L0 
+     /tmp/cckfRW2a.s:539    .text._Z7_assertbPKci:000000000000001c .L0 
+     /tmp/cckfRW2a.s:540    .text._Z7_assertbPKci:000000000000001c .L0 
+     /tmp/cckfRW2a.s:541    .text._Z7_assertbPKci:000000000000001c .L0 
+     /tmp/cckfRW2a.s:543    .text._Z7_assertbPKci:0000000000000020 .L0 
+     /tmp/cckfRW2a.s:547    .text._Z7_assertbPKci:0000000000000028 .L0 
+     /tmp/cckfRW2a.s:548    .text._Z7_assertbPKci:0000000000000028 .L0 
+     /tmp/cckfRW2a.s:553    .text._Z7_assertbPKci:0000000000000038 .L0 
+     /tmp/cckfRW2a.s:554    .text._Z7_assertbPKci:0000000000000038 .L0 
+     /tmp/cckfRW2a.s:558    .text._Z7_assertbPKci:0000000000000044 .L0 
+     /tmp/cckfRW2a.s:559    .text._Z7_assertbPKci:0000000000000044 .L0 
+     /tmp/cckfRW2a.s:563    .text._Z7_assertbPKci:0000000000000054 .L0 
+     /tmp/cckfRW2a.s:564    .text._Z7_assertbPKci:0000000000000054 .L0 
+     /tmp/cckfRW2a.s:568    .text._Z7_assertbPKci:0000000000000060 .L0 
+     /tmp/cckfRW2a.s:569    .text._Z7_assertbPKci:0000000000000060 .L0 
+     /tmp/cckfRW2a.s:573    .text._Z7_assertbPKci:0000000000000070 .L0 
+     /tmp/cckfRW2a.s:574    .text._Z7_assertbPKci:0000000000000070 .L0 
+GAS LISTING /tmp/cckfRW2a.s 			page 32
 
 
-     /tmp/cc1XBZ0z.s:469    .text:0000000000000284 .L0 
-     /tmp/cc1XBZ0z.s:470    .text:0000000000000284 .L0 
-     /tmp/cc1XBZ0z.s:474    .text:0000000000000290 .L0 
-     /tmp/cc1XBZ0z.s:475    .text:0000000000000290 .L0 
-     /tmp/cc1XBZ0z.s:479    .text:00000000000002a0 .L0 
-     /tmp/cc1XBZ0z.s:480    .text:00000000000002a0 .L0 
-     /tmp/cc1XBZ0z.s:483    .text:00000000000002a8 .L0 
-     /tmp/cc1XBZ0z.s:484    .text:00000000000002a8 .L0 
-     /tmp/cc1XBZ0z.s:492    .text:00000000000002b0 .L0 
-     /tmp/cc1XBZ0z.s:493    .text:00000000000002b0 .L0 
-     /tmp/cc1XBZ0z.s:498    .text:00000000000002c0 .L0 
-     /tmp/cc1XBZ0z.s:499    .text:00000000000002c0 .L0 
-     /tmp/cc1XBZ0z.s:503    .text:00000000000002d0 .L0 
-     /tmp/cc1XBZ0z.s:504    .text:00000000000002d0 .L0 
-     /tmp/cc1XBZ0z.s:508    .text:00000000000002e0 .L0 
-     /tmp/cc1XBZ0z.s:509    .text:00000000000002e0 .L0 
-     /tmp/cc1XBZ0z.s:513    .text:00000000000002ec .L0 
-     /tmp/cc1XBZ0z.s:514    .text:00000000000002ec .L0 
-     /tmp/cc1XBZ0z.s:518    .text:00000000000002fc .L0 
-     /tmp/cc1XBZ0z.s:519    .text:00000000000002fc .L0 
-     /tmp/cc1XBZ0z.s:522    .text:0000000000000304 .L0 
-     /tmp/cc1XBZ0z.s:523    .text:0000000000000304 .L0 
-     /tmp/cc1XBZ0z.s:527    .text:000000000000030c .L0 
-     /tmp/cc1XBZ0z.s:533    .text:000000000000030c _Z16doInitialAssertsv
-     /tmp/cc1XBZ0z.s:536    .text:000000000000030c .L0 
-     /tmp/cc1XBZ0z.s:537    .text:000000000000030c .L0 
-     /tmp/cc1XBZ0z.s:539    .text:000000000000030c .L0 
-     /tmp/cc1XBZ0z.s:540    .text:000000000000030c .L0 
-     /tmp/cc1XBZ0z.s:541    .text:000000000000030c .L0 
-     /tmp/cc1XBZ0z.s:542    .text:000000000000030c .L0 
-     /tmp/cc1XBZ0z.s:554    .text:0000000000000334 .L0 
-     /tmp/cc1XBZ0z.s:560    .text:000000000000033c .L0 
-     /tmp/cc1XBZ0z.s:561    .text:0000000000000340 .L0 
-     /tmp/cc1XBZ0z.s:564    .text:0000000000000348 .L0 
-     /tmp/cc1XBZ0z.s:565    .text:0000000000000348 .L0 
-     /tmp/cc1XBZ0z.s:567    .text:000000000000034c .L0 
-     /tmp/cc1XBZ0z.s:571    .text:000000000000034c .L0 
-     /tmp/cc1XBZ0z.s:572    .text:000000000000034c .L0 
-     /tmp/cc1XBZ0z.s:576    .text:000000000000035c .L0 
-     /tmp/cc1XBZ0z.s:577    .text:000000000000035c .L0 
-     /tmp/cc1XBZ0z.s:581    .text:000000000000036c .L0 
-     /tmp/cc1XBZ0z.s:582    .text:000000000000036c .L0 
-     /tmp/cc1XBZ0z.s:586    .text:000000000000037c .L0 
-     /tmp/cc1XBZ0z.s:587    .text:000000000000037c .L0 
-     /tmp/cc1XBZ0z.s:591    .text:0000000000000388 .L0 
-     /tmp/cc1XBZ0z.s:592    .text:0000000000000388 .L0 
-     /tmp/cc1XBZ0z.s:596    .text:0000000000000398 .L0 
-     /tmp/cc1XBZ0z.s:597    .text:0000000000000398 .L0 
-     /tmp/cc1XBZ0z.s:600    .text:00000000000003a0 .L0 
-     /tmp/cc1XBZ0z.s:601    .text:00000000000003a0 .L0 
-     /tmp/cc1XBZ0z.s:605    .text:00000000000003a8 .L0 
-     /tmp/cc1XBZ0z.s:611    .text:00000000000003a8 _Z19initInterruptVectorv
-     /tmp/cc1XBZ0z.s:614    .text:00000000000003a8 .L0 
-     /tmp/cc1XBZ0z.s:615    .text:00000000000003a8 .L0 
-     /tmp/cc1XBZ0z.s:616    .text:00000000000003ac .L0 
-     /tmp/cc1XBZ0z.s:618    .text:00000000000003b0 .L0 
-     /tmp/cc1XBZ0z.s:620    .text:00000000000003b4 .L0 
-GAS LISTING /tmp/cc1XBZ0z.s 			page 29
+     /tmp/cckfRW2a.s:577    .text._Z7_assertbPKci:0000000000000078 .L0 
+     /tmp/cckfRW2a.s:578    .text._Z7_assertbPKci:0000000000000078 .L0 
+     /tmp/cckfRW2a.s:580    .text._Z7_assertbPKci:0000000000000080 .L0 
+     /tmp/cckfRW2a.s:587    .text:0000000000000378 _Z13testAsyncCallv
+     /tmp/cckfRW2a.s:590    .text:0000000000000378 .L0 
+     /tmp/cckfRW2a.s:591    .text:0000000000000378 .L0 
+     /tmp/cckfRW2a.s:592    .text:000000000000037c .L0 
+     /tmp/cckfRW2a.s:595    .text:0000000000000384 .L0 
+     /tmp/cckfRW2a.s:596    .text:0000000000000384 .L0 
+     /tmp/cckfRW2a.s:598    .text:0000000000000388 .L0 
+     /tmp/cckfRW2a.s:600    .text:0000000000000388 .L0 
+     /tmp/cckfRW2a.s:601    .text:0000000000000388 .L0 
+     /tmp/cckfRW2a.s:604    .text:0000000000000390 .L0 
+     /tmp/cckfRW2a.s:611    .text:00000000000003a0 .L0 
+     /tmp/cckfRW2a.s:616    .text:00000000000003a4 .L0 
+     /tmp/cckfRW2a.s:617    .text:00000000000003a4 .L0 
+     /tmp/cckfRW2a.s:618    .text:00000000000003a4 .L0 
+     /tmp/cckfRW2a.s:621    .text:00000000000003ac .L0 
+     /tmp/cckfRW2a.s:622    .text:00000000000003ac .L0 
+     /tmp/cckfRW2a.s:623    .text:00000000000003ac .L0 
+     /tmp/cckfRW2a.s:629    .text:00000000000003c4 .L0 
+     /tmp/cckfRW2a.s:630    .text:00000000000003c4 .L0 
+     /tmp/cckfRW2a.s:633    .text:00000000000003cc .L0 
+     /tmp/cckfRW2a.s:640    .text:00000000000003dc .L0 
+     /tmp/cckfRW2a.s:644    .text:00000000000003e0 .L0 
+     /tmp/cckfRW2a.s:645    .text:00000000000003e4 .L0 
+     /tmp/cckfRW2a.s:646    .text:00000000000003e4 .L0 
+     /tmp/cckfRW2a.s:648    .text:00000000000003e8 .L0 
+     /tmp/cckfRW2a.s:649    .text:00000000000003e8 .L0 
+     /tmp/cckfRW2a.s:651    .text:00000000000003ec .L0 
+     /tmp/cckfRW2a.s:655    .text:00000000000003f0 .L0 
+     /tmp/cckfRW2a.s:659    .text:00000000000003f0 .L0 
+     /tmp/cckfRW2a.s:660    .text:00000000000003f0 .L0 
+     /tmp/cckfRW2a.s:665    .text:0000000000000400 .L0 
+     /tmp/cckfRW2a.s:666    .text:0000000000000400 .L0 
+     /tmp/cckfRW2a.s:670    .text:0000000000000410 .L0 
+     /tmp/cckfRW2a.s:671    .text:0000000000000410 .L0 
+     /tmp/cckfRW2a.s:675    .text:0000000000000420 .L0 
+     /tmp/cckfRW2a.s:676    .text:0000000000000420 .L0 
+     /tmp/cckfRW2a.s:680    .text:000000000000042c .L0 
+     /tmp/cckfRW2a.s:681    .text:000000000000042c .L0 
+     /tmp/cckfRW2a.s:685    .text:000000000000043c .L0 
+     /tmp/cckfRW2a.s:686    .text:000000000000043c .L0 
+     /tmp/cckfRW2a.s:689    .text:0000000000000444 .L0 
+     /tmp/cckfRW2a.s:690    .text:0000000000000444 .L0 
+     /tmp/cckfRW2a.s:698    .text:000000000000044c .L0 
+     /tmp/cckfRW2a.s:699    .text:000000000000044c .L0 
+     /tmp/cckfRW2a.s:704    .text:000000000000045c .L0 
+     /tmp/cckfRW2a.s:705    .text:000000000000045c .L0 
+     /tmp/cckfRW2a.s:709    .text:000000000000046c .L0 
+     /tmp/cckfRW2a.s:710    .text:000000000000046c .L0 
+     /tmp/cckfRW2a.s:714    .text:000000000000047c .L0 
+     /tmp/cckfRW2a.s:715    .text:000000000000047c .L0 
+     /tmp/cckfRW2a.s:719    .text:0000000000000488 .L0 
+     /tmp/cckfRW2a.s:720    .text:0000000000000488 .L0 
+     /tmp/cckfRW2a.s:724    .text:0000000000000498 .L0 
+     /tmp/cckfRW2a.s:725    .text:0000000000000498 .L0 
+GAS LISTING /tmp/cckfRW2a.s 			page 33
 
 
-     /tmp/cc1XBZ0z.s:622    .text:00000000000003b4 .L0 
-     /tmp/cc1XBZ0z.s:623    .text:00000000000003b4 .L0 
-     /tmp/cc1XBZ0z.s:629    .text:00000000000003c0 .L0 
-        src/main.cpp:145    .text:00000000000003c0 .L0 
-     /tmp/cc1XBZ0z.s:634    .text:00000000000003c4 .L0 
-        src/main.cpp:146    .text:00000000000003c4 .L0 
-     /tmp/cc1XBZ0z.s:640    .text:00000000000003c8 .L0 
-     /tmp/cc1XBZ0z.s:641    .text:00000000000003cc .L0 
-     /tmp/cc1XBZ0z.s:642    .text:00000000000003cc .L0 
-     /tmp/cc1XBZ0z.s:644    .text:00000000000003d0 .L0 
-     /tmp/cc1XBZ0z.s:646    .text:00000000000003d4 .L0 
-     /tmp/cc1XBZ0z.s:652    .text:00000000000003d4 main
-     /tmp/cc1XBZ0z.s:655    .text:00000000000003d4 .L0 
-     /tmp/cc1XBZ0z.s:656    .text:00000000000003d4 .L0 
-     /tmp/cc1XBZ0z.s:657    .text:00000000000003d8 .L0 
-     /tmp/cc1XBZ0z.s:661    .text:00000000000003e4 .L0 
-     /tmp/cc1XBZ0z.s:662    .text:00000000000003e4 .L0 
-     /tmp/cc1XBZ0z.s:663    .text:00000000000003e4 .L0 
-     /tmp/cc1XBZ0z.s:665    .text:00000000000003e8 .L0 
-     /tmp/cc1XBZ0z.s:667    .text:00000000000003e8 .L0 
-     /tmp/cc1XBZ0z.s:668    .text:00000000000003e8 .L0 
-     /tmp/cc1XBZ0z.s:671    .text:00000000000003f0 .L0 
-     /tmp/cc1XBZ0z.s:672    .text:00000000000003f0 .L0 
-     /tmp/cc1XBZ0z.s:675    .text:00000000000003f8 .L0 
-     /tmp/cc1XBZ0z.s:676    .text:00000000000003f8 .L0 
-     /tmp/cc1XBZ0z.s:679    .text:0000000000000400 .L0 
-     /tmp/cc1XBZ0z.s:680    .text:0000000000000400 .L0 
-        src/main.cpp:65     .text:0000000000000400 .L0 
-     /tmp/cc1XBZ0z.s:687    .text:0000000000000404 .L0 
-     /tmp/cc1XBZ0z.s:689    .text:0000000000000404 .L0 
-     /tmp/cc1XBZ0z.s:692    .text:0000000000000410 .L0 
-     /tmp/cc1XBZ0z.s:693    .text:0000000000000410 .L0 
-     /tmp/cc1XBZ0z.s:697    .text:000000000000041c .L0 
-     /tmp/cc1XBZ0z.s:709    .text:0000000000000450 .L0 
-     /tmp/cc1XBZ0z.s:710    .text:0000000000000450 .L0 
-     /tmp/cc1XBZ0z.s:712    .text:0000000000000454 .L0 
-     /tmp/cc1XBZ0z.s:713    .text:0000000000000454 .L0 
-     /tmp/cc1XBZ0z.s:716    .text:0000000000000460 .L0 
-     /tmp/cc1XBZ0z.s:717    .text:0000000000000460 .L0 
-     /tmp/cc1XBZ0z.s:718    .text:0000000000000460 .L0 
-     /tmp/cc1XBZ0z.s:724    .text:0000000000000478 .L0 
-     /tmp/cc1XBZ0z.s:725    .text:0000000000000478 .L0 
-     /tmp/cc1XBZ0z.s:730    .text:0000000000000488 .L0 
-     /tmp/cc1XBZ0z.s:733    .text:0000000000000494 .L0 
-     /tmp/cc1XBZ0z.s:734    .text:0000000000000494 .L0 
-     /tmp/cc1XBZ0z.s:737    .text:000000000000049c .L0 
-     /tmp/cc1XBZ0z.s:738    .text:000000000000049c .L0 
-     /tmp/cc1XBZ0z.s:742    .text:00000000000004a8 .L0 
-        src/main.cpp:81     .text:00000000000004a8 .L0 
-     /tmp/cc1XBZ0z.s:748    .text:00000000000004ac .L0 
-        src/main.cpp:82     .text:00000000000004ac .L0 
-     /tmp/cc1XBZ0z.s:753    .text:00000000000004b0 .L0 
-        src/main.cpp:84     .text:00000000000004b0 .L0 
-     /tmp/cc1XBZ0z.s:758    .text:00000000000004b4 .L0 
-     /tmp/cc1XBZ0z.s:760    .text:00000000000004b4 .L0 
-     /tmp/cc1XBZ0z.s:762    .text:00000000000004bc .L0 
-     /tmp/cc1XBZ0z.s:764    .text:00000000000004c0 .L0 
-GAS LISTING /tmp/cc1XBZ0z.s 			page 30
+     /tmp/cckfRW2a.s:728    .text:00000000000004a0 .L0 
+     /tmp/cckfRW2a.s:729    .text:00000000000004a0 .L0 
+     /tmp/cckfRW2a.s:733    .text:00000000000004a8 .L0 
+     /tmp/cckfRW2a.s:739    .text:00000000000004a8 _Z16doInitialAssertsv
+     /tmp/cckfRW2a.s:742    .text:00000000000004a8 .L0 
+     /tmp/cckfRW2a.s:743    .text:00000000000004a8 .L0 
+     /tmp/cckfRW2a.s:745    .text:00000000000004a8 .L0 
+     /tmp/cckfRW2a.s:746    .text:00000000000004a8 .L0 
+     /tmp/cckfRW2a.s:747    .text:00000000000004a8 .L0 
+     /tmp/cckfRW2a.s:748    .text:00000000000004a8 .L0 
+     /tmp/cckfRW2a.s:760    .text:00000000000004d0 .L0 
+     /tmp/cckfRW2a.s:766    .text:00000000000004d8 .L0 
+     /tmp/cckfRW2a.s:767    .text:00000000000004dc .L0 
+     /tmp/cckfRW2a.s:770    .text:00000000000004e4 .L0 
+     /tmp/cckfRW2a.s:771    .text:00000000000004e4 .L0 
+     /tmp/cckfRW2a.s:773    .text:00000000000004e8 .L0 
+     /tmp/cckfRW2a.s:777    .text:00000000000004e8 .L0 
+     /tmp/cckfRW2a.s:778    .text:00000000000004e8 .L0 
+     /tmp/cckfRW2a.s:782    .text:00000000000004f8 .L0 
+     /tmp/cckfRW2a.s:783    .text:00000000000004f8 .L0 
+     /tmp/cckfRW2a.s:787    .text:0000000000000508 .L0 
+     /tmp/cckfRW2a.s:788    .text:0000000000000508 .L0 
+     /tmp/cckfRW2a.s:792    .text:0000000000000518 .L0 
+     /tmp/cckfRW2a.s:793    .text:0000000000000518 .L0 
+     /tmp/cckfRW2a.s:797    .text:0000000000000524 .L0 
+     /tmp/cckfRW2a.s:798    .text:0000000000000524 .L0 
+     /tmp/cckfRW2a.s:802    .text:0000000000000534 .L0 
+     /tmp/cckfRW2a.s:803    .text:0000000000000534 .L0 
+     /tmp/cckfRW2a.s:806    .text:000000000000053c .L0 
+     /tmp/cckfRW2a.s:807    .text:000000000000053c .L0 
+     /tmp/cckfRW2a.s:811    .text:0000000000000544 .L0 
+     /tmp/cckfRW2a.s:817    .text:0000000000000544 _Z19initInterruptVectorv
+     /tmp/cckfRW2a.s:820    .text:0000000000000544 .L0 
+     /tmp/cckfRW2a.s:821    .text:0000000000000544 .L0 
+     /tmp/cckfRW2a.s:822    .text:0000000000000548 .L0 
+     /tmp/cckfRW2a.s:824    .text:000000000000054c .L0 
+     /tmp/cckfRW2a.s:826    .text:0000000000000550 .L0 
+     /tmp/cckfRW2a.s:828    .text:0000000000000550 .L0 
+     /tmp/cckfRW2a.s:829    .text:0000000000000550 .L0 
+     /tmp/cckfRW2a.s:835    .text:000000000000055c .L0 
+        src/main.cpp:127    .text:000000000000055c .L0 
+     /tmp/cckfRW2a.s:840    .text:0000000000000560 .L0 
+        src/main.cpp:128    .text:0000000000000560 .L0 
+     /tmp/cckfRW2a.s:846    .text:0000000000000564 .L0 
+     /tmp/cckfRW2a.s:847    .text:0000000000000568 .L0 
+     /tmp/cckfRW2a.s:848    .text:0000000000000568 .L0 
+     /tmp/cckfRW2a.s:850    .text:000000000000056c .L0 
+     /tmp/cckfRW2a.s:852    .text:0000000000000570 .L0 
+     /tmp/cckfRW2a.s:858    .text:0000000000000570 main
+     /tmp/cckfRW2a.s:861    .text:0000000000000570 .L0 
+     /tmp/cckfRW2a.s:862    .text:0000000000000570 .L0 
+     /tmp/cckfRW2a.s:863    .text:0000000000000574 .L0 
+     /tmp/cckfRW2a.s:867    .text:0000000000000580 .L0 
+     /tmp/cckfRW2a.s:868    .text:0000000000000580 .L0 
+     /tmp/cckfRW2a.s:869    .text:0000000000000580 .L0 
+     /tmp/cckfRW2a.s:871    .text:0000000000000584 .L0 
+     /tmp/cckfRW2a.s:873    .text:0000000000000584 .L0 
+GAS LISTING /tmp/cckfRW2a.s 			page 34
 
 
-     /tmp/cc1XBZ0z.s:765    .text:00000000000004c0 .L0 
-     /tmp/cc1XBZ0z.s:767    .text:00000000000004c4 .L0 
-     /tmp/cc1XBZ0z.s:769    .text:00000000000004c8 .L0 
-     /tmp/cc1XBZ0z.s:771    .text:00000000000004cc .L0 
-     /tmp/cc1XBZ0z.s:776    .text:00000000000004cc _GLOBAL__sub_I_kernelThread
-     /tmp/cc1XBZ0z.s:779    .text:00000000000004cc .L0 
-     /tmp/cc1XBZ0z.s:780    .text:00000000000004cc .L0 
-     /tmp/cc1XBZ0z.s:781    .text:00000000000004d0 .L0 
-     /tmp/cc1XBZ0z.s:784    .text:00000000000004d8 .L0 
-     /tmp/cc1XBZ0z.s:785    .text:00000000000004d8 .L0 
-     /tmp/cc1XBZ0z.s:787    .text:00000000000004dc .L0 
-     /tmp/cc1XBZ0z.s:789    .text:00000000000004dc .L0 
-     /tmp/cc1XBZ0z.s:795    .text:00000000000004f4 .L0 
-     /tmp/cc1XBZ0z.s:797    .text:00000000000004f8 .L0 
-     /tmp/cc1XBZ0z.s:798    .text:00000000000004f8 .L0 
-     /tmp/cc1XBZ0z.s:800    .text:00000000000004fc .L0 
-     /tmp/cc1XBZ0z.s:802    .text:0000000000000500 .L0 
-     /tmp/cc1XBZ0z.s:819    .bss:0000000000000050 kernelStack
-     /tmp/cc1XBZ0z.s:815    .bss:0000000000000000 kernelThread
-     /tmp/cc1XBZ0z.s:812    .bss:0000000000000000 .LANCHOR0
-     /tmp/cc1XBZ0z.s:827    .text:0000000000000500 .L0 
-     /tmp/cc1XBZ0z.s:377    .text._Z7_assertbPKci:0000000000000080 .L0 
-     /tmp/cc1XBZ0z.s:27     .text:0000000000000010 .L0 
-     /tmp/cc1XBZ0z.s:48     .text:0000000000000030 .L0 
-     /tmp/cc1XBZ0z.s:59     .text:0000000000000040 .L0 
-     /tmp/cc1XBZ0z.s:103    .text:0000000000000080 .L0 
-     /tmp/cc1XBZ0z.s:179    .text:00000000000000d4 .L0 
-     /tmp/cc1XBZ0z.s:117    .rodata.str1.8:0000000000000000 .LC0
-     /tmp/cc1XBZ0z.s:237    .text:0000000000000124 .L0 
-     /tmp/cc1XBZ0z.s:120    .rodata.str1.8:0000000000000028 .LC1
-     /tmp/cc1XBZ0z.s:242    .text:0000000000000134 .L0 
-     /tmp/cc1XBZ0z.s:123    .rodata.str1.8:0000000000000038 .LC2
-     /tmp/cc1XBZ0z.s:247    .text:0000000000000144 .L0 
-     /tmp/cc1XBZ0z.s:126    .rodata.str1.8:0000000000000048 .LC3
-     /tmp/cc1XBZ0z.s:257    .text:0000000000000160 .L0 
-     /tmp/cc1XBZ0z.s:275    .text:0000000000000180 .L0 
-     /tmp/cc1XBZ0z.s:281    .text:0000000000000190 .L0 
-     /tmp/cc1XBZ0z.s:286    .text:00000000000001a0 .L0 
-     /tmp/cc1XBZ0z.s:296    .text:00000000000001bc .L0 
-     /tmp/cc1XBZ0z.s:418    .text:0000000000000214 .L0 
-     /tmp/cc1XBZ0z.s:454    .text:0000000000000254 .L0 
-     /tmp/cc1XBZ0z.s:460    .text:0000000000000264 .L0 
-     /tmp/cc1XBZ0z.s:465    .text:0000000000000274 .L0 
-     /tmp/cc1XBZ0z.s:475    .text:0000000000000290 .L0 
-     /tmp/cc1XBZ0z.s:493    .text:00000000000002b0 .L0 
-     /tmp/cc1XBZ0z.s:499    .text:00000000000002c0 .L0 
-     /tmp/cc1XBZ0z.s:504    .text:00000000000002d0 .L0 
-     /tmp/cc1XBZ0z.s:514    .text:00000000000002ec .L0 
-     /tmp/cc1XBZ0z.s:542    .text:000000000000030c .L0 
-     /tmp/cc1XBZ0z.s:544    .text:0000000000000318 .L0 
-     /tmp/cc1XBZ0z.s:572    .text:000000000000034c .L0 
-     /tmp/cc1XBZ0z.s:577    .text:000000000000035c .L0 
-     /tmp/cc1XBZ0z.s:582    .text:000000000000036c .L0 
-     /tmp/cc1XBZ0z.s:592    .text:0000000000000388 .L0 
-     /tmp/cc1XBZ0z.s:623    .text:00000000000003b4 .L0 
-     /tmp/cc1XBZ0z.s:689    .text:0000000000000404 .L0 
-     /tmp/cc1XBZ0z.s:700    .text:0000000000000428 .L0 
-GAS LISTING /tmp/cc1XBZ0z.s 			page 31
+     /tmp/cckfRW2a.s:874    .text:0000000000000584 .L0 
+     /tmp/cckfRW2a.s:877    .text:000000000000058c .L0 
+     /tmp/cckfRW2a.s:878    .text:000000000000058c .L0 
+     /tmp/cckfRW2a.s:881    .text:0000000000000594 .L0 
+     /tmp/cckfRW2a.s:882    .text:0000000000000594 .L0 
+     /tmp/cckfRW2a.s:885    .text:000000000000059c .L0 
+     /tmp/cckfRW2a.s:886    .text:000000000000059c .L0 
+        src/main.cpp:51     .text:000000000000059c .L0 
+     /tmp/cckfRW2a.s:893    .text:00000000000005a0 .L0 
+     /tmp/cckfRW2a.s:895    .text:00000000000005a0 .L0 
+     /tmp/cckfRW2a.s:898    .text:00000000000005ac .L0 
+     /tmp/cckfRW2a.s:899    .text:00000000000005ac .L0 
+     /tmp/cckfRW2a.s:903    .text:00000000000005b8 .L0 
+     /tmp/cckfRW2a.s:915    .text:00000000000005ec .L0 
+     /tmp/cckfRW2a.s:916    .text:00000000000005ec .L0 
+     /tmp/cckfRW2a.s:918    .text:00000000000005f0 .L0 
+     /tmp/cckfRW2a.s:919    .text:00000000000005f0 .L0 
+     /tmp/cckfRW2a.s:922    .text:00000000000005fc .L0 
+     /tmp/cckfRW2a.s:923    .text:00000000000005fc .L0 
+     /tmp/cckfRW2a.s:924    .text:00000000000005fc .L0 
+     /tmp/cckfRW2a.s:930    .text:0000000000000614 .L0 
+     /tmp/cckfRW2a.s:931    .text:0000000000000614 .L0 
+     /tmp/cckfRW2a.s:936    .text:0000000000000624 .L0 
+     /tmp/cckfRW2a.s:939    .text:0000000000000630 .L0 
+        src/main.cpp:63     .text:0000000000000630 .L0 
+     /tmp/cckfRW2a.s:945    .text:0000000000000634 .L0 
+        src/main.cpp:64     .text:0000000000000634 .L0 
+     /tmp/cckfRW2a.s:950    .text:0000000000000638 .L0 
+        src/main.cpp:66     .text:0000000000000638 .L0 
+     /tmp/cckfRW2a.s:955    .text:000000000000063c .L0 
+     /tmp/cckfRW2a.s:957    .text:000000000000063c .L0 
+     /tmp/cckfRW2a.s:959    .text:0000000000000644 .L0 
+     /tmp/cckfRW2a.s:961    .text:0000000000000648 .L0 
+     /tmp/cckfRW2a.s:962    .text:0000000000000648 .L0 
+     /tmp/cckfRW2a.s:964    .text:000000000000064c .L0 
+     /tmp/cckfRW2a.s:966    .text:0000000000000650 .L0 
+     /tmp/cckfRW2a.s:968    .text:0000000000000654 .L0 
+     /tmp/cckfRW2a.s:973    .text:0000000000000654 _GLOBAL__sub_I_kernelThread
+     /tmp/cckfRW2a.s:976    .text:0000000000000654 .L0 
+     /tmp/cckfRW2a.s:977    .text:0000000000000654 .L0 
+     /tmp/cckfRW2a.s:978    .text:0000000000000658 .L0 
+     /tmp/cckfRW2a.s:981    .text:0000000000000660 .L0 
+     /tmp/cckfRW2a.s:982    .text:0000000000000660 .L0 
+     /tmp/cckfRW2a.s:984    .text:0000000000000664 .L0 
+     /tmp/cckfRW2a.s:986    .text:0000000000000664 .L0 
+     /tmp/cckfRW2a.s:992    .text:000000000000067c .L0 
+     /tmp/cckfRW2a.s:994    .text:0000000000000680 .L0 
+     /tmp/cckfRW2a.s:995    .text:0000000000000680 .L0 
+     /tmp/cckfRW2a.s:997    .text:0000000000000684 .L0 
+     /tmp/cckfRW2a.s:999    .text:0000000000000688 .L0 
+     /tmp/cckfRW2a.s:1025   .bss:0000000000000000 kernelThread
+     /tmp/cckfRW2a.s:1022   .bss:0000000000000000 .LANCHOR0
+     /tmp/cckfRW2a.s:1033   .text:0000000000000688 .L0 
+     /tmp/cckfRW2a.s:583    .text._Z7_assertbPKci:0000000000000080 .L0 
+     /tmp/cckfRW2a.s:27     .text:0000000000000010 .L0 
+     /tmp/cckfRW2a.s:48     .text:0000000000000030 .L0 
+     /tmp/cckfRW2a.s:59     .text:0000000000000040 .L0 
+GAS LISTING /tmp/cckfRW2a.s 			page 35
 
 
-     /tmp/cc1XBZ0z.s:704    .text:000000000000043c .L0 
-     /tmp/cc1XBZ0z.s:713    .text:0000000000000454 .L0 
-     /tmp/cc1XBZ0z.s:719    .text:0000000000000464 .L0 
-     /tmp/cc1XBZ0z.s:730    .text:0000000000000488 .L0 
-     /tmp/cc1XBZ0z.s:52     .text:000000000000003c .L3
-     /tmp/cc1XBZ0z.s:31     .text:0000000000000020 .L5
-     /tmp/cc1XBZ0z.s:39     .text:0000000000000024 .L2
-     /tmp/cc1XBZ0z.s:91     .text:0000000000000074 .L9
-     /tmp/cc1XBZ0z.s:83     .text:0000000000000068 .L6
-     /tmp/cc1XBZ0z.s:231    .text:0000000000000124 .L14
-     /tmp/cc1XBZ0z.s:268    .text:0000000000000180 .L15
-     /tmp/cc1XBZ0z.s:448    .text:0000000000000254 .L27
-     /tmp/cc1XBZ0z.s:486    .text:00000000000002b0 .L28
-     /tmp/cc1XBZ0z.s:556    .text:000000000000033c .L34
-     /tmp/cc1XBZ0z.s:342    .text._Z7_assertbPKci:0000000000000028 .L0 
-     /tmp/cc1XBZ0z.s:353    .text._Z7_assertbPKci:0000000000000044 .L0 
-     /tmp/cc1XBZ0z.s:363    .text._Z7_assertbPKci:0000000000000060 .L0 
-     /tmp/cc1XBZ0z.s:324    .text._Z7_assertbPKci:0000000000000008 .L22
-     /tmp/cc1XBZ0z.s:2495   .debug_abbrev:0000000000000000 .Ldebug_abbrev0
-     /tmp/cc1XBZ0z.s:4184   .debug_str:000000000000067b .LASF121
-     /tmp/cc1XBZ0z.s:4068   .debug_str:000000000000034e .LASF122
-     /tmp/cc1XBZ0z.s:4134   .debug_str:00000000000004fa .LASF123
-     /tmp/cc1XBZ0z.s:3922   .debug_ranges:0000000000000000 .Ldebug_ranges0
-     /tmp/cc1XBZ0z.s:3960   .debug_line:0000000000000000 .Ldebug_line0
-     /tmp/cc1XBZ0z.s:4098   .debug_str:0000000000000408 .LASF0
-     /tmp/cc1XBZ0z.s:4112   .debug_str:000000000000046e .LASF1
-     /tmp/cc1XBZ0z.s:4082   .debug_str:00000000000003b2 .LASF2
-     /tmp/cc1XBZ0z.s:4058   .debug_str:000000000000030d .LASF4
-     /tmp/cc1XBZ0z.s:4160   .debug_str:00000000000005c8 .LASF3
-     /tmp/cc1XBZ0z.s:3988   .debug_str:000000000000010b .LASF5
-     /tmp/cc1XBZ0z.s:4114   .debug_str:0000000000000481 .LASF6
-     /tmp/cc1XBZ0z.s:4096   .debug_str:00000000000003f5 .LASF7
-     /tmp/cc1XBZ0z.s:4196   .debug_str:0000000000000787 .LASF8
-     /tmp/cc1XBZ0z.s:4042   .debug_str:00000000000002b1 .LASF9
-     /tmp/cc1XBZ0z.s:4130   .debug_str:00000000000004d4 .LASF10
-     /tmp/cc1XBZ0z.s:4188   .debug_str:000000000000074a .LASF11
-     /tmp/cc1XBZ0z.s:3990   .debug_str:0000000000000112 .LASF12
-     /tmp/cc1XBZ0z.s:3972   .debug_str:0000000000000083 .LASF13
-     /tmp/cc1XBZ0z.s:4000   .debug_str:0000000000000167 .LASF14
-     /tmp/cc1XBZ0z.s:4150   .debug_str:0000000000000566 .LASF15
-     /tmp/cc1XBZ0z.s:4014   .debug_str:00000000000001bb .LASF16
-     /tmp/cc1XBZ0z.s:4084   .debug_str:00000000000003c0 .LASF33
-     /tmp/cc1XBZ0z.s:4040   .debug_str:000000000000029e .LASF124
-     /tmp/cc1XBZ0z.s:4174   .debug_str:000000000000063d .LASF20
-     /tmp/cc1XBZ0z.s:4044   .debug_str:00000000000002bf .LASF17
-     /tmp/cc1XBZ0z.s:4178   .debug_str:000000000000065f .LASF18
-     /tmp/cc1XBZ0z.s:4210   .debug_str:00000000000007e8 .LASF19
-     /tmp/cc1XBZ0z.s:3966   .debug_str:0000000000000020 .LASF22
-     /tmp/cc1XBZ0z.s:4094   .debug_str:00000000000003eb .LASF24
-     /tmp/cc1XBZ0z.s:4054   .debug_str:00000000000002f7 .LASF21
-     /tmp/cc1XBZ0z.s:4080   .debug_str:0000000000000394 .LASF23
-     /tmp/cc1XBZ0z.s:4030   .debug_str:0000000000000247 .LASF25
-     /tmp/cc1XBZ0z.s:4208   .debug_str:00000000000007df .LASF26
-     /tmp/cc1XBZ0z.s:3996   .debug_str:000000000000014a .LASF28
-     /tmp/cc1XBZ0z.s:4122   .debug_str:00000000000004b2 .LASF27
-     /tmp/cc1XBZ0z.s:4048   .debug_str:00000000000002cb .LASF29
-     /tmp/cc1XBZ0z.s:4194   .debug_str:0000000000000776 .LASF30
-GAS LISTING /tmp/cc1XBZ0z.s 			page 32
+     /tmp/cckfRW2a.s:103    .text:0000000000000080 .L0 
+     /tmp/cckfRW2a.s:162    .text:00000000000000b8 .L0 
+     /tmp/cckfRW2a.s:117    .rodata.str1.8:0000000000000000 .LC0
+     /tmp/cckfRW2a.s:189    .text:00000000000000d8 .L0 
+     /tmp/cckfRW2a.s:120    .rodata.str1.8:0000000000000028 .LC1
+     /tmp/cckfRW2a.s:195    .text:00000000000000e8 .L0 
+     /tmp/cckfRW2a.s:123    .rodata.str1.8:0000000000000038 .LC2
+     /tmp/cckfRW2a.s:200    .text:00000000000000f8 .L0 
+     /tmp/cckfRW2a.s:126    .rodata.str1.8:0000000000000048 .LC3
+     /tmp/cckfRW2a.s:210    .text:0000000000000114 .L0 
+     /tmp/cckfRW2a.s:228    .text:0000000000000134 .L0 
+     /tmp/cckfRW2a.s:234    .text:0000000000000144 .L0 
+     /tmp/cckfRW2a.s:239    .text:0000000000000154 .L0 
+     /tmp/cckfRW2a.s:249    .text:0000000000000170 .L0 
+     /tmp/cckfRW2a.s:272    .text:0000000000000194 .L0 
+     /tmp/cckfRW2a.s:287    .text:00000000000001b0 .L0 
+     /tmp/cckfRW2a.s:294    .text:00000000000001bc .L0 
+     /tmp/cckfRW2a.s:304    .text:00000000000001d4 .L0 
+     /tmp/cckfRW2a.s:312    .text:00000000000001e4 .L0 
+     /tmp/cckfRW2a.s:320    .text:00000000000001f4 .L0 
+     /tmp/cckfRW2a.s:327    .text:0000000000000200 .L0 
+     /tmp/cckfRW2a.s:337    .text:0000000000000218 .L0 
+     /tmp/cckfRW2a.s:344    .text:0000000000000224 .L0 
+     /tmp/cckfRW2a.s:352    .text:0000000000000234 .L0 
+     /tmp/cckfRW2a.s:359    .text:0000000000000240 .L0 
+     /tmp/cckfRW2a.s:369    .text:0000000000000258 .L0 
+     /tmp/cckfRW2a.s:376    .text:0000000000000264 .L0 
+     /tmp/cckfRW2a.s:384    .text:0000000000000274 .L0 
+     /tmp/cckfRW2a.s:391    .text:0000000000000280 .L0 
+     /tmp/cckfRW2a.s:401    .text:0000000000000298 .L0 
+     /tmp/cckfRW2a.s:408    .text:00000000000002a4 .L0 
+     /tmp/cckfRW2a.s:416    .text:00000000000002b4 .L0 
+     /tmp/cckfRW2a.s:423    .text:00000000000002c0 .L0 
+     /tmp/cckfRW2a.s:433    .text:00000000000002d8 .L0 
+     /tmp/cckfRW2a.s:440    .text:00000000000002e4 .L0 
+     /tmp/cckfRW2a.s:448    .text:00000000000002f4 .L0 
+     /tmp/cckfRW2a.s:455    .text:0000000000000300 .L0 
+     /tmp/cckfRW2a.s:465    .text:0000000000000318 .L0 
+     /tmp/cckfRW2a.s:472    .text:0000000000000324 .L0 
+     /tmp/cckfRW2a.s:480    .text:0000000000000334 .L0 
+     /tmp/cckfRW2a.s:487    .text:0000000000000340 .L0 
+     /tmp/cckfRW2a.s:497    .text:0000000000000358 .L0 
+     /tmp/cckfRW2a.s:624    .text:00000000000003b0 .L0 
+     /tmp/cckfRW2a.s:660    .text:00000000000003f0 .L0 
+     /tmp/cckfRW2a.s:666    .text:0000000000000400 .L0 
+     /tmp/cckfRW2a.s:671    .text:0000000000000410 .L0 
+     /tmp/cckfRW2a.s:681    .text:000000000000042c .L0 
+     /tmp/cckfRW2a.s:699    .text:000000000000044c .L0 
+     /tmp/cckfRW2a.s:705    .text:000000000000045c .L0 
+     /tmp/cckfRW2a.s:710    .text:000000000000046c .L0 
+     /tmp/cckfRW2a.s:720    .text:0000000000000488 .L0 
+     /tmp/cckfRW2a.s:748    .text:00000000000004a8 .L0 
+     /tmp/cckfRW2a.s:750    .text:00000000000004b4 .L0 
+     /tmp/cckfRW2a.s:778    .text:00000000000004e8 .L0 
+     /tmp/cckfRW2a.s:783    .text:00000000000004f8 .L0 
+     /tmp/cckfRW2a.s:788    .text:0000000000000508 .L0 
+     /tmp/cckfRW2a.s:798    .text:0000000000000524 .L0 
+GAS LISTING /tmp/cckfRW2a.s 			page 36
 
 
-     /tmp/cc1XBZ0z.s:3970   .debug_str:0000000000000062 .LASF31
-     /tmp/cc1XBZ0z.s:4214   .debug_str:00000000000007f7 .LASF51
-     /tmp/cc1XBZ0z.s:4216   .debug_str:000000000000080a .LASF53
-     /tmp/cc1XBZ0z.s:4072   .debug_str:0000000000000366 .LASF32
-     /tmp/cc1XBZ0z.s:4110   .debug_str:000000000000045d .LASF34
-     /tmp/cc1XBZ0z.s:4118   .debug_str:00000000000004a8 .LASF35
-     /tmp/cc1XBZ0z.s:3962   .debug_str:0000000000000000 .LASF36
-     /tmp/cc1XBZ0z.s:4192   .debug_str:000000000000076f .LASF37
-     /tmp/cc1XBZ0z.s:4046   .debug_str:00000000000002c5 .LASF125
-     /tmp/cc1XBZ0z.s:4124   .debug_str:00000000000004ba .LASF38
-     /tmp/cc1XBZ0z.s:4092   .debug_str:00000000000003e1 .LASF39
-     /tmp/cc1XBZ0z.s:4128   .debug_str:00000000000004ce .LASF40
-     /tmp/cc1XBZ0z.s:4090   .debug_str:00000000000003d4 .LASF41
-     /tmp/cc1XBZ0z.s:4076   .debug_str:0000000000000383 .LASF42
-     /tmp/cc1XBZ0z.s:4026   .debug_str:000000000000022e .LASF43
-     /tmp/cc1XBZ0z.s:4108   .debug_str:0000000000000448 .LASF44
-     /tmp/cc1XBZ0z.s:4180   .debug_str:0000000000000664 .LASF45
-     /tmp/cc1XBZ0z.s:4162   .debug_str:00000000000005da .LASF46
-     /tmp/cc1XBZ0z.s:4056   .debug_str:0000000000000301 .LASF47
-     /tmp/cc1XBZ0z.s:4050   .debug_str:00000000000002e3 .LASF48
-     /tmp/cc1XBZ0z.s:3964   .debug_str:0000000000000009 .LASF49
-     /tmp/cc1XBZ0z.s:4182   .debug_str:000000000000066f .LASF50
-     /tmp/cc1XBZ0z.s:4018   .debug_str:00000000000001df .LASF56
-     /tmp/cc1XBZ0z.s:4126   .debug_str:00000000000004c2 .LASF58
-     /tmp/cc1XBZ0z.s:4144   .debug_str:0000000000000533 .LASF60
-     /tmp/cc1XBZ0z.s:4064   .debug_str:0000000000000324 .LASF52
-     /tmp/cc1XBZ0z.s:3968   .debug_str:000000000000003d .LASF54
-     /tmp/cc1XBZ0z.s:4142   .debug_str:000000000000052e .LASF126
-     /tmp/cc1XBZ0z.s:4078   .debug_str:000000000000038f .LASF55
-     /tmp/cc1XBZ0z.s:3986   .debug_str:00000000000000f9 .LASF57
-     /tmp/cc1XBZ0z.s:4228   .debug_str:000000000000087e .LASF127
-     /tmp/cc1XBZ0z.s:4100   .debug_str:0000000000000415 .LASF128
-     /tmp/cc1XBZ0z.s:4164   .debug_str:00000000000005eb .LASF59
-     /tmp/cc1XBZ0z.s:3976   .debug_str:000000000000009e .LASF61
-     /tmp/cc1XBZ0z.s:3980   .debug_str:00000000000000cf .LASF62
-     /tmp/cc1XBZ0z.s:4062   .debug_str:000000000000031f .LASF63
-     /tmp/cc1XBZ0z.s:4104   .debug_str:0000000000000439 .LASF64
-     /tmp/cc1XBZ0z.s:4224   .debug_str:0000000000000854 .LASF65
-     /tmp/cc1XBZ0z.s:4106   .debug_str:000000000000043e .LASF66
-     /tmp/cc1XBZ0z.s:4204   .debug_str:00000000000007b9 .LASF67
-     /tmp/cc1XBZ0z.s:4088   .debug_str:00000000000003cf .LASF68
-     /tmp/cc1XBZ0z.s:4132   .debug_str:00000000000004e3 .LASF69
-     /tmp/cc1XBZ0z.s:4146   .debug_str:000000000000054f .LASF70
-     /tmp/cc1XBZ0z.s:4120   .debug_str:00000000000004ad .LASF71
-     /tmp/cc1XBZ0z.s:4066   .debug_str:0000000000000331 .LASF72
-     /tmp/cc1XBZ0z.s:3974   .debug_str:0000000000000093 .LASF73
-     /tmp/cc1XBZ0z.s:4034   .debug_str:0000000000000257 .LASF74
-     /tmp/cc1XBZ0z.s:4024   .debug_str:0000000000000223 .LASF75
-     /tmp/cc1XBZ0z.s:4176   .debug_str:0000000000000646 .LASF76
-     /tmp/cc1XBZ0z.s:4168   .debug_str:0000000000000602 .LASF77
-     /tmp/cc1XBZ0z.s:4102   .debug_str:0000000000000430 .LASF78
-     /tmp/cc1XBZ0z.s:4032   .debug_str:0000000000000252 .LASF79
-     /tmp/cc1XBZ0z.s:4028   .debug_str:000000000000023a .LASF80
-     /tmp/cc1XBZ0z.s:3992   .debug_str:0000000000000122 .LASF81
-     /tmp/cc1XBZ0z.s:3994   .debug_str:000000000000012e .LASF82
-     /tmp/cc1XBZ0z.s:777    .text:00000000000004cc .LFB25
-     /tmp/cc1XBZ0z.s:803    .text:0000000000000500 .LFE25
-GAS LISTING /tmp/cc1XBZ0z.s 			page 33
+     /tmp/cckfRW2a.s:829    .text:0000000000000550 .L0 
+     /tmp/cckfRW2a.s:895    .text:00000000000005a0 .L0 
+     /tmp/cckfRW2a.s:906    .text:00000000000005c4 .L0 
+     /tmp/cckfRW2a.s:910    .text:00000000000005d8 .L0 
+     /tmp/cckfRW2a.s:919    .text:00000000000005f0 .L0 
+     /tmp/cckfRW2a.s:925    .text:0000000000000600 .L0 
+     /tmp/cckfRW2a.s:936    .text:0000000000000624 .L0 
+     /tmp/cckfRW2a.s:52     .text:000000000000003c .L3
+     /tmp/cckfRW2a.s:31     .text:0000000000000020 .L5
+     /tmp/cckfRW2a.s:39     .text:0000000000000024 .L2
+     /tmp/cckfRW2a.s:91     .text:0000000000000074 .L9
+     /tmp/cckfRW2a.s:83     .text:0000000000000068 .L6
+     /tmp/cckfRW2a.s:183    .text:00000000000000d8 .L23
+     /tmp/cckfRW2a.s:221    .text:0000000000000134 .L24
+     /tmp/cckfRW2a.s:278    .text:00000000000001a8 .L21
+     /tmp/cckfRW2a.s:499    .text:0000000000000364 .L10
+     /tmp/cckfRW2a.s:305    .text:00000000000001dc .L14
+     /tmp/cckfRW2a.s:338    .text:0000000000000220 .L15
+     /tmp/cckfRW2a.s:370    .text:0000000000000260 .L16
+     /tmp/cckfRW2a.s:402    .text:00000000000002a0 .L17
+     /tmp/cckfRW2a.s:434    .text:00000000000002e0 .L18
+     /tmp/cckfRW2a.s:466    .text:0000000000000320 .L19
+     /tmp/cckfRW2a.s:260    .text:0000000000000190 .L20
+     /tmp/cckfRW2a.s:654    .text:00000000000003f0 .L36
+     /tmp/cckfRW2a.s:692    .text:000000000000044c .L37
+     /tmp/cckfRW2a.s:762    .text:00000000000004d8 .L43
+     /tmp/cckfRW2a.s:548    .text._Z7_assertbPKci:0000000000000028 .L0 
+     /tmp/cckfRW2a.s:559    .text._Z7_assertbPKci:0000000000000044 .L0 
+     /tmp/cckfRW2a.s:569    .text._Z7_assertbPKci:0000000000000060 .L0 
+     /tmp/cckfRW2a.s:530    .text._Z7_assertbPKci:0000000000000008 .L31
+     /tmp/cckfRW2a.s:3042   .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+     /tmp/cckfRW2a.s:4951   .debug_str:0000000000000716 .LASF133
+     /tmp/cckfRW2a.s:4825   .debug_str:0000000000000388 .LASF134
+     /tmp/cckfRW2a.s:4901   .debug_str:0000000000000593 .LASF135
+     /tmp/cckfRW2a.s:4659   .debug_ranges:0000000000000000 .Ldebug_ranges0
+     /tmp/cckfRW2a.s:4709   .debug_line:0000000000000000 .Ldebug_line0
+     /tmp/cckfRW2a.s:4861   .debug_str:0000000000000485 .LASF0
+     /tmp/cckfRW2a.s:4877   .debug_str:00000000000004f4 .LASF1
+     /tmp/cckfRW2a.s:4843   .debug_str:0000000000000416 .LASF2
+     /tmp/cckfRW2a.s:4815   .debug_str:0000000000000347 .LASF4
+     /tmp/cckfRW2a.s:4927   .debug_str:0000000000000663 .LASF3
+     /tmp/cckfRW2a.s:4739   .debug_str:000000000000011e .LASF5
+     /tmp/cckfRW2a.s:4881   .debug_str:000000000000051a .LASF6
+     /tmp/cckfRW2a.s:4859   .debug_str:0000000000000472 .LASF7
+     /tmp/cckfRW2a.s:4963   .debug_str:0000000000000829 .LASF8
+     /tmp/cckfRW2a.s:4795   .debug_str:00000000000002bb .LASF9
+     /tmp/cckfRW2a.s:4897   .debug_str:000000000000056d .LASF10
+     /tmp/cckfRW2a.s:4953   .debug_str:00000000000007da .LASF11
+     /tmp/cckfRW2a.s:4741   .debug_str:0000000000000125 .LASF12
+     /tmp/cckfRW2a.s:4721   .debug_str:0000000000000083 .LASF13
+     /tmp/cckfRW2a.s:4751   .debug_str:0000000000000174 .LASF14
+     /tmp/cckfRW2a.s:4917   .debug_str:00000000000005ff .LASF15
+     /tmp/cckfRW2a.s:4763   .debug_str:00000000000001bd .LASF16
+     /tmp/cckfRW2a.s:4845   .debug_str:0000000000000424 .LASF33
+     /tmp/cckfRW2a.s:4793   .debug_str:00000000000002a8 .LASF81
+     /tmp/cckfRW2a.s:4941   .debug_str:00000000000006d8 .LASF20
+     /tmp/cckfRW2a.s:4799   .debug_str:00000000000002d8 .LASF17
+GAS LISTING /tmp/cckfRW2a.s 			page 37
 
 
-     /tmp/cc1XBZ0z.s:793    .text:00000000000004f0 .LVL93
-     /tmp/cc1XBZ0z.s:4156   .debug_str:0000000000000593 .LASF83
-     /tmp/cc1XBZ0z.s:70     .text:0000000000000054 .LFB24
-     /tmp/cc1XBZ0z.s:113    .text:0000000000000094 .LFE24
-     /tmp/cc1XBZ0z.s:4074   .debug_str:0000000000000374 .LASF84
-     /tmp/cc1XBZ0z.s:4136   .debug_str:000000000000050e .LASF85
-     /tmp/cc1XBZ0z.s:98     .text:0000000000000080 .LBB19
-     /tmp/cc1XBZ0z.s:109    .text:0000000000000090 .LBE19
-     /tmp/cc1XBZ0z.s:3600   .debug_loc:0000000000000000 .LLST1
-     /tmp/cc1XBZ0z.s:4116   .debug_str:0000000000000494 .LASF129
-     /tmp/cc1XBZ0z.s:4206   .debug_str:00000000000007c6 .LASF130
-     /tmp/cc1XBZ0z.s:612    .text:00000000000003a8 .LFB23
-     /tmp/cc1XBZ0z.s:647    .text:00000000000003d4 .LFE23
-     /tmp/cc1XBZ0z.s:4172   .debug_str:000000000000062c .LASF86
-     /tmp/cc1XBZ0z.s:4190   .debug_str:0000000000000759 .LASF87
-     /tmp/cc1XBZ0z.s:534    .text:000000000000030c .LFB22
-     /tmp/cc1XBZ0z.s:606    .text:00000000000003a8 .LFE22
-     /tmp/cc1XBZ0z.s:551    .text:0000000000000334 .LBB48
-     /tmp/cc1XBZ0z.s:3609   .debug_loc:000000000000002c .LLST18
-     /tmp/cc1XBZ0z.s:574    .text:000000000000035c .LVL74
-     /tmp/cc1XBZ0z.s:579    .text:000000000000036c .LVL75
-     /tmp/cc1XBZ0z.s:584    .text:000000000000037c .LVL76
-     /tmp/cc1XBZ0z.s:589    .text:0000000000000388 .LVL77
-     /tmp/cc1XBZ0z.s:594    .text:0000000000000398 .LVL78
-     /tmp/cc1XBZ0z.s:598    .text:00000000000003a0 .LVL79
-     /tmp/cc1XBZ0z.s:602    .text:00000000000003a8 .LVL80
-     /tmp/cc1XBZ0z.s:4152   .debug_str:000000000000057c .LASF88
-     /tmp/cc1XBZ0z.s:4010   .debug_str:000000000000019f .LASF89
-     /tmp/cc1XBZ0z.s:382    .text:00000000000001dc .LFB21
-     /tmp/cc1XBZ0z.s:528    .text:000000000000030c .LFE21
-     /tmp/cc1XBZ0z.s:4052   .debug_str:00000000000002f2 .LASF90
-     /tmp/cc1XBZ0z.s:402    .text:0000000000000204 .LBB38
-     /tmp/cc1XBZ0z.s:3625   .debug_loc:000000000000006a .LLST12
-     /tmp/cc1XBZ0z.s:3640   .debug_loc:00000000000000a4 .LLST13
-     /tmp/cc1XBZ0z.s:3655   .debug_loc:00000000000000ec .LLST14
-     /tmp/cc1XBZ0z.s:457    .text:0000000000000264 .LVL57
-     /tmp/cc1XBZ0z.s:462    .text:0000000000000274 .LVL58
-     /tmp/cc1XBZ0z.s:467    .text:0000000000000284 .LVL59
-     /tmp/cc1XBZ0z.s:472    .text:0000000000000290 .LVL60
-     /tmp/cc1XBZ0z.s:477    .text:00000000000002a0 .LVL61
-     /tmp/cc1XBZ0z.s:481    .text:00000000000002a8 .LVL62
-     /tmp/cc1XBZ0z.s:485    .text:00000000000002b0 .LVL63
-     /tmp/cc1XBZ0z.s:431    .text:0000000000000240 .LBB41
-     /tmp/cc1XBZ0z.s:3674   .debug_loc:000000000000012a .LLST15
-     /tmp/cc1XBZ0z.s:3689   .debug_loc:0000000000000164 .LLST16
-     /tmp/cc1XBZ0z.s:3704   .debug_loc:00000000000001ac .LLST17
-     /tmp/cc1XBZ0z.s:496    .text:00000000000002c0 .LVL65
-     /tmp/cc1XBZ0z.s:501    .text:00000000000002d0 .LVL66
-     /tmp/cc1XBZ0z.s:506    .text:00000000000002e0 .LVL67
-     /tmp/cc1XBZ0z.s:511    .text:00000000000002ec .LVL68
-     /tmp/cc1XBZ0z.s:516    .text:00000000000002fc .LVL69
-     /tmp/cc1XBZ0z.s:520    .text:0000000000000304 .LVL70
-     /tmp/cc1XBZ0z.s:524    .text:000000000000030c .LVL71
-     /tmp/cc1XBZ0z.s:396    .text:00000000000001f4 .LVL47
-     /tmp/cc1XBZ0z.s:399    .text:00000000000001fc .LVL48
-     /tmp/cc1XBZ0z.s:401    .text:0000000000000204 .LVL49
-     /tmp/cc1XBZ0z.s:421    .text:0000000000000228 .LVL51
-GAS LISTING /tmp/cc1XBZ0z.s 			page 34
+     /tmp/cckfRW2a.s:4945   .debug_str:00000000000006fa .LASF18
+     /tmp/cckfRW2a.s:4981   .debug_str:000000000000089a .LASF19
+     /tmp/cckfRW2a.s:4715   .debug_str:0000000000000020 .LASF22
+     /tmp/cckfRW2a.s:4857   .debug_str:0000000000000468 .LASF24
+     /tmp/cckfRW2a.s:4811   .debug_str:0000000000000331 .LASF21
+     /tmp/cckfRW2a.s:4839   .debug_str:00000000000003ea .LASF23
+     /tmp/cckfRW2a.s:4781   .debug_str:000000000000024c .LASF25
+     /tmp/cckfRW2a.s:4979   .debug_str:0000000000000891 .LASF26
+     /tmp/cckfRW2a.s:4745   .debug_str:000000000000013a .LASF28
+     /tmp/cckfRW2a.s:4889   .debug_str:000000000000054b .LASF27
+     /tmp/cckfRW2a.s:4805   .debug_str:0000000000000302 .LASF29
+     /tmp/cckfRW2a.s:4961   .debug_str:0000000000000818 .LASF30
+     /tmp/cckfRW2a.s:4719   .debug_str:0000000000000062 .LASF31
+     /tmp/cckfRW2a.s:4985   .debug_str:00000000000008a9 .LASF51
+     /tmp/cckfRW2a.s:4987   .debug_str:00000000000008bc .LASF53
+     /tmp/cckfRW2a.s:4831   .debug_str:00000000000003bc .LASF32
+     /tmp/cckfRW2a.s:4875   .debug_str:00000000000004e3 .LASF34
+     /tmp/cckfRW2a.s:4885   .debug_str:0000000000000541 .LASF35
+     /tmp/cckfRW2a.s:4711   .debug_str:0000000000000000 .LASF36
+     /tmp/cckfRW2a.s:4959   .debug_str:0000000000000811 .LASF37
+     /tmp/cckfRW2a.s:4801   .debug_str:00000000000002de .LASF136
+     /tmp/cckfRW2a.s:4891   .debug_str:0000000000000553 .LASF38
+     /tmp/cckfRW2a.s:4853   .debug_str:0000000000000445 .LASF39
+     /tmp/cckfRW2a.s:4895   .debug_str:0000000000000567 .LASF40
+     /tmp/cckfRW2a.s:4851   .debug_str:0000000000000438 .LASF41
+     /tmp/cckfRW2a.s:4835   .debug_str:00000000000003d9 .LASF42
+     /tmp/cckfRW2a.s:4777   .debug_str:0000000000000233 .LASF43
+     /tmp/cckfRW2a.s:4873   .debug_str:00000000000004ce .LASF44
+     /tmp/cckfRW2a.s:4947   .debug_str:00000000000006ff .LASF45
+     /tmp/cckfRW2a.s:4929   .debug_str:0000000000000675 .LASF46
+     /tmp/cckfRW2a.s:4813   .debug_str:000000000000033b .LASF47
+     /tmp/cckfRW2a.s:4807   .debug_str:000000000000031a .LASF48
+     /tmp/cckfRW2a.s:4713   .debug_str:0000000000000009 .LASF49
+     /tmp/cckfRW2a.s:4949   .debug_str:000000000000070a .LASF50
+     /tmp/cckfRW2a.s:4769   .debug_str:00000000000001ef .LASF56
+     /tmp/cckfRW2a.s:4893   .debug_str:000000000000055b .LASF58
+     /tmp/cckfRW2a.s:4911   .debug_str:00000000000005cc .LASF60
+     /tmp/cckfRW2a.s:4821   .debug_str:000000000000035e .LASF52
+     /tmp/cckfRW2a.s:4717   .debug_str:000000000000003d .LASF54
+     /tmp/cckfRW2a.s:4909   .debug_str:00000000000005c7 .LASF137
+     /tmp/cckfRW2a.s:4837   .debug_str:00000000000003e5 .LASF55
+     /tmp/cckfRW2a.s:4737   .debug_str:000000000000010c .LASF57
+     /tmp/cckfRW2a.s:4999   .debug_str:0000000000000930 .LASF138
+     /tmp/cckfRW2a.s:4863   .debug_str:0000000000000492 .LASF139
+     /tmp/cckfRW2a.s:4931   .debug_str:0000000000000686 .LASF59
+     /tmp/cckfRW2a.s:4725   .debug_str:000000000000009e .LASF61
+     /tmp/cckfRW2a.s:4731   .debug_str:00000000000000ec .LASF62
+     /tmp/cckfRW2a.s:4819   .debug_str:0000000000000359 .LASF63
+     /tmp/cckfRW2a.s:4869   .debug_str:00000000000004bf .LASF64
+     /tmp/cckfRW2a.s:4995   .debug_str:0000000000000906 .LASF65
+     /tmp/cckfRW2a.s:4871   .debug_str:00000000000004c4 .LASF66
+     /tmp/cckfRW2a.s:4975   .debug_str:0000000000000875 .LASF67
+     /tmp/cckfRW2a.s:4849   .debug_str:0000000000000433 .LASF68
+     /tmp/cckfRW2a.s:4899   .debug_str:000000000000057c .LASF69
+     /tmp/cckfRW2a.s:4913   .debug_str:00000000000005e8 .LASF70
+     /tmp/cckfRW2a.s:4887   .debug_str:0000000000000546 .LASF71
+     /tmp/cckfRW2a.s:4823   .debug_str:000000000000036b .LASF72
+GAS LISTING /tmp/cckfRW2a.s 			page 38
 
 
-     /tmp/cc1XBZ0z.s:425    .text:0000000000000230 .LVL52
-     /tmp/cc1XBZ0z.s:428    .text:0000000000000238 .LVL53
-     /tmp/cc1XBZ0z.s:430    .text:0000000000000240 .LVL54
-     /tmp/cc1XBZ0z.s:4012   .debug_str:00000000000001b2 .LASF131
-     /tmp/cc1XBZ0z.s:10     .text:0000000000000000 .LFB20
-     /tmp/cc1XBZ0z.s:65     .text:0000000000000054 .LFE20
-     /tmp/cc1XBZ0z.s:3982   .debug_str:00000000000000d5 .LASF91
-     /tmp/cc1XBZ0z.s:4154   .debug_str:000000000000058a .LASF92
-     /tmp/cc1XBZ0z.s:3723   .debug_loc:00000000000001ea .LLST0
-     /tmp/cc1XBZ0z.s:3998   .debug_str:0000000000000162 .LASF93
-     /tmp/cc1XBZ0z.s:653    .text:00000000000003d4 .LFB19
-     /tmp/cc1XBZ0z.s:772    .text:00000000000004cc .LFE19
-     /tmp/cc1XBZ0z.s:3739   .debug_loc:0000000000000234 .LLST19
-     /tmp/cc1XBZ0z.s:669    .text:00000000000003f0 .LVL81
-     /tmp/cc1XBZ0z.s:673    .text:00000000000003f8 .LVL82
-     /tmp/cc1XBZ0z.s:677    .text:0000000000000400 .LVL83
-     /tmp/cc1XBZ0z.s:695    .text:000000000000041c .LVL85
-     /tmp/cc1XBZ0z.s:698    .text:0000000000000424 .LVL86
-     /tmp/cc1XBZ0z.s:707    .text:0000000000000450 .LVL87
-     /tmp/cc1XBZ0z.s:722    .text:0000000000000478 .LVL88
-     /tmp/cc1XBZ0z.s:726    .text:0000000000000480 .LVL89
-     /tmp/cc1XBZ0z.s:728    .text:0000000000000488 .LVL90
-     /tmp/cc1XBZ0z.s:735    .text:000000000000049c .LVL91
-     /tmp/cc1XBZ0z.s:740    .text:00000000000004a8 .LVL92
-     /tmp/cc1XBZ0z.s:4004   .debug_str:0000000000000183 .LASF94
-     /tmp/cc1XBZ0z.s:4166   .debug_str:00000000000005f0 .LASF95
-     /tmp/cc1XBZ0z.s:133    .text:0000000000000094 .LFB18
-     /tmp/cc1XBZ0z.s:310    .text:00000000000001dc .LFE18
-     /tmp/cc1XBZ0z.s:3746   .debug_loc:0000000000000257 .LLST2
-     /tmp/cc1XBZ0z.s:166    .text:00000000000000c4 .LBB26
-     /tmp/cc1XBZ0z.s:3768   .debug_loc:00000000000002b6 .LLST3
-     /tmp/cc1XBZ0z.s:3781   .debug_loc:00000000000002ee .LLST4
-     /tmp/cc1XBZ0z.s:3796   .debug_loc:0000000000000336 .LLST5
-     /tmp/cc1XBZ0z.s:239    .text:0000000000000134 .LVL23
-     /tmp/cc1XBZ0z.s:244    .text:0000000000000144 .LVL24
-     /tmp/cc1XBZ0z.s:249    .text:0000000000000154 .LVL25
-     /tmp/cc1XBZ0z.s:254    .text:0000000000000160 .LVL26
-     /tmp/cc1XBZ0z.s:259    .text:0000000000000170 .LVL27
-     /tmp/cc1XBZ0z.s:263    .text:0000000000000178 .LVL28
-     /tmp/cc1XBZ0z.s:267    .text:0000000000000180 .LVL29
-     /tmp/cc1XBZ0z.s:182    .text:00000000000000e0 .LBB29
-     /tmp/cc1XBZ0z.s:3815   .debug_loc:0000000000000374 .LLST6
-     /tmp/cc1XBZ0z.s:3828   .debug_loc:00000000000003ac .LLST7
-     /tmp/cc1XBZ0z.s:3843   .debug_loc:00000000000003f4 .LLST8
-     /tmp/cc1XBZ0z.s:278    .text:0000000000000190 .LVL31
-     /tmp/cc1XBZ0z.s:283    .text:00000000000001a0 .LVL32
-     /tmp/cc1XBZ0z.s:288    .text:00000000000001b0 .LVL33
-     /tmp/cc1XBZ0z.s:293    .text:00000000000001bc .LVL34
-     /tmp/cc1XBZ0z.s:298    .text:00000000000001cc .LVL35
-     /tmp/cc1XBZ0z.s:302    .text:00000000000001d4 .LVL36
-     /tmp/cc1XBZ0z.s:306    .text:00000000000001dc .LVL37
-     /tmp/cc1XBZ0z.s:160    .text:00000000000000bc .LVL10
-     /tmp/cc1XBZ0z.s:164    .text:00000000000000c4 .LVL11
-     /tmp/cc1XBZ0z.s:177    .text:00000000000000d0 .LVL13
-     /tmp/cc1XBZ0z.s:193    .text:00000000000000ec .LVL16
-     /tmp/cc1XBZ0z.s:197    .text:00000000000000f4 .LVL17
-     /tmp/cc1XBZ0z.s:201    .text:00000000000000fc .LVL18
-GAS LISTING /tmp/cc1XBZ0z.s 			page 35
+     /tmp/cckfRW2a.s:4723   .debug_str:0000000000000093 .LASF73
+     /tmp/cckfRW2a.s:4785   .debug_str:000000000000025c .LASF74
+     /tmp/cckfRW2a.s:4775   .debug_str:0000000000000228 .LASF75
+     /tmp/cckfRW2a.s:4943   .debug_str:00000000000006e1 .LASF76
+     /tmp/cckfRW2a.s:4935   .debug_str:000000000000069d .LASF77
+     /tmp/cckfRW2a.s:4865   .debug_str:00000000000004ad .LASF78
+     /tmp/cckfRW2a.s:4783   .debug_str:0000000000000257 .LASF79
+     /tmp/cckfRW2a.s:4809   .debug_str:0000000000000329 .LASF80
+     /tmp/cckfRW2a.s:4955   .debug_str:00000000000007e9 .LASF82
+     /tmp/cckfRW2a.s:4841   .debug_str:0000000000000408 .LASF83
+     /tmp/cckfRW2a.s:4765   .debug_str:00000000000001d3 .LASF84
+     /tmp/cckfRW2a.s:4971   .debug_str:000000000000085b .LASF85
+     /tmp/cckfRW2a.s:4797   .debug_str:00000000000002c9 .LASF86
+     /tmp/cckfRW2a.s:4743   .debug_str:0000000000000135 .LASF87
+     /tmp/cckfRW2a.s:4879   .debug_str:0000000000000507 .LASF88
+     /tmp/cckfRW2a.s:4773   .debug_str:0000000000000223 .LASF89
+     /tmp/cckfRW2a.s:4735   .debug_str:00000000000000f9 .LASF90
+     /tmp/cckfRW2a.s:4977   .debug_str:0000000000000882 .LASF91
+     /tmp/cckfRW2a.s:4803   .debug_str:00000000000002e4 .LASF92
+     /tmp/cckfRW2a.s:4919   .debug_str:0000000000000615 .LASF93
+     /tmp/cckfRW2a.s:4779   .debug_str:000000000000023f .LASF94
+     /tmp/cckfRW2a.s:4827   .debug_str:0000000000000395 .LASF95
+     /tmp/cckfRW2a.s:974    .text:0000000000000654 .LFB25
+     /tmp/cckfRW2a.s:1000   .text:0000000000000688 .LFE25
+     /tmp/cckfRW2a.s:990    .text:0000000000000678 .LVL108
+     /tmp/cckfRW2a.s:4923   .debug_str:000000000000062e .LASF96
+     /tmp/cckfRW2a.s:70     .text:0000000000000054 .LFB24
+     /tmp/cckfRW2a.s:113    .text:0000000000000094 .LFE24
+     /tmp/cckfRW2a.s:4833   .debug_str:00000000000003ca .LASF97
+     /tmp/cckfRW2a.s:4903   .debug_str:00000000000005a7 .LASF98
+     /tmp/cckfRW2a.s:98     .text:0000000000000080 .LBB58
+     /tmp/cckfRW2a.s:109    .text:0000000000000090 .LBE58
+     /tmp/cckfRW2a.s:4250   .debug_loc:0000000000000000 .LLST1
+     /tmp/cckfRW2a.s:4883   .debug_str:000000000000052d .LASF140
+     /tmp/cckfRW2a.s:4855   .debug_str:000000000000044f .LASF141
+     /tmp/cckfRW2a.s:818    .text:0000000000000544 .LFB23
+     /tmp/cckfRW2a.s:853    .text:0000000000000570 .LFE23
+     /tmp/cckfRW2a.s:4939   .debug_str:00000000000006c7 .LASF99
+     /tmp/cckfRW2a.s:4957   .debug_str:00000000000007fb .LASF100
+     /tmp/cckfRW2a.s:740    .text:00000000000004a8 .LFB22
+     /tmp/cckfRW2a.s:812    .text:0000000000000544 .LFE22
+     /tmp/cckfRW2a.s:757    .text:00000000000004d0 .LBB162
+     /tmp/cckfRW2a.s:4259   .debug_loc:000000000000002c .LLST26
+     /tmp/cckfRW2a.s:780    .text:00000000000004f8 .LVL91
+     /tmp/cckfRW2a.s:785    .text:0000000000000508 .LVL92
+     /tmp/cckfRW2a.s:790    .text:0000000000000518 .LVL93
+     /tmp/cckfRW2a.s:795    .text:0000000000000524 .LVL94
+     /tmp/cckfRW2a.s:800    .text:0000000000000534 .LVL95
+     /tmp/cckfRW2a.s:804    .text:000000000000053c .LVL96
+     /tmp/cckfRW2a.s:808    .text:0000000000000544 .LVL97
+     /tmp/cckfRW2a.s:4969   .debug_str:000000000000084d .LASF101
+     /tmp/cckfRW2a.s:4759   .debug_str:00000000000001a1 .LASF102
+     /tmp/cckfRW2a.s:588    .text:0000000000000378 .LFB21
+     /tmp/cckfRW2a.s:734    .text:00000000000004a8 .LFE21
+     /tmp/cckfRW2a.s:4791   .debug_str:00000000000002a3 .LASF103
+     /tmp/cckfRW2a.s:608    .text:00000000000003a0 .LBB152
+     /tmp/cckfRW2a.s:4275   .debug_loc:000000000000006a .LLST20
+GAS LISTING /tmp/cckfRW2a.s 			page 39
 
 
-     /tmp/cc1XBZ0z.s:212    .text:0000000000000108 .LVL19
-     /tmp/cc1XBZ0z.s:216    .text:0000000000000110 .LVL20
-     /tmp/cc1XBZ0z.s:4138   .debug_str:0000000000000519 .LASF132
-     /tmp/cc1XBZ0z.s:4198   .debug_str:0000000000000797 .LASF133
-     /tmp/cc1XBZ0z.s:4148   .debug_str:000000000000055e .LASF96
-     /tmp/cc1XBZ0z.s:4220   .debug_str:0000000000000834 .LASF97
-     /tmp/cc1XBZ0z.s:4086   .debug_str:00000000000003c9 .LASF98
-     /tmp/cc1XBZ0z.s:4008   .debug_str:000000000000019a .LASF99
-     /tmp/cc1XBZ0z.s:4200   .debug_str:00000000000007a6 .LASF100
-     /tmp/cc1XBZ0z.s:317    .text._Z7_assertbPKci:0000000000000000 .LFB0
-     /tmp/cc1XBZ0z.s:375    .text._Z7_assertbPKci:0000000000000080 .LFE0
-     /tmp/cc1XBZ0z.s:3868   .debug_loc:0000000000000438 .LLST9
-     /tmp/cc1XBZ0z.s:3882   .debug_loc:0000000000000471 .LLST10
-     /tmp/cc1XBZ0z.s:3893   .debug_loc:00000000000004a7 .LLST11
-     /tmp/cc1XBZ0z.s:345    .text._Z7_assertbPKci:0000000000000038 .LVL40
-     /tmp/cc1XBZ0z.s:350    .text._Z7_assertbPKci:0000000000000044 .LVL41
-     /tmp/cc1XBZ0z.s:355    .text._Z7_assertbPKci:0000000000000054 .LVL42
-     /tmp/cc1XBZ0z.s:360    .text._Z7_assertbPKci:0000000000000060 .LVL43
-     /tmp/cc1XBZ0z.s:365    .text._Z7_assertbPKci:0000000000000070 .LVL44
-     /tmp/cc1XBZ0z.s:369    .text._Z7_assertbPKci:0000000000000078 .LVL45
-     /tmp/cc1XBZ0z.s:373    .text._Z7_assertbPKci:0000000000000080 .LVL46
-     /tmp/cc1XBZ0z.s:4222   .debug_str:0000000000000844 .LASF101
-     /tmp/cc1XBZ0z.s:4212   .debug_str:00000000000007ed .LASF103
-     /tmp/cc1XBZ0z.s:4060   .debug_str:0000000000000314 .LASF102
-     /tmp/cc1XBZ0z.s:4218   .debug_str:000000000000082d .LASF104
-     /tmp/cc1XBZ0z.s:4170   .debug_str:000000000000061c .LASF105
-     /tmp/cc1XBZ0z.s:4158   .debug_str:00000000000005bd .LASF106
-     /tmp/cc1XBZ0z.s:4140   .debug_str:000000000000051e .LASF107
-     /tmp/cc1XBZ0z.s:4070   .debug_str:000000000000035b .LASF108
-     /tmp/cc1XBZ0z.s:4226   .debug_str:0000000000000860 .LASF109
-     /tmp/cc1XBZ0z.s:4038   .debug_str:0000000000000285 .LASF110
-     /tmp/cc1XBZ0z.s:3984   .debug_str:00000000000000dc .LASF111
-     /tmp/cc1XBZ0z.s:4016   .debug_str:00000000000001d1 .LASF112
-     /tmp/cc1XBZ0z.s:4036   .debug_str:0000000000000270 .LASF113
-     /tmp/cc1XBZ0z.s:4002   .debug_str:0000000000000173 .LASF114
-     /tmp/cc1XBZ0z.s:3978   .debug_str:00000000000000b0 .LASF115
-     /tmp/cc1XBZ0z.s:4020   .debug_str:00000000000001f9 .LASF116
-     /tmp/cc1XBZ0z.s:4006   .debug_str:000000000000018f .LASF117
-     /tmp/cc1XBZ0z.s:4202   .debug_str:00000000000007ab .LASF118
-     /tmp/cc1XBZ0z.s:4022   .debug_str:0000000000000213 .LASF119
-     /tmp/cc1XBZ0z.s:4186   .debug_str:000000000000073f .LASF120
-     /tmp/cc1XBZ0z.s:97     .text:0000000000000080 .LVL6
-     /tmp/cc1XBZ0z.s:106    .text:0000000000000090 .LVL7
-     /tmp/cc1XBZ0z.s:550    .text:0000000000000334 .LVL73
-     /tmp/cc1XBZ0z.s:407    .text:0000000000000208 .LVL50
-     /tmp/cc1XBZ0z.s:447    .text:0000000000000254 .LVL55
-     /tmp/cc1XBZ0z.s:455    .text:000000000000025c .LVL56
-     /tmp/cc1XBZ0z.s:494    .text:00000000000002b8 .LVL64
-     /tmp/cc1XBZ0z.s:29     .text:000000000000001c .LVL1
-     /tmp/cc1XBZ0z.s:43     .text:0000000000000028 .LVL2
-     /tmp/cc1XBZ0z.s:49     .text:0000000000000038 .LVL3
-     /tmp/cc1XBZ0z.s:51     .text:000000000000003c .LVL4
-     /tmp/cc1XBZ0z.s:685    .text:0000000000000404 .LVL84
-     /tmp/cc1XBZ0z.s:136    .text:0000000000000094 .LVL8
-     /tmp/cc1XBZ0z.s:158    .text:00000000000000b4 .LVL9
-     /tmp/cc1XBZ0z.s:226    .text:000000000000011c .LVL21
-     /tmp/cc1XBZ0z.s:230    .text:0000000000000124 .LVL22
-GAS LISTING /tmp/cc1XBZ0z.s 			page 36
+     /tmp/cckfRW2a.s:4290   .debug_loc:00000000000000a4 .LLST21
+     /tmp/cckfRW2a.s:4305   .debug_loc:00000000000000ec .LLST22
+     /tmp/cckfRW2a.s:663    .text:0000000000000400 .LVL74
+     /tmp/cckfRW2a.s:668    .text:0000000000000410 .LVL75
+     /tmp/cckfRW2a.s:673    .text:0000000000000420 .LVL76
+     /tmp/cckfRW2a.s:678    .text:000000000000042c .LVL77
+     /tmp/cckfRW2a.s:683    .text:000000000000043c .LVL78
+     /tmp/cckfRW2a.s:687    .text:0000000000000444 .LVL79
+     /tmp/cckfRW2a.s:691    .text:000000000000044c .LVL80
+     /tmp/cckfRW2a.s:637    .text:00000000000003dc .LBB155
+     /tmp/cckfRW2a.s:4324   .debug_loc:000000000000012a .LLST23
+     /tmp/cckfRW2a.s:4339   .debug_loc:0000000000000164 .LLST24
+     /tmp/cckfRW2a.s:4354   .debug_loc:00000000000001ac .LLST25
+     /tmp/cckfRW2a.s:702    .text:000000000000045c .LVL82
+     /tmp/cckfRW2a.s:707    .text:000000000000046c .LVL83
+     /tmp/cckfRW2a.s:712    .text:000000000000047c .LVL84
+     /tmp/cckfRW2a.s:717    .text:0000000000000488 .LVL85
+     /tmp/cckfRW2a.s:722    .text:0000000000000498 .LVL86
+     /tmp/cckfRW2a.s:726    .text:00000000000004a0 .LVL87
+     /tmp/cckfRW2a.s:730    .text:00000000000004a8 .LVL88
+     /tmp/cckfRW2a.s:602    .text:0000000000000390 .LVL64
+     /tmp/cckfRW2a.s:605    .text:0000000000000398 .LVL65
+     /tmp/cckfRW2a.s:607    .text:00000000000003a0 .LVL66
+     /tmp/cckfRW2a.s:627    .text:00000000000003c4 .LVL68
+     /tmp/cckfRW2a.s:631    .text:00000000000003cc .LVL69
+     /tmp/cckfRW2a.s:634    .text:00000000000003d4 .LVL70
+     /tmp/cckfRW2a.s:636    .text:00000000000003dc .LVL71
+     /tmp/cckfRW2a.s:4761   .debug_str:00000000000001b4 .LASF142
+     /tmp/cckfRW2a.s:10     .text:0000000000000000 .LFB20
+     /tmp/cckfRW2a.s:65     .text:0000000000000054 .LFE20
+     /tmp/cckfRW2a.s:4733   .debug_str:00000000000000f2 .LASF104
+     /tmp/cckfRW2a.s:4921   .debug_str:0000000000000625 .LASF105
+     /tmp/cckfRW2a.s:4373   .debug_loc:00000000000001ea .LLST0
+     /tmp/cckfRW2a.s:4747   .debug_str:0000000000000152 .LASF106
+     /tmp/cckfRW2a.s:859    .text:0000000000000570 .LFB19
+     /tmp/cckfRW2a.s:969    .text:0000000000000654 .LFE19
+     /tmp/cckfRW2a.s:4389   .debug_loc:0000000000000234 .LLST27
+     /tmp/cckfRW2a.s:875    .text:000000000000058c .LVL98
+     /tmp/cckfRW2a.s:879    .text:0000000000000594 .LVL99
+     /tmp/cckfRW2a.s:883    .text:000000000000059c .LVL100
+     /tmp/cckfRW2a.s:901    .text:00000000000005b8 .LVL102
+     /tmp/cckfRW2a.s:904    .text:00000000000005c0 .LVL103
+     /tmp/cckfRW2a.s:913    .text:00000000000005ec .LVL104
+     /tmp/cckfRW2a.s:928    .text:0000000000000614 .LVL105
+     /tmp/cckfRW2a.s:932    .text:000000000000061c .LVL106
+     /tmp/cckfRW2a.s:934    .text:0000000000000624 .LVL107
+     /tmp/cckfRW2a.s:4755   .debug_str:0000000000000190 .LASF107
+     /tmp/cckfRW2a.s:4933   .debug_str:000000000000068b .LASF108
+     /tmp/cckfRW2a.s:133    .text:0000000000000094 .LFB18
+     /tmp/cckfRW2a.s:516    .text:0000000000000378 .LFE18
+     /tmp/cckfRW2a.s:4396   .debug_loc:0000000000000257 .LLST2
+     /tmp/cckfRW2a.s:4421   .debug_loc:00000000000002b9 .LLST9
+     /tmp/cckfRW2a.s:264    .text:0000000000000190 .LBB108
+     /tmp/cckfRW2a.s:483    .text:0000000000000340 .LBB110
+     /tmp/cckfRW2a.s:494    .text:0000000000000354 .LBE110
+     /tmp/cckfRW2a.s:4433   .debug_loc:00000000000002f0 .LLST10
+     /tmp/cckfRW2a.s:283    .text:00000000000001b0 .LBB114
+GAS LISTING /tmp/cckfRW2a.s 			page 40
 
 
-     /tmp/cc1XBZ0z.s:172    .text:00000000000000c8 .LVL12
-     /tmp/cc1XBZ0z.s:181    .text:00000000000000e0 .LVL14
-     /tmp/cc1XBZ0z.s:187    .text:00000000000000e4 .LVL15
-     /tmp/cc1XBZ0z.s:276    .text:0000000000000188 .LVL30
-     /tmp/cc1XBZ0z.s:320    .text._Z7_assertbPKci:0000000000000000 .LVL38
-     /tmp/cc1XBZ0z.s:343    .text._Z7_assertbPKci:0000000000000030 .LVL39
-     /tmp/cc1XBZ0z.s:828    .debug_info:0000000000000000 .Ldebug_info0
-     /tmp/cc1XBZ0z.s:5      .text:0000000000000000 .Ltext0
-     /tmp/cc1XBZ0z.s:822    .text:0000000000000500 .Letext0
-     /tmp/cc1XBZ0z.s:174    .text:00000000000000c8 .LBE26
-     /tmp/cc1XBZ0z.s:233    .text:0000000000000124 .LBB32
-     /tmp/cc1XBZ0z.s:270    .text:0000000000000180 .LBE32
-     /tmp/cc1XBZ0z.s:189    .text:00000000000000e4 .LBE29
-     /tmp/cc1XBZ0z.s:271    .text:0000000000000180 .LBB33
-     /tmp/cc1XBZ0z.s:308    .text:00000000000001dc .LBE33
-     /tmp/cc1XBZ0z.s:409    .text:0000000000000208 .LBE38
-     /tmp/cc1XBZ0z.s:450    .text:0000000000000254 .LBB44
-     /tmp/cc1XBZ0z.s:488    .text:00000000000002b0 .LBE44
-     /tmp/cc1XBZ0z.s:436    .text:0000000000000244 .LBE41
-     /tmp/cc1XBZ0z.s:489    .text:00000000000002b0 .LBB45
-     /tmp/cc1XBZ0z.s:526    .text:000000000000030c .LBE45
-     /tmp/cc1XBZ0z.s:558    .text:000000000000033c .LBE48
-     /tmp/cc1XBZ0z.s:568    .text:000000000000034c .LBB51
-     /tmp/cc1XBZ0z.s:604    .text:00000000000003a8 .LBE51
+     /tmp/cckfRW2a.s:308    .text:00000000000001dc .LBE114
+     /tmp/cckfRW2a.s:290    .text:00000000000001bc .LBB116
+     /tmp/cckfRW2a.s:301    .text:00000000000001d0 .LBE116
+     /tmp/cckfRW2a.s:4442   .debug_loc:000000000000031c .LLST11
+     /tmp/cckfRW2a.s:316    .text:00000000000001f4 .LBB119
+     /tmp/cckfRW2a.s:341    .text:0000000000000220 .LBE119
+     /tmp/cckfRW2a.s:323    .text:0000000000000200 .LBB121
+     /tmp/cckfRW2a.s:334    .text:0000000000000214 .LBE121
+     /tmp/cckfRW2a.s:4451   .debug_loc:0000000000000348 .LLST12
+     /tmp/cckfRW2a.s:348    .text:0000000000000234 .LBB124
+     /tmp/cckfRW2a.s:373    .text:0000000000000260 .LBE124
+     /tmp/cckfRW2a.s:355    .text:0000000000000240 .LBB126
+     /tmp/cckfRW2a.s:366    .text:0000000000000254 .LBE126
+     /tmp/cckfRW2a.s:4460   .debug_loc:0000000000000374 .LLST13
+     /tmp/cckfRW2a.s:380    .text:0000000000000274 .LBB129
+     /tmp/cckfRW2a.s:405    .text:00000000000002a0 .LBE129
+     /tmp/cckfRW2a.s:387    .text:0000000000000280 .LBB131
+     /tmp/cckfRW2a.s:398    .text:0000000000000294 .LBE131
+     /tmp/cckfRW2a.s:4469   .debug_loc:00000000000003a0 .LLST14
+     /tmp/cckfRW2a.s:412    .text:00000000000002b4 .LBB134
+     /tmp/cckfRW2a.s:437    .text:00000000000002e0 .LBE134
+     /tmp/cckfRW2a.s:419    .text:00000000000002c0 .LBB136
+     /tmp/cckfRW2a.s:430    .text:00000000000002d4 .LBE136
+     /tmp/cckfRW2a.s:4478   .debug_loc:00000000000003cc .LLST15
+     /tmp/cckfRW2a.s:444    .text:00000000000002f4 .LBB139
+     /tmp/cckfRW2a.s:469    .text:0000000000000320 .LBE139
+     /tmp/cckfRW2a.s:451    .text:0000000000000300 .LBB141
+     /tmp/cckfRW2a.s:462    .text:0000000000000314 .LBE141
+     /tmp/cckfRW2a.s:4487   .debug_loc:00000000000003f8 .LLST16
+     /tmp/cckfRW2a.s:274    .text:00000000000001a4 .LVL32
+     /tmp/cckfRW2a.s:314    .text:00000000000001f4 .LVL36
+     /tmp/cckfRW2a.s:346    .text:0000000000000234 .LVL39
+     /tmp/cckfRW2a.s:378    .text:0000000000000274 .LVL42
+     /tmp/cckfRW2a.s:410    .text:00000000000002b4 .LVL45
+     /tmp/cckfRW2a.s:442    .text:00000000000002f4 .LVL48
+     /tmp/cckfRW2a.s:474    .text:0000000000000334 .LVL51
+     /tmp/cckfRW2a.s:149    .text:00000000000000a8 .LBB101
+     /tmp/cckfRW2a.s:4496   .debug_loc:0000000000000424 .LLST3
+     /tmp/cckfRW2a.s:4509   .debug_loc:000000000000045c .LLST4
+     /tmp/cckfRW2a.s:4524   .debug_loc:00000000000004a4 .LLST5
+     /tmp/cckfRW2a.s:192    .text:00000000000000e8 .LVL17
+     /tmp/cckfRW2a.s:197    .text:00000000000000f8 .LVL18
+     /tmp/cckfRW2a.s:202    .text:0000000000000108 .LVL19
+     /tmp/cckfRW2a.s:207    .text:0000000000000114 .LVL20
+     /tmp/cckfRW2a.s:212    .text:0000000000000124 .LVL21
+     /tmp/cckfRW2a.s:216    .text:000000000000012c .LVL22
+     /tmp/cckfRW2a.s:220    .text:0000000000000134 .LVL23
+     /tmp/cckfRW2a.s:165    .text:00000000000000c4 .LBB104
+     /tmp/cckfRW2a.s:4552   .debug_loc:00000000000004fa .LLST6
+     /tmp/cckfRW2a.s:4565   .debug_loc:0000000000000532 .LLST7
+     /tmp/cckfRW2a.s:4580   .debug_loc:000000000000057a .LLST8
+     /tmp/cckfRW2a.s:231    .text:0000000000000144 .LVL25
+     /tmp/cckfRW2a.s:236    .text:0000000000000154 .LVL26
+     /tmp/cckfRW2a.s:241    .text:0000000000000164 .LVL27
+     /tmp/cckfRW2a.s:246    .text:0000000000000170 .LVL28
+     /tmp/cckfRW2a.s:251    .text:0000000000000180 .LVL29
+     /tmp/cckfRW2a.s:255    .text:0000000000000188 .LVL30
+GAS LISTING /tmp/cckfRW2a.s 			page 41
+
+
+     /tmp/cckfRW2a.s:259    .text:0000000000000190 .LVL31
+     /tmp/cckfRW2a.s:160    .text:00000000000000b4 .LVL11
+     /tmp/cckfRW2a.s:176    .text:00000000000000d0 .LVL14
+     /tmp/cckfRW2a.s:4905   .debug_str:00000000000005b2 .LASF109
+     /tmp/cckfRW2a.s:4973   .debug_str:0000000000000865 .LASF110
+     /tmp/cckfRW2a.s:4867   .debug_str:00000000000004b6 .LASF143
+     /tmp/cckfRW2a.s:4749   .debug_str:0000000000000157 .LASF144
+     /tmp/cckfRW2a.s:4965   .debug_str:0000000000000839 .LASF111
+     /tmp/cckfRW2a.s:4915   .debug_str:00000000000005f7 .LASF112
+     /tmp/cckfRW2a.s:4991   .debug_str:00000000000008e6 .LASF113
+     /tmp/cckfRW2a.s:4847   .debug_str:000000000000042d .LASF114
+     /tmp/cckfRW2a.s:4757   .debug_str:000000000000019c .LASF115
+     /tmp/cckfRW2a.s:4967   .debug_str:0000000000000848 .LASF116
+     /tmp/cckfRW2a.s:523    .text._Z7_assertbPKci:0000000000000000 .LFB0
+     /tmp/cckfRW2a.s:581    .text._Z7_assertbPKci:0000000000000080 .LFE0
+     /tmp/cckfRW2a.s:4605   .debug_loc:00000000000005be .LLST17
+     /tmp/cckfRW2a.s:4619   .debug_loc:00000000000005f7 .LLST18
+     /tmp/cckfRW2a.s:4630   .debug_loc:000000000000062d .LLST19
+     /tmp/cckfRW2a.s:551    .text._Z7_assertbPKci:0000000000000038 .LVL57
+     /tmp/cckfRW2a.s:556    .text._Z7_assertbPKci:0000000000000044 .LVL58
+     /tmp/cckfRW2a.s:561    .text._Z7_assertbPKci:0000000000000054 .LVL59
+     /tmp/cckfRW2a.s:566    .text._Z7_assertbPKci:0000000000000060 .LVL60
+     /tmp/cckfRW2a.s:571    .text._Z7_assertbPKci:0000000000000070 .LVL61
+     /tmp/cckfRW2a.s:575    .text._Z7_assertbPKci:0000000000000078 .LVL62
+     /tmp/cckfRW2a.s:579    .text._Z7_assertbPKci:0000000000000080 .LVL63
+     /tmp/cckfRW2a.s:4993   .debug_str:00000000000008f6 .LASF117
+     /tmp/cckfRW2a.s:4983   .debug_str:000000000000089f .LASF119
+     /tmp/cckfRW2a.s:4817   .debug_str:000000000000034e .LASF118
+     /tmp/cckfRW2a.s:4989   .debug_str:00000000000008df .LASF120
+     /tmp/cckfRW2a.s:4937   .debug_str:00000000000006b7 .LASF121
+     /tmp/cckfRW2a.s:4925   .debug_str:0000000000000658 .LASF122
+     /tmp/cckfRW2a.s:4907   .debug_str:00000000000005b7 .LASF123
+     /tmp/cckfRW2a.s:4829   .debug_str:00000000000003b1 .LASF124
+     /tmp/cckfRW2a.s:4997   .debug_str:0000000000000912 .LASF125
+     /tmp/cckfRW2a.s:4789   .debug_str:000000000000028a .LASF126
+     /tmp/cckfRW2a.s:4729   .debug_str:00000000000000cf .LASF127
+     /tmp/cckfRW2a.s:4767   .debug_str:00000000000001e1 .LASF128
+     /tmp/cckfRW2a.s:4787   .debug_str:0000000000000275 .LASF129
+     /tmp/cckfRW2a.s:4753   .debug_str:0000000000000180 .LASF130
+     /tmp/cckfRW2a.s:4727   .debug_str:00000000000000b0 .LASF131
+     /tmp/cckfRW2a.s:4771   .debug_str:0000000000000209 .LASF132
+     /tmp/cckfRW2a.s:97     .text:0000000000000080 .LVL6
+     /tmp/cckfRW2a.s:106    .text:0000000000000090 .LVL7
+     /tmp/cckfRW2a.s:756    .text:00000000000004d0 .LVL90
+     /tmp/cckfRW2a.s:613    .text:00000000000003a4 .LVL67
+     /tmp/cckfRW2a.s:653    .text:00000000000003f0 .LVL72
+     /tmp/cckfRW2a.s:661    .text:00000000000003f8 .LVL73
+     /tmp/cckfRW2a.s:700    .text:0000000000000454 .LVL81
+     /tmp/cckfRW2a.s:29     .text:000000000000001c .LVL1
+     /tmp/cckfRW2a.s:43     .text:0000000000000028 .LVL2
+     /tmp/cckfRW2a.s:49     .text:0000000000000038 .LVL3
+     /tmp/cckfRW2a.s:51     .text:000000000000003c .LVL4
+     /tmp/cckfRW2a.s:891    .text:00000000000005a0 .LVL101
+     /tmp/cckfRW2a.s:136    .text:0000000000000094 .LVL8
+     /tmp/cckfRW2a.s:182    .text:00000000000000d8 .LVL15
+     /tmp/cckfRW2a.s:190    .text:00000000000000e0 .LVL16
+     /tmp/cckfRW2a.s:511    .text:0000000000000370 .LVL54
+GAS LISTING /tmp/cckfRW2a.s 			page 42
+
+
+     /tmp/cckfRW2a.s:482    .text:0000000000000340 .LVL52
+     /tmp/cckfRW2a.s:491    .text:0000000000000354 .LVL53
+     /tmp/cckfRW2a.s:289    .text:00000000000001bc .LVL34
+     /tmp/cckfRW2a.s:298    .text:00000000000001d0 .LVL35
+     /tmp/cckfRW2a.s:322    .text:0000000000000200 .LVL37
+     /tmp/cckfRW2a.s:331    .text:0000000000000214 .LVL38
+     /tmp/cckfRW2a.s:354    .text:0000000000000240 .LVL40
+     /tmp/cckfRW2a.s:363    .text:0000000000000254 .LVL41
+     /tmp/cckfRW2a.s:386    .text:0000000000000280 .LVL43
+     /tmp/cckfRW2a.s:395    .text:0000000000000294 .LVL44
+     /tmp/cckfRW2a.s:418    .text:00000000000002c0 .LVL46
+     /tmp/cckfRW2a.s:427    .text:00000000000002d4 .LVL47
+     /tmp/cckfRW2a.s:450    .text:0000000000000300 .LVL49
+     /tmp/cckfRW2a.s:459    .text:0000000000000314 .LVL50
+     /tmp/cckfRW2a.s:148    .text:00000000000000a8 .LVL9
+     /tmp/cckfRW2a.s:155    .text:00000000000000ac .LVL10
+     /tmp/cckfRW2a.s:164    .text:00000000000000c4 .LVL12
+     /tmp/cckfRW2a.s:170    .text:00000000000000c8 .LVL13
+     /tmp/cckfRW2a.s:229    .text:000000000000013c .LVL24
+     /tmp/cckfRW2a.s:526    .text._Z7_assertbPKci:0000000000000000 .LVL55
+     /tmp/cckfRW2a.s:549    .text._Z7_assertbPKci:0000000000000030 .LVL56
+     /tmp/cckfRW2a.s:1034   .debug_info:0000000000000000 .Ldebug_info0
+     /tmp/cckfRW2a.s:5      .text:0000000000000000 .Ltext0
+     /tmp/cckfRW2a.s:1028   .text:0000000000000688 .Letext0
+     /tmp/cckfRW2a.s:157    .text:00000000000000ac .LBE101
+     /tmp/cckfRW2a.s:185    .text:00000000000000d8 .LBB145
+     /tmp/cckfRW2a.s:223    .text:0000000000000134 .LBE145
+     /tmp/cckfRW2a.s:172    .text:00000000000000c8 .LBE104
+     /tmp/cckfRW2a.s:224    .text:0000000000000134 .LBB146
+     /tmp/cckfRW2a.s:262    .text:0000000000000190 .LBE146
+     /tmp/cckfRW2a.s:178    .text:00000000000000d0 .LBB107
+     /tmp/cckfRW2a.s:184    .text:00000000000000d8 .LBE107
+     /tmp/cckfRW2a.s:263    .text:0000000000000190 .LBB147
+     /tmp/cckfRW2a.s:502    .text:0000000000000364 .LBE147
+     /tmp/cckfRW2a.s:269    .text:0000000000000190 .LBE108
+     /tmp/cckfRW2a.s:476    .text:0000000000000334 .LBB144
+     /tmp/cckfRW2a.s:501    .text:0000000000000364 .LBE144
+     /tmp/cckfRW2a.s:615    .text:00000000000003a4 .LBE152
+     /tmp/cckfRW2a.s:656    .text:00000000000003f0 .LBB158
+     /tmp/cckfRW2a.s:694    .text:000000000000044c .LBE158
+     /tmp/cckfRW2a.s:642    .text:00000000000003e0 .LBE155
+     /tmp/cckfRW2a.s:695    .text:000000000000044c .LBB159
+     /tmp/cckfRW2a.s:732    .text:00000000000004a8 .LBE159
+     /tmp/cckfRW2a.s:764    .text:00000000000004d8 .LBE162
+     /tmp/cckfRW2a.s:774    .text:00000000000004e8 .LBB165
+     /tmp/cckfRW2a.s:810    .text:0000000000000544 .LBE165
 
 UNDEFINED SYMBOLS
 gTimer
-plic_complete
-plic_claim
 _ZN6Thread11getPRunningEv
 _ZN6Thread10pRunningSpE
 _Z24enableExternalInterruptsv
-_Z10myUserMainv
 _Z9putStringPKc
 _Z6putInti
 _Z10putNewlinev
 _Z10stopKernelv
+_ZN7Console4putcEc
+GAS LISTING /tmp/cckfRW2a.s 			page 43
+
+
 _ZN8MemAlloc3getEv
 _ZN8MemAlloc16getUserlandUsageEv
 _Z13thread_createPmPFvPvES0_

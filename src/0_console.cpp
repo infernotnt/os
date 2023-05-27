@@ -5,7 +5,6 @@ void Console::consoleHandler()
 {
     int a = plic_claim();
     assert(a == 10);
-//    assert(a != 0 || a == 0);
 
     if( ((*((char *) CONSOLE_STATUS)) & CONSOLE_TX_STATUS_BIT) != 0 )
     {

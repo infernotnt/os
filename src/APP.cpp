@@ -12,20 +12,18 @@ void myUserMain()
 {
 //    __asm__ volatile ("csrw sscratch, x1"); // set spie bit to 1. spie signifies that we dont want to mask external interrupts after sret
 
-    __asm__ volatile ("mv x10, x10");
-
-//    putString("=== App started");
-//    putNewline();
+    putString("=== App started");
+    putNewline();
     assert(MemAlloc::get()->getUserlandUsage() == Thread::initialUserMemoryUsage);
-
-    for(int i=0; i<1000000000; i++)
-    {
-        __asm__ volatile ("mv x10, x10");
-    }
 
     testSystemCalls();
     testMemoryAllocator();
     testSyncCall();
+
+    for(uint64 i=0; i<3500000000; i++)
+    {
+
+    }
 
 //    assert(MemAlloc::get()->getUserlandUsage() == Thread::initialUserMemoryUsage); // TODO: enable after thread_exit
 
@@ -36,7 +34,7 @@ void myUserMain()
 
 void testSyncCall()
 {
-//    disableExternalInterrupts();
+    disableExternalInterrupts();
 
 //    assert(MemAlloc::get()->getUserlandUsage() == Thread::initialUserMemoryUsage);
 
@@ -66,8 +64,7 @@ void testSyncCall()
 //    assert(Thread::pAllThreads[a]->id == Thread::pAllThreads[b]->id-1);
 //    assert(MemAlloc::get()->getUserlandUsage() == Thread::initialUserMemoryUsage);
 
-//    enableExternalInterrupts();
-    __asm__ volatile("mv x10, x10");
+    enableExternalInterrupts();
 
     putString("=== Success in testing \"testSyncCall\"");
     putNewline();

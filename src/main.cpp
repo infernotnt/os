@@ -16,42 +16,28 @@ uint64 fib(uint64 n);
 void testAsyncCall();
 
 Thread kernelThread;
-char kernelStack[ACTUAL_STACK_SIZE + 16];
 
 void userWrapper(void* p)
 {
-    __asm__ volatile("mv x10, x10");
-    plic_complete(10);
-
-    plic_claim(); // temp
-
     assert(p == nullptr);
     assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
 
-    plic_claim(); // temp
-
     enableExternalInterrupts();
 
-    plic_claim(); // temp
+//    myUserMain();
 
-    __asm__ volatile ("mv x10, x10");
+    for(int i=0; i<10; i++)
+    {
+        Console::get()->putc(i + '0');
 
-    plic_claim(); // temp
+        Console::get()->putc(' ');
+        Console::get()->putc('b');
+        Console::get()->putc('a');
+        Console::get()->putc('b');
+        Console::get()->putc('a');
 
-    myUserMain();
-
-//    for(int i=0; i<10; i++)
-//    {
-//        Console::get()->putc(i + '0');
-//
-//        Console::get()->putc(' ');
-//        Console::get()->putc('b');
-//        Console::get()->putc('a');
-//        Console::get()->putc('b');
-//        Console::get()->putc('a');
-//
-//        Console::get()->putc('\n');
-//    }
+        Console::get()->putc('\n');
+    }
 }
 
 int main()
@@ -73,10 +59,6 @@ int main()
     thread_create(&t, &userWrapper, nullptr);
 
     Thread::initialUserMemoryUsage = MemAlloc::get()->getUserlandUsage();
-
-    plic_claim(); // temp
-
-    plic_complete(10);
 
     __asm__ volatile ("li a0, 4"); // this is a system call that calls Thread::switchToUser()
     __asm__ volatile ("ecall");
