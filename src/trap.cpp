@@ -51,10 +51,16 @@ void cTimerInterruptRoutine()
     }
     else if (cause == 9)
     { // console
-        plic_claim();
+        console_handler();
+//        plic_claim();
 //        Console::get()->consoleHandler();
 //        console_handler();
 //        __asm__ volatile("mv x10, x10");
+//        plic_complete(10);
+    }
+    else
+    {
+        assert(false); // unknown interupt
     }
 
     __asm__ volatile("mv x10, x10");
