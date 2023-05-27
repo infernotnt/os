@@ -3,6 +3,7 @@
 //
 
 #include "../h/my_console.h"
+#include "../h/c_api.h"
 
 //inline void _assert(bool valid, const char* file, int line)
 
@@ -22,7 +23,7 @@
 
 void putNewline()
 {
-    __putc('\n');
+    putc('\n');
 }
 
 void putString(const char* s)
@@ -32,7 +33,7 @@ void putString(const char* s)
     {
         if(s[i] == '\0')
             return;
-        else __putc(s[i++]);
+        else putc(s[i++]);
     }
 }
 
@@ -47,7 +48,7 @@ void putBinary(uint64 n)
     }
     else if(n == 0 || n == 1)
     {
-        __putc('0' + n);
+        putc('0' + n);
     }
     else
     {
@@ -64,7 +65,7 @@ void putBinary(uint64 n)
             if (digit > 0 || alreadyWritten)
             {
                 alreadyWritten = true;
-                __putc(digit + '0');
+                putc(digit + '0');
                 n = n % initial;
             }
             initial = ((initial) >> 1);
@@ -75,7 +76,7 @@ void putBinary(uint64 n)
 void putU64(uint64 n)
 {
     if(n >= 0 and n <= 9)
-        __putc('0' + n);
+        putc('0' + n);
     else if (n < 0)
     {
         putString("===== FATAL PRINTING ERROR IN FUNCTION putU64. NEGATIVE VALUE. Stoping the kernel ====");
@@ -99,7 +100,7 @@ void putU64(uint64 n)
             if (digit > 0 || alreadyWritten)
             {
                 alreadyWritten = true;
-                __putc(digit + '0');
+                putc(digit + '0');
                 n = n % initial;
             }
             initial /= 10;
@@ -110,10 +111,10 @@ void putU64(uint64 n)
 void putInt(int n)
 {
     if(n >= 0 and n <= 9)
-        __putc('0' + n);
+        putc('0' + n);
     else if (n < 0)
     {
-        __putc('-');
+        putc('-');
         putInt(-n);
     }
     else {
@@ -133,7 +134,7 @@ void putInt(int n)
             if (digit > 0 || alreadyWritten)
             {
                 alreadyWritten = true;
-                __putc(digit + '0');
+                putc(digit + '0');
                 n = n % initial;
             }
             initial /= 10;

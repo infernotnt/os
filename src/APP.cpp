@@ -14,9 +14,14 @@ void myUserMain()
 
     __asm__ volatile ("mv x10, x10");
 
-    putString("=== App started");
-    putNewline();
+//    putString("=== App started");
+//    putNewline();
     assert(MemAlloc::get()->getUserlandUsage() == Thread::initialUserMemoryUsage);
+
+    for(int i=0; i<1000000000; i++)
+    {
+        __asm__ volatile ("mv x10, x10");
+    }
 
     testSystemCalls();
     testMemoryAllocator();

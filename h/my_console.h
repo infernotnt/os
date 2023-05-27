@@ -2,7 +2,6 @@
 
 #include "../h/risc.h"
 
-#include "../lib/console.h"
 #include "../lib/hw.h"
 
 #define __DEBUG_MODE

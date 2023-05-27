@@ -14,6 +14,7 @@ uint64 testCall(uint64 n)
 
 void  cConsoleInterruptRoutine()
 {
+    assert(false);
     uint64 scause;
     __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
 
@@ -27,7 +28,7 @@ void  cConsoleInterruptRoutine()
 
     __asm__ volatile ("csrc sip, 0xA"); // clears the 9th bit in register sip. (the bit signifies external interupt)
 
-    console_handler();
+//    console_handler();
     __asm__ volatile ("mv x10, x10");
 
 //    Console::get()->consoleHandler();
@@ -36,6 +37,8 @@ void  cConsoleInterruptRoutine()
 
 void cTimerInterruptRoutine()
 {
+    __asm__ volatile ("mv x10, x10");
+
     uint64 scause;
     __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
 
@@ -51,7 +54,12 @@ void cTimerInterruptRoutine()
     }
     else if (cause == 9)
     { // console
-        console_handler();
+        Console::get()->consoleHandler();
+//        plic_claim();
+//        plic_complete(10);
+
+//        Console::get()->consoleHandler();
+//        console_handler();
 //        plic_claim();
 //        Console::get()->consoleHandler();
 //        console_handler();

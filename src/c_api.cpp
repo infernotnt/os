@@ -1,6 +1,7 @@
 #include "../h/c_api.h"
 #include "../h/my_console.h"
 #include "../h/thread.h"
+#include "../h/0_console.h"
 
 uint64 fib(uint64);
 
@@ -119,8 +120,9 @@ char getc()
 
 void putc(char c)
 {
-    uint64 a;
-    *((char*)(&a)) = c;
-
-    helperP164(0x42, a);
+//    uint64 a;
+//    *((char*)(&a)) = c;
+//
+//    helperP164(0x42, a);
+    Console::get()->putc(c);
 }
