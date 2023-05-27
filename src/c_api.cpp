@@ -4,6 +4,14 @@
 
 uint64 fib(uint64);
 
+void helperP164(uint64 code, uint64 parameter1)
+{
+    __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be after the a1 instruction. Reason: if its before it can augment the argument
+
+    __asm__ volatile ("ecall");
+}
+
 int helperRet32P164P264P364(uint64 code, uint64 parameter1, uint64 parameter2, uint64 parameter3)
 {
     __asm__ volatile ("mv a3, %[name]" : : [name] "r" (parameter3));
@@ -53,6 +61,7 @@ static void helper(uint64 code) // returns nothing and takes no parameters (eg t
     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code));
     __asm__ volatile ("ecall");
 
+    __asm__ volatile ("mv x10, x10");
 }
 
 void* mem_alloc(size_t size)
@@ -80,10 +89,10 @@ int thread_create(thread_t* handle, void(*start_routine)(void*), void*arg)
     return helperRet32P164P264P364(0x11, (uint64)handle, (uint64)start_routine, (uint64)arg);
 }
 
-//void thread_join(thread_t handle)
-//{
-//    helperP164(0x14, handle);
-//}
+void thread_join(thread_t handle)
+{
+    helperP164(0x14, handle);
+}
 
 uint64 test_call(uint64 n)
 {

@@ -8,6 +8,85 @@ uint64 Thread::timeSliceCounter = 0;
 bool Thread::switchedToUserThread = 0;
 uint64 Thread::nrTotalThreads = 1;
 Thread* Thread::pAllThreads[MAX_NR_TOTAL_THREADS];
+uint64 Thread::initialUserMemoryUsage;
+
+void Thread::signalDone()
+{
+    Thread* pCur = pWaitingHead;
+
+    while(pCur)
+    {
+        pCur->state = READY;
+        Scheduler::put(pCur);
+
+        pCur = pCur->pNext;
+    }
+}
+
+void Thread::join(uint64 id)
+{
+    Thread* oldRunning = Thread::getPRunning();
+
+    Thread* t = pAllThreads[id];
+
+    extern Thread kernelThread;
+    assert(oldRunning != &kernelThread); // you're only supposed to open user threads with system call with code 4
+
+    putU64(id);
+
+    if(t->done == true)
+        return;
+
+    if(t->pWaitingHead == nullptr)
+    {
+        t->pWaitingHead = oldRunning;
+    }
+    else
+    {
+        Thread* pCur = t->pWaitingHead;
+        while(pCur->pNext)
+        {
+            pCur = pCur->pNext;
+        }
+
+        pCur->pNext = oldRunning;
+    }
+
+    oldRunning->pNext = nullptr;
+    oldRunning->state = SUSPENDED;
+
+    Scheduler::dispatchToNext();
+}
+
+void Thread::switchToUser()
+{
+    uint64 scause;
+    __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
+    bool cameFromKernelMode = ((scause & (1 << 8)) == 0);
+
+    if(!cameFromKernelMode) // if user thread calls this it does nothing
+    {
+        assert(false); // temp
+        assert(Thread::pRunning->id != 0);
+        return;
+    }
+
+    assert(Thread::pRunning->id == 0);
+
+    Scheduler::dispatchToNext();
+
+    assert(Thread::getPRunning()->id == 1);
+
+//    __asm__ volatile ("csrs sstatus, 0x6"); // TODO: probably should be removed when i add permissions
+//    __asm__ volatile ("mv x10, x10");
+//    __asm__ volatile ("mv x10, x10");
+//    __asm__ volatile ("mv x10, x10");
+//    putString("KITA PENIS");
+
+//    __asm__ volatile ("csrc sstatus, 0x9");
+//    __asm__ volatile ("csrc sstatus, 0x8");
+//    __asm__ volatile ("csrw sstatus, 0"); // TODO: radi preko csrc jer ovako menjam sve
+}
 
 void Thread::setPRunning(Thread* p)
 {
@@ -26,6 +105,8 @@ int Thread::createThread(uint64* id, Body body, void* arg)
     void* pLogicalStack = t->allocStack();
 
     t->init(body, arg, pLogicalStack);
+
+    *id = t->id;
 
     Scheduler::put(t);
 
@@ -73,6 +154,8 @@ void Thread::init(Body body, void* arg, void* pLogicalStack) // this is used as 
     state = INITIALIZING;
     timeSlice = DEFAULT_TIME_SLICE;
     pNext = nullptr;
+    pWaitingHead = nullptr;
+    done = false;
 
     // sets context
     context[2] = (uint64)pLogicalStack; // sp field
@@ -90,16 +173,29 @@ int Thread::exit()
 {
     Thread* t = Thread::getPRunning();
     assert(t->state == RUNNING);
+    assert(t->done == false);
+    t->done = true;
 
     MemAlloc::get()->freeMem(t->pStackStart);
-//    t->signalDone();
 
-    if(Scheduler::get()->pHead == nullptr)
+    t->signalDone(); // WARNING: must be in this order
+
+    bool existReadyThread = !(Scheduler::get()->pHead == nullptr); // WARNING: must be after signalDone()
+    if(!existReadyThread) // TODO: add (... && !existSleepedThread && !waitingForConsoleThread), vrv ne moram da proveravam dal neko ceka na semaforu
     {
-        putString("NO MORE THREADS EXIST, IDK WHAT TO RUN");
+        putString("==== NO MORE THREADS EXIST. RETURNING TO KERNEL THREAD");
         putNewline();
-        assert(false);
+
+        extern Thread kernelThread;
+        assert(pAllThreads[0] == &kernelThread);
+        pAllThreads[0]->state = READY;
+        Scheduler::put(Thread::pAllThreads[0]);
+
+        // ovo je nesto pogresno
+//        __asm__ volatile ("csrc sstatus, 0x6"); // set spie bit to 1. spie signifies that we dont want to mask external interrupts after sret
+//        __asm__ volatile ("csrc sstatus, 0x9"); // clear spp bit, so we change to user mode after sret-ing to user thread
     }
+
     Scheduler::dispatchToNext();
 
     return 0;

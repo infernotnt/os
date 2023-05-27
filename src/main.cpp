@@ -2,6 +2,7 @@
 #include "../h/c_api.h"
 #include "../h/thread.h"
 #include "../h/c_api.h"
+#include "../h/scheduler.h"
 
 extern "C" void trapRoutine();
 
@@ -10,9 +11,21 @@ void doInitialAsserts();
 void initInterruptVector();
 
 uint64 fib(uint64 n);
+void testAsyncCall();
 
 Thread kernelThread;
 char kernelStack[ACTUAL_STACK_SIZE + 16];
+
+void userWrapper(void* p)
+{
+//    volatile uint64 a;
+//    __asm__ volatile ("csrr %[name], sstatus" : [name] "=r"(a));
+//    assert(p == nullptr);
+
+//    enableExternalInterrupts();
+
+    userMain();
+}
 
 int main()
 {
@@ -25,13 +38,55 @@ int main()
     kernelThread.id = 0;
     Thread::pAllThreads[0] = &kernelThread;
 
-    enableExternalInterrupts(); // mozda treba bez?
+    thread_t t;
+    thread_create(&t, &userWrapper, nullptr);
 
-    userMain();
+    Thread::initialUserMemoryUsage = MemAlloc::get()->getUserlandUsage();
 
-    disableExternalInterrupts(); // shouldnt be here but rather should be implicit
+    __asm__ volatile ("li a0, 4"); // this is a system call that calls Thread::switchToUser()
+    __asm__ volatile ("ecall");
+
+
+    __asm__ volatile ("csrw sscratch, x0"); //TEST permissions
 
     return 0;
+}
+
+void doC(void* p)
+{
+    volatile uint64 i=0;
+    extern uint64 gTimer;
+    uint64 oldTimer = gTimer;
+    while(i>=0)
+    {
+        if(gTimer != oldTimer)
+        {
+            __asm__ volatile ("mv x1, x1");
+        }
+        i++;
+        oldTimer = gTimer;
+    }
+    __asm__ volatile ("mv x1, x1");
+}
+
+void testAsyncCall()
+{
+    enableExternalInterrupts();
+
+    assert(MemAlloc::get()->getUserlandUsage() == 0);
+
+//    void doB(void*);
+
+    int argA = 69;
+//    int argB = 420;
+    thread_t a;
+//    thread_t b;
+    thread_create(&a, doC, &argA);
+//    thread_create(&b, doB, &argB);
+    thread_dispatch();
+
+//    assert(Thread::pAllThreads[a]->id == Thread::pAllThreads[b]->id-1);
+    assert(MemAlloc::get()->getUserlandUsage() == 0);
 }
 
 void doInitialAsserts()

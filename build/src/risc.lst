@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccF7Ng2m.s 			page 1
+GAS LISTING /tmp/ccaENHTU.s 			page 1
 
 
    1              		.file	"risc.cpp"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccF7Ng2m.s 			page 1
   49              		.cfi_def_cfa 8, 0
   10:src/risc.cpp  ****     __asm__ volatile ("csrc sstatus, 0x02"); // sets the "sie" bit to 0
   50              		.loc 1 10 5
-GAS LISTING /tmp/ccF7Ng2m.s 			page 2
+GAS LISTING /tmp/ccaENHTU.s 			page 2
 
 
   51              		.loc 1 10 44 is_stmt 0
@@ -78,53 +78,53 @@ GAS LISTING /tmp/ccF7Ng2m.s 			page 1
   64              		.cfi_endproc
   65              	.LFE1:
   67              	.Letext0:
-GAS LISTING /tmp/ccF7Ng2m.s 			page 3
+GAS LISTING /tmp/ccaENHTU.s 			page 3
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 risc.cpp
-     /tmp/ccF7Ng2m.s:9      .text:0000000000000000 _Z24enableExternalInterruptsv
-     /tmp/ccF7Ng2m.s:13     .text:0000000000000000 .L0 
-     /tmp/ccF7Ng2m.s:14     .text:0000000000000000 .L0 
-     /tmp/ccF7Ng2m.s:15     .text:0000000000000004 .L0 
-     /tmp/ccF7Ng2m.s:17     .text:0000000000000008 .L0 
-     /tmp/ccF7Ng2m.s:19     .text:000000000000000c .L0 
-     /tmp/ccF7Ng2m.s:21     .text:000000000000000c .L0 
+     /tmp/ccaENHTU.s:9      .text:0000000000000000 _Z24enableExternalInterruptsv
+     /tmp/ccaENHTU.s:13     .text:0000000000000000 .L0 
+     /tmp/ccaENHTU.s:14     .text:0000000000000000 .L0 
+     /tmp/ccaENHTU.s:15     .text:0000000000000004 .L0 
+     /tmp/ccaENHTU.s:17     .text:0000000000000008 .L0 
+     /tmp/ccaENHTU.s:19     .text:000000000000000c .L0 
+     /tmp/ccaENHTU.s:21     .text:000000000000000c .L0 
         src/risc.cpp:5      .text:000000000000000c .L0 
-     /tmp/ccF7Ng2m.s:28     .text:0000000000000010 .L0 
-     /tmp/ccF7Ng2m.s:29     .text:0000000000000014 .L0 
-     /tmp/ccF7Ng2m.s:30     .text:0000000000000014 .L0 
-     /tmp/ccF7Ng2m.s:32     .text:0000000000000018 .L0 
-     /tmp/ccF7Ng2m.s:34     .text:000000000000001c .L0 
-     /tmp/ccF7Ng2m.s:40     .text:000000000000001c _Z25disableExternalInterruptsv
-     /tmp/ccF7Ng2m.s:43     .text:000000000000001c .L0 
-     /tmp/ccF7Ng2m.s:44     .text:000000000000001c .L0 
-     /tmp/ccF7Ng2m.s:45     .text:0000000000000020 .L0 
-     /tmp/ccF7Ng2m.s:47     .text:0000000000000024 .L0 
-     /tmp/ccF7Ng2m.s:49     .text:0000000000000028 .L0 
-     /tmp/ccF7Ng2m.s:51     .text:0000000000000028 .L0 
+     /tmp/ccaENHTU.s:28     .text:0000000000000010 .L0 
+     /tmp/ccaENHTU.s:29     .text:0000000000000014 .L0 
+     /tmp/ccaENHTU.s:30     .text:0000000000000014 .L0 
+     /tmp/ccaENHTU.s:32     .text:0000000000000018 .L0 
+     /tmp/ccaENHTU.s:34     .text:000000000000001c .L0 
+     /tmp/ccaENHTU.s:40     .text:000000000000001c _Z25disableExternalInterruptsv
+     /tmp/ccaENHTU.s:43     .text:000000000000001c .L0 
+     /tmp/ccaENHTU.s:44     .text:000000000000001c .L0 
+     /tmp/ccaENHTU.s:45     .text:0000000000000020 .L0 
+     /tmp/ccaENHTU.s:47     .text:0000000000000024 .L0 
+     /tmp/ccaENHTU.s:49     .text:0000000000000028 .L0 
+     /tmp/ccaENHTU.s:51     .text:0000000000000028 .L0 
         src/risc.cpp:10     .text:0000000000000028 .L0 
-     /tmp/ccF7Ng2m.s:58     .text:000000000000002c .L0 
-     /tmp/ccF7Ng2m.s:59     .text:0000000000000030 .L0 
-     /tmp/ccF7Ng2m.s:60     .text:0000000000000030 .L0 
-     /tmp/ccF7Ng2m.s:62     .text:0000000000000034 .L0 
-     /tmp/ccF7Ng2m.s:64     .text:0000000000000038 .L0 
-     /tmp/ccF7Ng2m.s:68     .text:0000000000000038 .L0 
-     /tmp/ccF7Ng2m.s:104    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
-     /tmp/ccF7Ng2m.s:169    .debug_str:000000000000002d .LASF4
-     /tmp/ccF7Ng2m.s:173    .debug_str:0000000000000110 .LASF5
-     /tmp/ccF7Ng2m.s:165    .debug_str:0000000000000000 .LASF6
-     /tmp/ccF7Ng2m.s:5      .text:0000000000000000 .Ltext0
-     /tmp/ccF7Ng2m.s:67     .text:0000000000000038 .Letext0
-     /tmp/ccF7Ng2m.s:163    .debug_line:0000000000000000 .Ldebug_line0
-     /tmp/ccF7Ng2m.s:177    .debug_str:000000000000013b .LASF0
-     /tmp/ccF7Ng2m.s:171    .debug_str:00000000000000f1 .LASF2
-     /tmp/ccF7Ng2m.s:41     .text:000000000000001c .LFB1
-     /tmp/ccF7Ng2m.s:65     .text:0000000000000038 .LFE1
-     /tmp/ccF7Ng2m.s:167    .debug_str:0000000000000014 .LASF1
-     /tmp/ccF7Ng2m.s:175    .debug_str:000000000000011d .LASF3
-     /tmp/ccF7Ng2m.s:10     .text:0000000000000000 .LFB0
-     /tmp/ccF7Ng2m.s:35     .text:000000000000001c .LFE0
-     /tmp/ccF7Ng2m.s:69     .debug_info:0000000000000000 .Ldebug_info0
+     /tmp/ccaENHTU.s:58     .text:000000000000002c .L0 
+     /tmp/ccaENHTU.s:59     .text:0000000000000030 .L0 
+     /tmp/ccaENHTU.s:60     .text:0000000000000030 .L0 
+     /tmp/ccaENHTU.s:62     .text:0000000000000034 .L0 
+     /tmp/ccaENHTU.s:64     .text:0000000000000038 .L0 
+     /tmp/ccaENHTU.s:68     .text:0000000000000038 .L0 
+     /tmp/ccaENHTU.s:104    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+     /tmp/ccaENHTU.s:169    .debug_str:000000000000002d .LASF4
+     /tmp/ccaENHTU.s:173    .debug_str:0000000000000110 .LASF5
+     /tmp/ccaENHTU.s:165    .debug_str:0000000000000000 .LASF6
+     /tmp/ccaENHTU.s:5      .text:0000000000000000 .Ltext0
+     /tmp/ccaENHTU.s:67     .text:0000000000000038 .Letext0
+     /tmp/ccaENHTU.s:163    .debug_line:0000000000000000 .Ldebug_line0
+     /tmp/ccaENHTU.s:177    .debug_str:000000000000013b .LASF0
+     /tmp/ccaENHTU.s:171    .debug_str:00000000000000f1 .LASF2
+     /tmp/ccaENHTU.s:41     .text:000000000000001c .LFB1
+     /tmp/ccaENHTU.s:65     .text:0000000000000038 .LFE1
+     /tmp/ccaENHTU.s:167    .debug_str:0000000000000014 .LASF1
+     /tmp/ccaENHTU.s:175    .debug_str:000000000000011d .LASF3
+     /tmp/ccaENHTU.s:10     .text:0000000000000000 .LFB0
+     /tmp/ccaENHTU.s:35     .text:000000000000001c .LFE0
+     /tmp/ccaENHTU.s:69     .debug_info:0000000000000000 .Ldebug_info0
 
 NO UNDEFINED SYMBOLS

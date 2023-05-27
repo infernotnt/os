@@ -26,11 +26,14 @@ public:
     static uint64 timeSliceCounter;
     static Thread* pAllThreads[MAX_NR_TOTAL_THREADS];
     static uint64 nrTotalThreads;
+    static uint64 initialUserMemoryUsage;
 
     static  Thread*  getPRunning();
     static void setPRunning(Thread* p);
     static int createThread(uint64* id, Body body, void* arg);
     static int exit(); // exit the currently running thread
+    static void switchToUser();
+    static void join(uint64 id);
 
     State state;
     Body body;
@@ -39,12 +42,15 @@ public:
     uint64 timeSlice; // private
     uint64 id;
     Thread* pNext;
+    Thread* pWaitingHead;
+    bool done;
 
     Thread(Body body, void* arg);
-    Thread() : pStackStart(nullptr) {} // move to private?. Mind the kernel thread
+    Thread() : pStackStart(nullptr), pNext(nullptr) {} // move to private?. Mind the kernel thread
 
     void init(Body body, void* arg, void* pLogicalStack);
     void* allocStack();
+    void signalDone();
 
 private:
     Thread(Body body, void* arg, void* pStartOfStack); // threads can only be made with createThread. Maybe Thread() = delete;?
