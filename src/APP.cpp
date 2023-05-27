@@ -8,9 +8,11 @@ void testMemoryAllocator();
 void testSyncCall();
 uint64 fib(uint64);
 
-void userMain()
+void myUserMain()
 {
 //    __asm__ volatile ("csrw sscratch, x1"); // set spie bit to 1. spie signifies that we dont want to mask external interrupts after sret
+
+    __asm__ volatile ("mv x10, x10");
 
     putString("=== App started");
     putNewline();
@@ -21,6 +23,8 @@ void userMain()
     testSyncCall();
 
 //    assert(MemAlloc::get()->getUserlandUsage() == Thread::initialUserMemoryUsage); // TODO: enable after thread_exit
+
+
     putString("=== App ended");
     putNewline();
 }
@@ -61,6 +65,7 @@ void testSyncCall()
     __asm__ volatile("mv x10, x10");
 
     putString("=== Success in testing \"testSyncCall\"");
+    putNewline();
 }
 
 

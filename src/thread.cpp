@@ -3,7 +3,8 @@
 #include "../h/scheduler.h"
 
 Thread* Thread::pRunning = nullptr;
-uint64* Thread::pRunningContext = nullptr;
+//uint64* Thread::runningSp = nullptr;
+uint64** Thread::pRunningSp = nullptr;
 uint64 Thread::timeSliceCounter = 0;
 bool Thread::switchedToUserThread = 0;
 uint64 Thread::nrTotalThreads = 1;
@@ -91,7 +92,7 @@ void Thread::switchToUser()
 void Thread::setPRunning(Thread* p)
 {
     pRunning = p;
-    pRunningContext = &(p->context[0]);
+    pRunningSp = &(p->sp);
 }
 
 int Thread::createThread(uint64* id, Body body, void* arg)
@@ -143,7 +144,7 @@ void wrapper(uint64 __DO_NOT_USE, Thread::Body body, void* arg) // this entire f
     thread_exit();
 }
 
-void Thread::init(Body body, void* arg, void* pLogicalStack) // this is used as a "constructor"
+void Thread::init(Body body, void* arg, void* pLogicalStack) // this is used as a "constructor", except for kernel thread
 {
     assert(nrTotalThreads < MAX_NR_TOTAL_THREADS);
     id = nrTotalThreads;
@@ -158,9 +159,14 @@ void Thread::init(Body body, void* arg, void* pLogicalStack) // this is used as 
     done = false;
 
     // sets context
-    context[2] = (uint64)pLogicalStack; // sp field
+    sp = (uint64*)pLogicalStack; // sp field
 
     // skipping a0 to pass arguments as it is will be not be restored in the context switch because it is assumed to hold return values of a sys. call
+
+    for(int i=0; i<32; i++)
+    {
+        *((uint64*)pLogicalStack + i) = i;
+    }
 
     *((uint64*)pLogicalStack + 11) = (uint64)body;
     *((uint64*)pLogicalStack + 12) = (uint64)arg;
@@ -183,7 +189,7 @@ int Thread::exit()
     bool existReadyThread = !(Scheduler::get()->pHead == nullptr); // WARNING: must be after signalDone()
     if(!existReadyThread) // TODO: add (... && !existSleepedThread && !waitingForConsoleThread), vrv ne moram da proveravam dal neko ceka na semaforu
     {
-        putString("==== NO MORE THREADS EXIST. RETURNING TO KERNEL THREAD");
+        putString("=== NO MORE THREADS EXIST. RETURNING TO KERNEL THREAD");
         putNewline();
 
         extern Thread kernelThread;

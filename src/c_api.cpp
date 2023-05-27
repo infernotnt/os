@@ -4,6 +4,19 @@
 
 uint64 fib(uint64);
 
+char helperRet8(uint64 code)
+{
+
+    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be after the a1 instruction. Reason: if its before it can augment the argument
+
+    __asm__ volatile ("ecall");
+
+    uint64 ret;
+    __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+
+    return *((char*)&ret);
+}
+
 void helperP164(uint64 code, uint64 parameter1)
 {
     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
@@ -97,4 +110,17 @@ void thread_join(thread_t handle)
 uint64 test_call(uint64 n)
 {
     return helperRet64P164(3, n);
+}
+
+char getc()
+{
+    return helperRet8(0x41);
+}
+
+void putc(char c)
+{
+    uint64 a;
+    *((char*)(&a)) = c;
+
+    helperP164(0x42, a);
 }

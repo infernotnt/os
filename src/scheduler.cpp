@@ -27,7 +27,7 @@ void Scheduler::printState()
 
 void Scheduler::dispatchToNext() // WARNING: different than sys. call dispatch()
 {
-    assert(&(Thread::getPRunning()->context[0]) == Thread::pRunningContext);
+    assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
 
     Thread *pOld = Thread::getPRunning();
     Thread *pNew = Scheduler::getNext();

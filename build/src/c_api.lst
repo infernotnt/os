@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccb4iuiZ.s 			page 1
+GAS LISTING /tmp/cc8VIPma.s 			page 1
 
 
    1              		.file	"c_api.cpp"
@@ -8,7 +8,7 @@ GAS LISTING /tmp/ccb4iuiZ.s 			page 1
    5              	.Ltext0:
    6              		.align	2
    8              	_ZL15helperRet64P164mm:
-   9              	.LFB6:
+   9              	.LFB7:
   10              		.file 1 "src/c_api.cpp"
    1:src/c_api.cpp **** #include "../h/c_api.h"
    2:src/c_api.cpp **** #include "../h/my_console.h"
@@ -16,35 +16,51 @@ GAS LISTING /tmp/ccb4iuiZ.s 			page 1
    4:src/c_api.cpp **** 
    5:src/c_api.cpp **** uint64 fib(uint64);
    6:src/c_api.cpp **** 
-   7:src/c_api.cpp **** void helperP164(uint64 code, uint64 parameter1)
+   7:src/c_api.cpp **** char helperRet8(uint64 code)
    8:src/c_api.cpp **** {
-   9:src/c_api.cpp ****     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+   9:src/c_api.cpp **** 
   10:src/c_api.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
   11:src/c_api.cpp **** 
   12:src/c_api.cpp ****     __asm__ volatile ("ecall");
-  13:src/c_api.cpp **** }
-  14:src/c_api.cpp **** 
-  15:src/c_api.cpp **** int helperRet32P164P264P364(uint64 code, uint64 parameter1, uint64 parameter2, uint64 parameter3)
-  16:src/c_api.cpp **** {
-  17:src/c_api.cpp ****     __asm__ volatile ("mv a3, %[name]" : : [name] "r" (parameter3));
-  18:src/c_api.cpp ****     __asm__ volatile ("mv a2, %[name]" : : [name] "r" (parameter2));
-  19:src/c_api.cpp ****     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
-  20:src/c_api.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
-  21:src/c_api.cpp **** 
-  22:src/c_api.cpp ****     __asm__ volatile ("ecall");
-  23:src/c_api.cpp **** 
-  24:src/c_api.cpp ****     __asm__ volatile("mv x10, x10"); // temp
-  25:src/c_api.cpp **** 
-  26:src/c_api.cpp ****     uint64 ret;
-  27:src/c_api.cpp ****     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
-  28:src/c_api.cpp **** 
-  29:src/c_api.cpp ****     return *((int*)&ret);
-  30:src/c_api.cpp **** }
-  31:src/c_api.cpp **** 
-  32:src/c_api.cpp **** static uint64 helperRet64P164(uint64 code, uint64 parameter1) // returns 64bit and takes a 64bit pa
-  33:src/c_api.cpp **** {
-  11              		.loc 1 33 1
+  13:src/c_api.cpp **** 
+  14:src/c_api.cpp ****     uint64 ret;
+  15:src/c_api.cpp ****     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+  16:src/c_api.cpp **** 
+  17:src/c_api.cpp ****     return *((char*)&ret);
+  18:src/c_api.cpp **** }
+  19:src/c_api.cpp **** 
+  20:src/c_api.cpp **** void helperP164(uint64 code, uint64 parameter1)
+  21:src/c_api.cpp **** {
+  22:src/c_api.cpp ****     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+  23:src/c_api.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
+  24:src/c_api.cpp **** 
+  25:src/c_api.cpp ****     __asm__ volatile ("ecall");
+  26:src/c_api.cpp **** }
+  27:src/c_api.cpp **** 
+  28:src/c_api.cpp **** int helperRet32P164P264P364(uint64 code, uint64 parameter1, uint64 parameter2, uint64 parameter3)
+  29:src/c_api.cpp **** {
+  30:src/c_api.cpp ****     __asm__ volatile ("mv a3, %[name]" : : [name] "r" (parameter3));
+  31:src/c_api.cpp ****     __asm__ volatile ("mv a2, %[name]" : : [name] "r" (parameter2));
+  32:src/c_api.cpp ****     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+  33:src/c_api.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
+  34:src/c_api.cpp **** 
+  35:src/c_api.cpp ****     __asm__ volatile ("ecall");
+  36:src/c_api.cpp **** 
+  37:src/c_api.cpp ****     __asm__ volatile("mv x10, x10"); // temp
+  38:src/c_api.cpp **** 
+  39:src/c_api.cpp ****     uint64 ret;
+  40:src/c_api.cpp ****     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+  41:src/c_api.cpp **** 
+  42:src/c_api.cpp ****     return *((int*)&ret);
+  43:src/c_api.cpp **** }
+  44:src/c_api.cpp **** 
+  45:src/c_api.cpp **** static uint64 helperRet64P164(uint64 code, uint64 parameter1) // returns 64bit and takes a 64bit pa
+  46:src/c_api.cpp **** {
+  11              		.loc 1 46 1
   12              		.cfi_startproc
+GAS LISTING /tmp/cc8VIPma.s 			page 2
+
+
   13              	.LVL0:
   14 0000 130101FF 		addi	sp,sp,-16
   15              		.cfi_def_cfa_offset 16
@@ -52,51 +68,48 @@ GAS LISTING /tmp/ccb4iuiZ.s 			page 1
   17              		.cfi_offset 8, -8
   18 0008 13040101 		addi	s0,sp,16
   19              		.cfi_def_cfa 8, 0
-  34:src/c_api.cpp ****     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
-  20              		.loc 1 34 5
-  21              		.loc 1 34 68 is_stmt 0
+  47:src/c_api.cpp ****     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+  20              		.loc 1 47 5
+  21              		.loc 1 47 68 is_stmt 0
   22              	#APP
-  23              	# 34 "src/c_api.cpp" 1
-  35              	    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
-GAS LISTING /tmp/ccb4iuiZ.s 			page 2
-
-
+  23              	# 47 "src/c_api.cpp" 1
+  48              	    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
   24              		mv a1, a1
   25              	# 0 "" 2
-  26              		.loc 1 35 5 is_stmt 1
-  27              		.loc 1 35 62 is_stmt 0
-  28              	# 35 "src/c_api.cpp" 1
-  36              	
-  37:src/c_api.cpp ****     __asm__ volatile ("ecall");
+  26              		.loc 1 48 5 is_stmt 1
+  27              		.loc 1 48 62 is_stmt 0
+  28              	# 48 "src/c_api.cpp" 1
+  49              	
+  50:src/c_api.cpp ****     __asm__ volatile ("ecall");
   29              		mv a0, a0
   30              	# 0 "" 2
-  31              		.loc 1 37 5 is_stmt 1
-  32              		.loc 1 37 31 is_stmt 0
-  33              	# 37 "src/c_api.cpp" 1
-  38              	
-  39:src/c_api.cpp ****     __asm__ volatile ("mv x10, x10");
+  31              		.loc 1 50 5 is_stmt 1
+  32              		.loc 1 50 31 is_stmt 0
+  33              	# 50 "src/c_api.cpp" 1
+  51              	
+  52:src/c_api.cpp ****     __asm__ volatile ("mv x10, x10");
   34              		ecall
   35              	# 0 "" 2
-  36              		.loc 1 39 5 is_stmt 1
-  37              		.loc 1 39 37 is_stmt 0
-  38              	# 39 "src/c_api.cpp" 1
-  40              	
-  41:src/c_api.cpp ****     uint64 ret;
+  36              		.loc 1 52 5 is_stmt 1
+  37              		.loc 1 52 37 is_stmt 0
+  38              	# 52 "src/c_api.cpp" 1
+  53              	
+  54:src/c_api.cpp ****     uint64 ret;
   39              		mv x10, x10
   40              	# 0 "" 2
-  41              		.loc 1 41 5 is_stmt 1
-  42:src/c_api.cpp ****     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
-  42              		.loc 1 42 5
-  43              		.loc 1 42 59 is_stmt 0
-  44              	# 42 "src/c_api.cpp" 1
-  43              	
+  41              		.loc 1 54 5 is_stmt 1
+  55:src/c_api.cpp ****     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+  42              		.loc 1 55 5
+  43              		.loc 1 55 59 is_stmt 0
+  44              	# 55 "src/c_api.cpp" 1
+  56              	
   45              		mv a0, a0
   46              	# 0 "" 2
   47              	.LVL1:
-  44:src/c_api.cpp ****     return ret;
-  48              		.loc 1 44 5 is_stmt 1
-  45:src/c_api.cpp **** }
-  49              		.loc 1 45 1 is_stmt 0
+  57:src/c_api.cpp ****     return ret;
+  48              		.loc 1 57 5 is_stmt 1
+  58:src/c_api.cpp **** }
+  49              		.loc 1 58 1 is_stmt 0
   50              	#NO_APP
   51 0020 03348100 		ld	s0,8(sp)
   52              		.cfi_restore 8
@@ -105,54 +118,54 @@ GAS LISTING /tmp/ccb4iuiZ.s 			page 1
   55              		.cfi_def_cfa_offset 0
   56 0028 67800000 		jr	ra
   57              		.cfi_endproc
-  58              	.LFE6:
+GAS LISTING /tmp/cc8VIPma.s 			page 3
+
+
+  58              	.LFE7:
   60              		.align	2
   62              	_ZL11helperRet32m:
-  63              	.LFB7:
-  46:src/c_api.cpp **** 
-  47:src/c_api.cpp **** static int helperRet32(uint64 code) // returns 64bit and takes no params
-  48:src/c_api.cpp **** {
-  64              		.loc 1 48 1 is_stmt 1
+  63              	.LFB8:
+  59:src/c_api.cpp **** 
+  60:src/c_api.cpp **** static int helperRet32(uint64 code) // returns 64bit and takes no params
+  61:src/c_api.cpp **** {
+  64              		.loc 1 61 1 is_stmt 1
   65              		.cfi_startproc
   66              	.LVL2:
   67 002c 130101FF 		addi	sp,sp,-16
   68              		.cfi_def_cfa_offset 16
   69 0030 23348100 		sd	s0,8(sp)
-GAS LISTING /tmp/ccb4iuiZ.s 			page 3
-
-
   70              		.cfi_offset 8, -8
   71 0034 13040101 		addi	s0,sp,16
   72              		.cfi_def_cfa 8, 0
-  49:src/c_api.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code));
-  73              		.loc 1 49 5
-  74              		.loc 1 49 62 is_stmt 0
+  62:src/c_api.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code));
+  73              		.loc 1 62 5
+  74              		.loc 1 62 62 is_stmt 0
   75              	#APP
-  76              	# 49 "src/c_api.cpp" 1
-  50              	
-  51:src/c_api.cpp ****     __asm__ volatile ("ecall");
+  76              	# 62 "src/c_api.cpp" 1
+  63              	
+  64:src/c_api.cpp ****     __asm__ volatile ("ecall");
   77              		mv a0, a0
   78              	# 0 "" 2
-  79              		.loc 1 51 5 is_stmt 1
-  80              		.loc 1 51 31 is_stmt 0
-  81              	# 51 "src/c_api.cpp" 1
-  52              	
-  53:src/c_api.cpp ****     uint64 ret;
+  79              		.loc 1 64 5 is_stmt 1
+  80              		.loc 1 64 31 is_stmt 0
+  81              	# 64 "src/c_api.cpp" 1
+  65              	
+  66:src/c_api.cpp ****     uint64 ret;
   82              		ecall
   83              	# 0 "" 2
-  84              		.loc 1 53 5 is_stmt 1
-  54:src/c_api.cpp ****     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
-  85              		.loc 1 54 5
-  86              		.loc 1 54 59 is_stmt 0
-  87              	# 54 "src/c_api.cpp" 1
-  55              	
+  84              		.loc 1 66 5 is_stmt 1
+  67:src/c_api.cpp ****     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+  85              		.loc 1 67 5
+  86              		.loc 1 67 59 is_stmt 0
+  87              	# 67 "src/c_api.cpp" 1
+  68              	
   88              		mv a0, a0
   89              	# 0 "" 2
   90              	.LVL3:
-  56:src/c_api.cpp ****     return *((int*)&ret);
-  91              		.loc 1 56 5 is_stmt 1
-  57:src/c_api.cpp **** }
-  92              		.loc 1 57 1 is_stmt 0
+  69:src/c_api.cpp ****     return *((int*)&ret);
+  91              		.loc 1 69 5 is_stmt 1
+  70:src/c_api.cpp **** }
+  92              		.loc 1 70 1 is_stmt 0
   93              	#NO_APP
   94 0044 1B050500 		sext.w	a0,a0
   95 0048 03348100 		ld	s0,8(sp)
@@ -162,14 +175,17 @@ GAS LISTING /tmp/ccb4iuiZ.s 			page 1
   99              		.cfi_def_cfa_offset 0
  100 0050 67800000 		jr	ra
  101              		.cfi_endproc
- 102              	.LFE7:
+ 102              	.LFE8:
  104              		.align	2
  106              	_ZL6helperm:
- 107              	.LFB8:
-  58:src/c_api.cpp **** 
-  59:src/c_api.cpp **** static void helper(uint64 code) // returns nothing and takes no parameters (eg thread_dispatch)
-  60:src/c_api.cpp **** {
- 108              		.loc 1 60 1 is_stmt 1
+GAS LISTING /tmp/cc8VIPma.s 			page 4
+
+
+ 107              	.LFB9:
+  71:src/c_api.cpp **** 
+  72:src/c_api.cpp **** static void helper(uint64 code) // returns nothing and takes no parameters (eg thread_dispatch)
+  73:src/c_api.cpp **** {
+ 108              		.loc 1 73 1 is_stmt 1
  109              		.cfi_startproc
  110              	.LVL4:
  111 0054 130101FF 		addi	sp,sp,-16
@@ -178,31 +194,28 @@ GAS LISTING /tmp/ccb4iuiZ.s 			page 1
  114              		.cfi_offset 8, -8
  115 005c 13040101 		addi	s0,sp,16
  116              		.cfi_def_cfa 8, 0
-GAS LISTING /tmp/ccb4iuiZ.s 			page 4
-
-
-  61:src/c_api.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code));
- 117              		.loc 1 61 5
- 118              		.loc 1 61 62 is_stmt 0
+  74:src/c_api.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code));
+ 117              		.loc 1 74 5
+ 118              		.loc 1 74 62 is_stmt 0
  119              	#APP
- 120              	# 61 "src/c_api.cpp" 1
-  62              	    __asm__ volatile ("ecall");
+ 120              	# 74 "src/c_api.cpp" 1
+  75              	    __asm__ volatile ("ecall");
  121              		mv a0, a0
  122              	# 0 "" 2
- 123              		.loc 1 62 5 is_stmt 1
- 124              		.loc 1 62 31 is_stmt 0
- 125              	# 62 "src/c_api.cpp" 1
-  63              	
-  64:src/c_api.cpp ****     __asm__ volatile ("mv x10, x10");
+ 123              		.loc 1 75 5 is_stmt 1
+ 124              		.loc 1 75 31 is_stmt 0
+ 125              	# 75 "src/c_api.cpp" 1
+  76              	
+  77:src/c_api.cpp ****     __asm__ volatile ("mv x10, x10");
  126              		ecall
  127              	# 0 "" 2
- 128              		.loc 1 64 5 is_stmt 1
- 129              		.loc 1 64 37 is_stmt 0
- 130              	# 64 "src/c_api.cpp" 1
-  65              	}
+ 128              		.loc 1 77 5 is_stmt 1
+ 129              		.loc 1 77 37 is_stmt 0
+ 130              	# 77 "src/c_api.cpp" 1
+  78              	}
  131              		mv x10, x10
  132              	# 0 "" 2
- 133              		.loc 1 65 1
+ 133              		.loc 1 78 1
  134              	#NO_APP
  135 006c 03348100 		ld	s0,8(sp)
  136              		.cfi_restore 8
@@ -211,12 +224,12 @@ GAS LISTING /tmp/ccb4iuiZ.s 			page 1
  139              		.cfi_def_cfa_offset 0
  140 0074 67800000 		jr	ra
  141              		.cfi_endproc
- 142              	.LFE8:
+ 142              	.LFE9:
  144              		.align	2
- 145              		.globl	_Z10helperP164mm
- 147              	_Z10helperP164mm:
+ 145              		.globl	_Z10helperRet8m
+ 147              	_Z10helperRet8m:
  148              	.LFB4:
-   8:src/c_api.cpp ****     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+   8:src/c_api.cpp **** 
  149              		.loc 1 8 1 is_stmt 1
  150              		.cfi_startproc
  151              	.LVL5:
@@ -225,759 +238,982 @@ GAS LISTING /tmp/ccb4iuiZ.s 			page 1
  154 007c 23348100 		sd	s0,8(sp)
  155              		.cfi_offset 8, -8
  156 0080 13040101 		addi	s0,sp,16
+GAS LISTING /tmp/cc8VIPma.s 			page 5
+
+
  157              		.cfi_def_cfa 8, 0
-   9:src/c_api.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
- 158              		.loc 1 9 5
-   9:src/c_api.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
- 159              		.loc 1 9 68 is_stmt 0
+  10:src/c_api.cpp **** 
+ 158              		.loc 1 10 5
+  10:src/c_api.cpp **** 
+ 159              		.loc 1 10 62 is_stmt 0
  160              	#APP
- 161              	# 9 "src/c_api.cpp" 1
-  10:src/c_api.cpp **** 
- 162              		mv a1, a1
+ 161              	# 10 "src/c_api.cpp" 1
+  12:src/c_api.cpp **** 
+ 162              		mv a0, a0
  163              	# 0 "" 2
- 164              		.loc 1 10 5 is_stmt 1
-  10:src/c_api.cpp **** 
- 165              		.loc 1 10 62 is_stmt 0
-GAS LISTING /tmp/ccb4iuiZ.s 			page 5
-
-
- 166              	# 10 "src/c_api.cpp" 1
-  12:src/c_api.cpp **** }
- 167              		mv a0, a0
+ 164              		.loc 1 12 5 is_stmt 1
+  12:src/c_api.cpp **** 
+ 165              		.loc 1 12 31 is_stmt 0
+ 166              	# 12 "src/c_api.cpp" 1
+  14:src/c_api.cpp ****     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+ 167              		ecall
  168              	# 0 "" 2
- 169              		.loc 1 12 5 is_stmt 1
-  12:src/c_api.cpp **** }
- 170              		.loc 1 12 31 is_stmt 0
- 171              	# 12 "src/c_api.cpp" 1
-  13:src/c_api.cpp **** 
- 172              		ecall
- 173              	# 0 "" 2
- 174              		.loc 1 13 1
- 175              	#NO_APP
- 176 0090 03348100 		ld	s0,8(sp)
- 177              		.cfi_restore 8
- 178              		.cfi_def_cfa 2, 16
- 179 0094 13010101 		addi	sp,sp,16
- 180              		.cfi_def_cfa_offset 0
- 181 0098 67800000 		jr	ra
- 182              		.cfi_endproc
- 183              	.LFE4:
- 185              		.align	2
- 186              		.globl	_Z23helperRet32P164P264P364mmmm
- 188              	_Z23helperRet32P164P264P364mmmm:
- 189              	.LFB5:
-  16:src/c_api.cpp ****     __asm__ volatile ("mv a3, %[name]" : : [name] "r" (parameter3));
- 190              		.loc 1 16 1 is_stmt 1
- 191              		.cfi_startproc
- 192              	.LVL6:
- 193 009c 130101FF 		addi	sp,sp,-16
- 194              		.cfi_def_cfa_offset 16
- 195 00a0 23348100 		sd	s0,8(sp)
- 196              		.cfi_offset 8, -8
- 197 00a4 13040101 		addi	s0,sp,16
- 198              		.cfi_def_cfa 8, 0
-  17:src/c_api.cpp ****     __asm__ volatile ("mv a2, %[name]" : : [name] "r" (parameter2));
- 199              		.loc 1 17 5
-  17:src/c_api.cpp ****     __asm__ volatile ("mv a2, %[name]" : : [name] "r" (parameter2));
- 200              		.loc 1 17 68 is_stmt 0
- 201              	#APP
- 202              	# 17 "src/c_api.cpp" 1
-  18:src/c_api.cpp ****     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
- 203              		mv a3, a3
- 204              	# 0 "" 2
- 205              		.loc 1 18 5 is_stmt 1
-  18:src/c_api.cpp ****     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
- 206              		.loc 1 18 68 is_stmt 0
- 207              	# 18 "src/c_api.cpp" 1
-  19:src/c_api.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
- 208              		mv a2, a2
- 209              	# 0 "" 2
- 210              		.loc 1 19 5 is_stmt 1
-  19:src/c_api.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
- 211              		.loc 1 19 68 is_stmt 0
- 212              	# 19 "src/c_api.cpp" 1
-  20:src/c_api.cpp **** 
- 213              		mv a1, a1
-GAS LISTING /tmp/ccb4iuiZ.s 			page 6
+ 169              		.loc 1 14 5 is_stmt 1
+  15:src/c_api.cpp **** 
+ 170              		.loc 1 15 5
+  15:src/c_api.cpp **** 
+ 171              		.loc 1 15 59 is_stmt 0
+ 172              	# 15 "src/c_api.cpp" 1
+ 173              		mv a0, a0
+ 174              	# 0 "" 2
+ 175              	.LVL6:
+  17:src/c_api.cpp **** }
+ 176              		.loc 1 17 5 is_stmt 1
+  18:src/c_api.cpp **** 
+ 177              		.loc 1 18 1 is_stmt 0
+ 178              	#NO_APP
+ 179 0090 1375F50F 		andi	a0,a0,0xff
+ 180 0094 03348100 		ld	s0,8(sp)
+ 181              		.cfi_restore 8
+ 182              		.cfi_def_cfa 2, 16
+ 183 0098 13010101 		addi	sp,sp,16
+ 184              		.cfi_def_cfa_offset 0
+ 185 009c 67800000 		jr	ra
+ 186              		.cfi_endproc
+ 187              	.LFE4:
+ 189              		.align	2
+ 190              		.globl	_Z10helperP164mm
+ 192              	_Z10helperP164mm:
+ 193              	.LFB5:
+  21:src/c_api.cpp ****     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+ 194              		.loc 1 21 1 is_stmt 1
+ 195              		.cfi_startproc
+ 196              	.LVL7:
+ 197 00a0 130101FF 		addi	sp,sp,-16
+ 198              		.cfi_def_cfa_offset 16
+ 199 00a4 23348100 		sd	s0,8(sp)
+ 200              		.cfi_offset 8, -8
+ 201 00a8 13040101 		addi	s0,sp,16
+ 202              		.cfi_def_cfa 8, 0
+  22:src/c_api.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
+ 203              		.loc 1 22 5
+  22:src/c_api.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
+GAS LISTING /tmp/cc8VIPma.s 			page 6
 
 
- 214              	# 0 "" 2
- 215              		.loc 1 20 5 is_stmt 1
-  20:src/c_api.cpp **** 
- 216              		.loc 1 20 62 is_stmt 0
- 217              	# 20 "src/c_api.cpp" 1
-  22:src/c_api.cpp **** 
- 218              		mv a0, a0
- 219              	# 0 "" 2
- 220              		.loc 1 22 5 is_stmt 1
-  22:src/c_api.cpp **** 
- 221              		.loc 1 22 31 is_stmt 0
- 222              	# 22 "src/c_api.cpp" 1
-  24:src/c_api.cpp **** 
- 223              		ecall
- 224              	# 0 "" 2
- 225              		.loc 1 24 5 is_stmt 1
-  24:src/c_api.cpp **** 
- 226              		.loc 1 24 36 is_stmt 0
- 227              	# 24 "src/c_api.cpp" 1
-  26:src/c_api.cpp ****     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
- 228              		mv x10, x10
- 229              	# 0 "" 2
- 230              		.loc 1 26 5 is_stmt 1
-  27:src/c_api.cpp **** 
- 231              		.loc 1 27 5
-  27:src/c_api.cpp **** 
- 232              		.loc 1 27 59 is_stmt 0
- 233              	# 27 "src/c_api.cpp" 1
- 234              		mv a0, a0
- 235              	# 0 "" 2
- 236              	.LVL7:
-  29:src/c_api.cpp **** }
- 237              		.loc 1 29 5 is_stmt 1
-  30:src/c_api.cpp **** 
- 238              		.loc 1 30 1 is_stmt 0
- 239              	#NO_APP
- 240 00c4 1B050500 		sext.w	a0,a0
- 241 00c8 03348100 		ld	s0,8(sp)
- 242              		.cfi_restore 8
- 243              		.cfi_def_cfa 2, 16
- 244 00cc 13010101 		addi	sp,sp,16
- 245              		.cfi_def_cfa_offset 0
- 246 00d0 67800000 		jr	ra
- 247              		.cfi_endproc
- 248              	.LFE5:
- 250              		.align	2
- 251              		.globl	_Z9mem_allocm
- 253              	_Z9mem_allocm:
- 254              	.LFB9:
-  66:src/c_api.cpp **** 
-  67:src/c_api.cpp **** void* mem_alloc(size_t size)
-  68:src/c_api.cpp **** {
- 255              		.loc 1 68 1 is_stmt 1
- 256              		.cfi_startproc
- 257              	.LVL8:
- 258 00d4 130101FF 		addi	sp,sp,-16
- 259              		.cfi_def_cfa_offset 16
-GAS LISTING /tmp/ccb4iuiZ.s 			page 7
+ 204              		.loc 1 22 68 is_stmt 0
+ 205              	#APP
+ 206              	# 22 "src/c_api.cpp" 1
+  23:src/c_api.cpp **** 
+ 207              		mv a1, a1
+ 208              	# 0 "" 2
+ 209              		.loc 1 23 5 is_stmt 1
+  23:src/c_api.cpp **** 
+ 210              		.loc 1 23 62 is_stmt 0
+ 211              	# 23 "src/c_api.cpp" 1
+  25:src/c_api.cpp **** }
+ 212              		mv a0, a0
+ 213              	# 0 "" 2
+ 214              		.loc 1 25 5 is_stmt 1
+  25:src/c_api.cpp **** }
+ 215              		.loc 1 25 31 is_stmt 0
+ 216              	# 25 "src/c_api.cpp" 1
+  26:src/c_api.cpp **** 
+ 217              		ecall
+ 218              	# 0 "" 2
+ 219              		.loc 1 26 1
+ 220              	#NO_APP
+ 221 00b8 03348100 		ld	s0,8(sp)
+ 222              		.cfi_restore 8
+ 223              		.cfi_def_cfa 2, 16
+ 224 00bc 13010101 		addi	sp,sp,16
+ 225              		.cfi_def_cfa_offset 0
+ 226 00c0 67800000 		jr	ra
+ 227              		.cfi_endproc
+ 228              	.LFE5:
+ 230              		.align	2
+ 231              		.globl	_Z23helperRet32P164P264P364mmmm
+ 233              	_Z23helperRet32P164P264P364mmmm:
+ 234              	.LFB6:
+  29:src/c_api.cpp ****     __asm__ volatile ("mv a3, %[name]" : : [name] "r" (parameter3));
+ 235              		.loc 1 29 1 is_stmt 1
+ 236              		.cfi_startproc
+ 237              	.LVL8:
+ 238 00c4 130101FF 		addi	sp,sp,-16
+ 239              		.cfi_def_cfa_offset 16
+ 240 00c8 23348100 		sd	s0,8(sp)
+ 241              		.cfi_offset 8, -8
+ 242 00cc 13040101 		addi	s0,sp,16
+ 243              		.cfi_def_cfa 8, 0
+  30:src/c_api.cpp ****     __asm__ volatile ("mv a2, %[name]" : : [name] "r" (parameter2));
+ 244              		.loc 1 30 5
+  30:src/c_api.cpp ****     __asm__ volatile ("mv a2, %[name]" : : [name] "r" (parameter2));
+ 245              		.loc 1 30 68 is_stmt 0
+ 246              	#APP
+ 247              	# 30 "src/c_api.cpp" 1
+  31:src/c_api.cpp ****     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+ 248              		mv a3, a3
+ 249              	# 0 "" 2
+ 250              		.loc 1 31 5 is_stmt 1
+  31:src/c_api.cpp ****     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+ 251              		.loc 1 31 68 is_stmt 0
+ 252              	# 31 "src/c_api.cpp" 1
+GAS LISTING /tmp/cc8VIPma.s 			page 7
 
 
- 260 00d8 23341100 		sd	ra,8(sp)
- 261 00dc 23308100 		sd	s0,0(sp)
- 262              		.cfi_offset 1, -8
- 263              		.cfi_offset 8, -16
- 264 00e0 13040101 		addi	s0,sp,16
- 265              		.cfi_def_cfa 8, 0
- 266 00e4 93050500 		mv	a1,a0
-  69:src/c_api.cpp ****     return (void*) helperRet64P164(1, size);
- 267              		.loc 1 69 5
- 268              		.loc 1 69 35 is_stmt 0
- 269 00e8 13051000 		li	a0,1
- 270              	.LVL9:
- 271 00ec 97000000 		call	_ZL15helperRet64P164mm
- 271      E7800000 
- 272              	.LVL10:
-  70:src/c_api.cpp **** }
- 273              		.loc 1 70 1
- 274 00f4 83308100 		ld	ra,8(sp)
- 275              		.cfi_restore 1
- 276 00f8 03340100 		ld	s0,0(sp)
- 277              		.cfi_restore 8
- 278              		.cfi_def_cfa 2, 16
- 279 00fc 13010101 		addi	sp,sp,16
- 280              		.cfi_def_cfa_offset 0
- 281 0100 67800000 		jr	ra
- 282              		.cfi_endproc
- 283              	.LFE9:
- 285              		.align	2
- 286              		.globl	_Z8mem_freePv
- 288              	_Z8mem_freePv:
- 289              	.LFB10:
-  71:src/c_api.cpp **** 
-  72:src/c_api.cpp **** int mem_free(void* ptr)
-  73:src/c_api.cpp **** {
- 290              		.loc 1 73 1 is_stmt 1
- 291              		.cfi_startproc
- 292              	.LVL11:
- 293 0104 130101FF 		addi	sp,sp,-16
- 294              		.cfi_def_cfa_offset 16
- 295 0108 23341100 		sd	ra,8(sp)
- 296 010c 23308100 		sd	s0,0(sp)
- 297              		.cfi_offset 1, -8
- 298              		.cfi_offset 8, -16
- 299 0110 13040101 		addi	s0,sp,16
- 300              		.cfi_def_cfa 8, 0
- 301 0114 93050500 		mv	a1,a0
-  74:src/c_api.cpp ****     return helperRet64P164(2, (uint64) ptr);
- 302              		.loc 1 74 5
- 303              		.loc 1 74 27 is_stmt 0
- 304 0118 13052000 		li	a0,2
- 305              	.LVL12:
- 306 011c 97000000 		call	_ZL15helperRet64P164mm
- 306      E7800000 
- 307              	.LVL13:
-  75:src/c_api.cpp **** }
- 308              		.loc 1 75 1
- 309 0124 1B050500 		sext.w	a0,a0
-GAS LISTING /tmp/ccb4iuiZ.s 			page 8
+  32:src/c_api.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
+ 253              		mv a2, a2
+ 254              	# 0 "" 2
+ 255              		.loc 1 32 5 is_stmt 1
+  32:src/c_api.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
+ 256              		.loc 1 32 68 is_stmt 0
+ 257              	# 32 "src/c_api.cpp" 1
+  33:src/c_api.cpp **** 
+ 258              		mv a1, a1
+ 259              	# 0 "" 2
+ 260              		.loc 1 33 5 is_stmt 1
+  33:src/c_api.cpp **** 
+ 261              		.loc 1 33 62 is_stmt 0
+ 262              	# 33 "src/c_api.cpp" 1
+  35:src/c_api.cpp **** 
+ 263              		mv a0, a0
+ 264              	# 0 "" 2
+ 265              		.loc 1 35 5 is_stmt 1
+  35:src/c_api.cpp **** 
+ 266              		.loc 1 35 31 is_stmt 0
+ 267              	# 35 "src/c_api.cpp" 1
+  37:src/c_api.cpp **** 
+ 268              		ecall
+ 269              	# 0 "" 2
+ 270              		.loc 1 37 5 is_stmt 1
+  37:src/c_api.cpp **** 
+ 271              		.loc 1 37 36 is_stmt 0
+ 272              	# 37 "src/c_api.cpp" 1
+  39:src/c_api.cpp ****     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+ 273              		mv x10, x10
+ 274              	# 0 "" 2
+ 275              		.loc 1 39 5 is_stmt 1
+  40:src/c_api.cpp **** 
+ 276              		.loc 1 40 5
+  40:src/c_api.cpp **** 
+ 277              		.loc 1 40 59 is_stmt 0
+ 278              	# 40 "src/c_api.cpp" 1
+ 279              		mv a0, a0
+ 280              	# 0 "" 2
+ 281              	.LVL9:
+  42:src/c_api.cpp **** }
+ 282              		.loc 1 42 5 is_stmt 1
+  43:src/c_api.cpp **** 
+ 283              		.loc 1 43 1 is_stmt 0
+ 284              	#NO_APP
+ 285 00ec 1B050500 		sext.w	a0,a0
+ 286 00f0 03348100 		ld	s0,8(sp)
+ 287              		.cfi_restore 8
+ 288              		.cfi_def_cfa 2, 16
+ 289 00f4 13010101 		addi	sp,sp,16
+ 290              		.cfi_def_cfa_offset 0
+ 291 00f8 67800000 		jr	ra
+ 292              		.cfi_endproc
+ 293              	.LFE6:
+ 295              		.align	2
+ 296              		.globl	_Z9mem_allocm
+ 298              	_Z9mem_allocm:
+GAS LISTING /tmp/cc8VIPma.s 			page 8
 
 
- 310 0128 83308100 		ld	ra,8(sp)
- 311              		.cfi_restore 1
- 312 012c 03340100 		ld	s0,0(sp)
- 313              		.cfi_restore 8
- 314              		.cfi_def_cfa 2, 16
- 315 0130 13010101 		addi	sp,sp,16
- 316              		.cfi_def_cfa_offset 0
- 317 0134 67800000 		jr	ra
- 318              		.cfi_endproc
- 319              	.LFE10:
- 321              		.align	2
- 322              		.globl	_Z15thread_dispatchv
- 324              	_Z15thread_dispatchv:
- 325              	.LFB11:
-  76:src/c_api.cpp **** 
-  77:src/c_api.cpp **** void thread_dispatch() // WARNING: different than Scheduler::dispatchToNext()
-  78:src/c_api.cpp **** {
- 326              		.loc 1 78 1 is_stmt 1
- 327              		.cfi_startproc
- 328 0138 130101FF 		addi	sp,sp,-16
- 329              		.cfi_def_cfa_offset 16
- 330 013c 23341100 		sd	ra,8(sp)
- 331 0140 23308100 		sd	s0,0(sp)
- 332              		.cfi_offset 1, -8
- 333              		.cfi_offset 8, -16
- 334 0144 13040101 		addi	s0,sp,16
- 335              		.cfi_def_cfa 8, 0
-  79:src/c_api.cpp ****     helper(0x13);
- 336              		.loc 1 79 5
- 337              		.loc 1 79 11 is_stmt 0
- 338 0148 13053001 		li	a0,19
- 339 014c 97000000 		call	_ZL6helperm
- 339      E7800000 
- 340              	.LVL14:
-  80:src/c_api.cpp **** }
- 341              		.loc 1 80 1
- 342 0154 83308100 		ld	ra,8(sp)
- 343              		.cfi_restore 1
- 344 0158 03340100 		ld	s0,0(sp)
- 345              		.cfi_restore 8
- 346              		.cfi_def_cfa 2, 16
- 347 015c 13010101 		addi	sp,sp,16
- 348              		.cfi_def_cfa_offset 0
- 349 0160 67800000 		jr	ra
- 350              		.cfi_endproc
- 351              	.LFE11:
- 353              		.align	2
- 354              		.globl	_Z11thread_exitv
- 356              	_Z11thread_exitv:
- 357              	.LFB12:
-  81:src/c_api.cpp **** 
-  82:src/c_api.cpp **** int thread_exit()
-  83:src/c_api.cpp **** {
- 358              		.loc 1 83 1 is_stmt 1
- 359              		.cfi_startproc
- 360 0164 130101FF 		addi	sp,sp,-16
- 361              		.cfi_def_cfa_offset 16
-GAS LISTING /tmp/ccb4iuiZ.s 			page 9
+ 299              	.LFB10:
+  79:src/c_api.cpp **** 
+  80:src/c_api.cpp **** void* mem_alloc(size_t size)
+  81:src/c_api.cpp **** {
+ 300              		.loc 1 81 1 is_stmt 1
+ 301              		.cfi_startproc
+ 302              	.LVL10:
+ 303 00fc 130101FF 		addi	sp,sp,-16
+ 304              		.cfi_def_cfa_offset 16
+ 305 0100 23341100 		sd	ra,8(sp)
+ 306 0104 23308100 		sd	s0,0(sp)
+ 307              		.cfi_offset 1, -8
+ 308              		.cfi_offset 8, -16
+ 309 0108 13040101 		addi	s0,sp,16
+ 310              		.cfi_def_cfa 8, 0
+ 311 010c 93050500 		mv	a1,a0
+  82:src/c_api.cpp ****     return (void*) helperRet64P164(1, size);
+ 312              		.loc 1 82 5
+ 313              		.loc 1 82 35 is_stmt 0
+ 314 0110 13051000 		li	a0,1
+ 315              	.LVL11:
+ 316 0114 97000000 		call	_ZL15helperRet64P164mm
+ 316      E7800000 
+ 317              	.LVL12:
+  83:src/c_api.cpp **** }
+ 318              		.loc 1 83 1
+ 319 011c 83308100 		ld	ra,8(sp)
+ 320              		.cfi_restore 1
+ 321 0120 03340100 		ld	s0,0(sp)
+ 322              		.cfi_restore 8
+ 323              		.cfi_def_cfa 2, 16
+ 324 0124 13010101 		addi	sp,sp,16
+ 325              		.cfi_def_cfa_offset 0
+ 326 0128 67800000 		jr	ra
+ 327              		.cfi_endproc
+ 328              	.LFE10:
+ 330              		.align	2
+ 331              		.globl	_Z8mem_freePv
+ 333              	_Z8mem_freePv:
+ 334              	.LFB11:
+  84:src/c_api.cpp **** 
+  85:src/c_api.cpp **** int mem_free(void* ptr)
+  86:src/c_api.cpp **** {
+ 335              		.loc 1 86 1 is_stmt 1
+ 336              		.cfi_startproc
+ 337              	.LVL13:
+ 338 012c 130101FF 		addi	sp,sp,-16
+ 339              		.cfi_def_cfa_offset 16
+ 340 0130 23341100 		sd	ra,8(sp)
+ 341 0134 23308100 		sd	s0,0(sp)
+ 342              		.cfi_offset 1, -8
+ 343              		.cfi_offset 8, -16
+ 344 0138 13040101 		addi	s0,sp,16
+ 345              		.cfi_def_cfa 8, 0
+ 346 013c 93050500 		mv	a1,a0
+  87:src/c_api.cpp ****     return helperRet64P164(2, (uint64) ptr);
+ 347              		.loc 1 87 5
+GAS LISTING /tmp/cc8VIPma.s 			page 9
 
 
- 362 0168 23341100 		sd	ra,8(sp)
- 363 016c 23308100 		sd	s0,0(sp)
- 364              		.cfi_offset 1, -8
- 365              		.cfi_offset 8, -16
- 366 0170 13040101 		addi	s0,sp,16
- 367              		.cfi_def_cfa 8, 0
-  84:src/c_api.cpp ****     return helperRet32(0x12);
- 368              		.loc 1 84 5
- 369              		.loc 1 84 23 is_stmt 0
- 370 0174 13052001 		li	a0,18
- 371 0178 97000000 		call	_ZL11helperRet32m
- 371      E7800000 
- 372              	.LVL15:
-  85:src/c_api.cpp **** }
- 373              		.loc 1 85 1
- 374 0180 83308100 		ld	ra,8(sp)
- 375              		.cfi_restore 1
- 376 0184 03340100 		ld	s0,0(sp)
- 377              		.cfi_restore 8
- 378              		.cfi_def_cfa 2, 16
- 379 0188 13010101 		addi	sp,sp,16
- 380              		.cfi_def_cfa_offset 0
- 381 018c 67800000 		jr	ra
- 382              		.cfi_endproc
- 383              	.LFE12:
- 385              		.align	2
- 386              		.globl	_Z13thread_createPmPFvPvES0_
- 388              	_Z13thread_createPmPFvPvES0_:
- 389              	.LFB13:
-  86:src/c_api.cpp **** 
-  87:src/c_api.cpp **** int thread_create(thread_t* handle, void(*start_routine)(void*), void*arg)
-  88:src/c_api.cpp **** {
- 390              		.loc 1 88 1 is_stmt 1
- 391              		.cfi_startproc
- 392              	.LVL16:
- 393 0190 130101FF 		addi	sp,sp,-16
- 394              		.cfi_def_cfa_offset 16
- 395 0194 23341100 		sd	ra,8(sp)
- 396 0198 23308100 		sd	s0,0(sp)
- 397              		.cfi_offset 1, -8
- 398              		.cfi_offset 8, -16
- 399 019c 13040101 		addi	s0,sp,16
- 400              		.cfi_def_cfa 8, 0
- 401 01a0 93060600 		mv	a3,a2
-  89:src/c_api.cpp ****     return helperRet32P164P264P364(0x11, (uint64)handle, (uint64)start_routine, (uint64)arg);
- 402              		.loc 1 89 5
- 403              		.loc 1 89 35 is_stmt 0
- 404 01a4 13860500 		mv	a2,a1
- 405              	.LVL17:
- 406 01a8 93050500 		mv	a1,a0
- 407              	.LVL18:
- 408 01ac 13051001 		li	a0,17
- 409              	.LVL19:
- 410 01b0 97000000 		call	_Z23helperRet32P164P264P364mmmm
- 410      E7800000 
- 411              	.LVL20:
-  90:src/c_api.cpp **** }
-GAS LISTING /tmp/ccb4iuiZ.s 			page 10
+ 348              		.loc 1 87 27 is_stmt 0
+ 349 0140 13052000 		li	a0,2
+ 350              	.LVL14:
+ 351 0144 97000000 		call	_ZL15helperRet64P164mm
+ 351      E7800000 
+ 352              	.LVL15:
+  88:src/c_api.cpp **** }
+ 353              		.loc 1 88 1
+ 354 014c 1B050500 		sext.w	a0,a0
+ 355 0150 83308100 		ld	ra,8(sp)
+ 356              		.cfi_restore 1
+ 357 0154 03340100 		ld	s0,0(sp)
+ 358              		.cfi_restore 8
+ 359              		.cfi_def_cfa 2, 16
+ 360 0158 13010101 		addi	sp,sp,16
+ 361              		.cfi_def_cfa_offset 0
+ 362 015c 67800000 		jr	ra
+ 363              		.cfi_endproc
+ 364              	.LFE11:
+ 366              		.align	2
+ 367              		.globl	_Z15thread_dispatchv
+ 369              	_Z15thread_dispatchv:
+ 370              	.LFB12:
+  89:src/c_api.cpp **** 
+  90:src/c_api.cpp **** void thread_dispatch() // WARNING: different than Scheduler::dispatchToNext()
+  91:src/c_api.cpp **** {
+ 371              		.loc 1 91 1 is_stmt 1
+ 372              		.cfi_startproc
+ 373 0160 130101FF 		addi	sp,sp,-16
+ 374              		.cfi_def_cfa_offset 16
+ 375 0164 23341100 		sd	ra,8(sp)
+ 376 0168 23308100 		sd	s0,0(sp)
+ 377              		.cfi_offset 1, -8
+ 378              		.cfi_offset 8, -16
+ 379 016c 13040101 		addi	s0,sp,16
+ 380              		.cfi_def_cfa 8, 0
+  92:src/c_api.cpp ****     helper(0x13);
+ 381              		.loc 1 92 5
+ 382              		.loc 1 92 11 is_stmt 0
+ 383 0170 13053001 		li	a0,19
+ 384 0174 97000000 		call	_ZL6helperm
+ 384      E7800000 
+ 385              	.LVL16:
+  93:src/c_api.cpp **** }
+ 386              		.loc 1 93 1
+ 387 017c 83308100 		ld	ra,8(sp)
+ 388              		.cfi_restore 1
+ 389 0180 03340100 		ld	s0,0(sp)
+ 390              		.cfi_restore 8
+ 391              		.cfi_def_cfa 2, 16
+ 392 0184 13010101 		addi	sp,sp,16
+ 393              		.cfi_def_cfa_offset 0
+ 394 0188 67800000 		jr	ra
+ 395              		.cfi_endproc
+ 396              	.LFE12:
+ 398              		.align	2
+ 399              		.globl	_Z11thread_exitv
+GAS LISTING /tmp/cc8VIPma.s 			page 10
 
 
- 412              		.loc 1 90 1
- 413 01b8 83308100 		ld	ra,8(sp)
- 414              		.cfi_restore 1
- 415 01bc 03340100 		ld	s0,0(sp)
- 416              		.cfi_restore 8
- 417              		.cfi_def_cfa 2, 16
- 418 01c0 13010101 		addi	sp,sp,16
- 419              		.cfi_def_cfa_offset 0
- 420 01c4 67800000 		jr	ra
- 421              		.cfi_endproc
- 422              	.LFE13:
- 424              		.align	2
- 425              		.globl	_Z11thread_joinm
- 427              	_Z11thread_joinm:
- 428              	.LFB14:
-  91:src/c_api.cpp **** 
-  92:src/c_api.cpp **** void thread_join(thread_t handle)
-  93:src/c_api.cpp **** {
- 429              		.loc 1 93 1 is_stmt 1
- 430              		.cfi_startproc
- 431              	.LVL21:
- 432 01c8 130101FF 		addi	sp,sp,-16
- 433              		.cfi_def_cfa_offset 16
- 434 01cc 23341100 		sd	ra,8(sp)
- 435 01d0 23308100 		sd	s0,0(sp)
- 436              		.cfi_offset 1, -8
- 437              		.cfi_offset 8, -16
- 438 01d4 13040101 		addi	s0,sp,16
- 439              		.cfi_def_cfa 8, 0
- 440 01d8 93050500 		mv	a1,a0
-  94:src/c_api.cpp ****     helperP164(0x14, handle);
- 441              		.loc 1 94 5
- 442              		.loc 1 94 15 is_stmt 0
- 443 01dc 13054001 		li	a0,20
- 444              	.LVL22:
- 445 01e0 97000000 		call	_Z10helperP164mm
- 445      E7800000 
- 446              	.LVL23:
-  95:src/c_api.cpp **** }
- 447              		.loc 1 95 1
- 448 01e8 83308100 		ld	ra,8(sp)
- 449              		.cfi_restore 1
- 450 01ec 03340100 		ld	s0,0(sp)
- 451              		.cfi_restore 8
- 452              		.cfi_def_cfa 2, 16
- 453 01f0 13010101 		addi	sp,sp,16
- 454              		.cfi_def_cfa_offset 0
- 455 01f4 67800000 		jr	ra
- 456              		.cfi_endproc
- 457              	.LFE14:
- 459              		.align	2
- 460              		.globl	_Z9test_callm
- 462              	_Z9test_callm:
- 463              	.LFB15:
-  96:src/c_api.cpp **** 
-  97:src/c_api.cpp **** uint64 test_call(uint64 n)
-  98:src/c_api.cpp **** {
-GAS LISTING /tmp/ccb4iuiZ.s 			page 11
+ 401              	_Z11thread_exitv:
+ 402              	.LFB13:
+  94:src/c_api.cpp **** 
+  95:src/c_api.cpp **** int thread_exit()
+  96:src/c_api.cpp **** {
+ 403              		.loc 1 96 1 is_stmt 1
+ 404              		.cfi_startproc
+ 405 018c 130101FF 		addi	sp,sp,-16
+ 406              		.cfi_def_cfa_offset 16
+ 407 0190 23341100 		sd	ra,8(sp)
+ 408 0194 23308100 		sd	s0,0(sp)
+ 409              		.cfi_offset 1, -8
+ 410              		.cfi_offset 8, -16
+ 411 0198 13040101 		addi	s0,sp,16
+ 412              		.cfi_def_cfa 8, 0
+  97:src/c_api.cpp ****     return helperRet32(0x12);
+ 413              		.loc 1 97 5
+ 414              		.loc 1 97 23 is_stmt 0
+ 415 019c 13052001 		li	a0,18
+ 416 01a0 97000000 		call	_ZL11helperRet32m
+ 416      E7800000 
+ 417              	.LVL17:
+  98:src/c_api.cpp **** }
+ 418              		.loc 1 98 1
+ 419 01a8 83308100 		ld	ra,8(sp)
+ 420              		.cfi_restore 1
+ 421 01ac 03340100 		ld	s0,0(sp)
+ 422              		.cfi_restore 8
+ 423              		.cfi_def_cfa 2, 16
+ 424 01b0 13010101 		addi	sp,sp,16
+ 425              		.cfi_def_cfa_offset 0
+ 426 01b4 67800000 		jr	ra
+ 427              		.cfi_endproc
+ 428              	.LFE13:
+ 430              		.align	2
+ 431              		.globl	_Z13thread_createPmPFvPvES0_
+ 433              	_Z13thread_createPmPFvPvES0_:
+ 434              	.LFB14:
+  99:src/c_api.cpp **** 
+ 100:src/c_api.cpp **** int thread_create(thread_t* handle, void(*start_routine)(void*), void*arg)
+ 101:src/c_api.cpp **** {
+ 435              		.loc 1 101 1 is_stmt 1
+ 436              		.cfi_startproc
+ 437              	.LVL18:
+ 438 01b8 130101FF 		addi	sp,sp,-16
+ 439              		.cfi_def_cfa_offset 16
+ 440 01bc 23341100 		sd	ra,8(sp)
+ 441 01c0 23308100 		sd	s0,0(sp)
+ 442              		.cfi_offset 1, -8
+ 443              		.cfi_offset 8, -16
+ 444 01c4 13040101 		addi	s0,sp,16
+ 445              		.cfi_def_cfa 8, 0
+ 446 01c8 93060600 		mv	a3,a2
+ 102:src/c_api.cpp ****     return helperRet32P164P264P364(0x11, (uint64)handle, (uint64)start_routine, (uint64)arg);
+ 447              		.loc 1 102 5
+ 448              		.loc 1 102 35 is_stmt 0
+ 449 01cc 13860500 		mv	a2,a1
+GAS LISTING /tmp/cc8VIPma.s 			page 11
 
 
- 464              		.loc 1 98 1 is_stmt 1
- 465              		.cfi_startproc
- 466              	.LVL24:
- 467 01f8 130101FF 		addi	sp,sp,-16
- 468              		.cfi_def_cfa_offset 16
- 469 01fc 23341100 		sd	ra,8(sp)
- 470 0200 23308100 		sd	s0,0(sp)
- 471              		.cfi_offset 1, -8
- 472              		.cfi_offset 8, -16
- 473 0204 13040101 		addi	s0,sp,16
- 474              		.cfi_def_cfa 8, 0
- 475 0208 93050500 		mv	a1,a0
-  99:src/c_api.cpp ****     return helperRet64P164(3, n);
- 476              		.loc 1 99 5
- 477              		.loc 1 99 27 is_stmt 0
- 478 020c 13053000 		li	a0,3
- 479              	.LVL25:
- 480 0210 97000000 		call	_ZL15helperRet64P164mm
- 480      E7800000 
- 481              	.LVL26:
- 100:src/c_api.cpp **** }...
- 482              		.loc 1 100 1
- 483 0218 83308100 		ld	ra,8(sp)
- 484              		.cfi_restore 1
- 485 021c 03340100 		ld	s0,0(sp)
- 486              		.cfi_restore 8
- 487              		.cfi_def_cfa 2, 16
- 488 0220 13010101 		addi	sp,sp,16
- 489              		.cfi_def_cfa_offset 0
- 490 0224 67800000 		jr	ra
- 491              		.cfi_endproc
- 492              	.LFE15:
- 494              	.Letext0:
- 495              		.file 2 "src/../h/../lib/hw.h"
- 496              		.file 3 "src/../h/c_api.h"
-GAS LISTING /tmp/ccb4iuiZ.s 			page 12
+ 450              	.LVL19:
+ 451 01d0 93050500 		mv	a1,a0
+ 452              	.LVL20:
+ 453 01d4 13051001 		li	a0,17
+ 454              	.LVL21:
+ 455 01d8 97000000 		call	_Z23helperRet32P164P264P364mmmm
+ 455      E7800000 
+ 456              	.LVL22:
+ 103:src/c_api.cpp **** }
+ 457              		.loc 1 103 1
+ 458 01e0 83308100 		ld	ra,8(sp)
+ 459              		.cfi_restore 1
+ 460 01e4 03340100 		ld	s0,0(sp)
+ 461              		.cfi_restore 8
+ 462              		.cfi_def_cfa 2, 16
+ 463 01e8 13010101 		addi	sp,sp,16
+ 464              		.cfi_def_cfa_offset 0
+ 465 01ec 67800000 		jr	ra
+ 466              		.cfi_endproc
+ 467              	.LFE14:
+ 469              		.align	2
+ 470              		.globl	_Z11thread_joinm
+ 472              	_Z11thread_joinm:
+ 473              	.LFB15:
+ 104:src/c_api.cpp **** 
+ 105:src/c_api.cpp **** void thread_join(thread_t handle)
+ 106:src/c_api.cpp **** {
+ 474              		.loc 1 106 1 is_stmt 1
+ 475              		.cfi_startproc
+ 476              	.LVL23:
+ 477 01f0 130101FF 		addi	sp,sp,-16
+ 478              		.cfi_def_cfa_offset 16
+ 479 01f4 23341100 		sd	ra,8(sp)
+ 480 01f8 23308100 		sd	s0,0(sp)
+ 481              		.cfi_offset 1, -8
+ 482              		.cfi_offset 8, -16
+ 483 01fc 13040101 		addi	s0,sp,16
+ 484              		.cfi_def_cfa 8, 0
+ 485 0200 93050500 		mv	a1,a0
+ 107:src/c_api.cpp ****     helperP164(0x14, handle);
+ 486              		.loc 1 107 5
+ 487              		.loc 1 107 15 is_stmt 0
+ 488 0204 13054001 		li	a0,20
+ 489              	.LVL24:
+ 490 0208 97000000 		call	_Z10helperP164mm
+ 490      E7800000 
+ 491              	.LVL25:
+ 108:src/c_api.cpp **** }
+ 492              		.loc 1 108 1
+ 493 0210 83308100 		ld	ra,8(sp)
+ 494              		.cfi_restore 1
+ 495 0214 03340100 		ld	s0,0(sp)
+ 496              		.cfi_restore 8
+ 497              		.cfi_def_cfa 2, 16
+ 498 0218 13010101 		addi	sp,sp,16
+ 499              		.cfi_def_cfa_offset 0
+ 500 021c 67800000 		jr	ra
+GAS LISTING /tmp/cc8VIPma.s 			page 12
+
+
+ 501              		.cfi_endproc
+ 502              	.LFE15:
+ 504              		.align	2
+ 505              		.globl	_Z9test_callm
+ 507              	_Z9test_callm:
+ 508              	.LFB16:
+ 109:src/c_api.cpp **** 
+ 110:src/c_api.cpp **** uint64 test_call(uint64 n)
+ 111:src/c_api.cpp **** {
+ 509              		.loc 1 111 1 is_stmt 1
+ 510              		.cfi_startproc
+ 511              	.LVL26:
+ 512 0220 130101FF 		addi	sp,sp,-16
+ 513              		.cfi_def_cfa_offset 16
+ 514 0224 23341100 		sd	ra,8(sp)
+ 515 0228 23308100 		sd	s0,0(sp)
+ 516              		.cfi_offset 1, -8
+ 517              		.cfi_offset 8, -16
+ 518 022c 13040101 		addi	s0,sp,16
+ 519              		.cfi_def_cfa 8, 0
+ 520 0230 93050500 		mv	a1,a0
+ 112:src/c_api.cpp ****     return helperRet64P164(3, n);
+ 521              		.loc 1 112 5
+ 522              		.loc 1 112 27 is_stmt 0
+ 523 0234 13053000 		li	a0,3
+ 524              	.LVL27:
+ 525 0238 97000000 		call	_ZL15helperRet64P164mm
+ 525      E7800000 
+ 526              	.LVL28:
+ 113:src/c_api.cpp **** }
+ 527              		.loc 1 113 1
+ 528 0240 83308100 		ld	ra,8(sp)
+ 529              		.cfi_restore 1
+ 530 0244 03340100 		ld	s0,0(sp)
+ 531              		.cfi_restore 8
+ 532              		.cfi_def_cfa 2, 16
+ 533 0248 13010101 		addi	sp,sp,16
+ 534              		.cfi_def_cfa_offset 0
+ 535 024c 67800000 		jr	ra
+ 536              		.cfi_endproc
+ 537              	.LFE16:
+ 539              		.align	2
+ 540              		.globl	_Z4getcv
+ 542              	_Z4getcv:
+ 543              	.LFB17:
+ 114:src/c_api.cpp **** 
+ 115:src/c_api.cpp **** char getc()
+ 116:src/c_api.cpp **** {
+ 544              		.loc 1 116 1 is_stmt 1
+ 545              		.cfi_startproc
+ 546 0250 130101FF 		addi	sp,sp,-16
+ 547              		.cfi_def_cfa_offset 16
+ 548 0254 23341100 		sd	ra,8(sp)
+ 549 0258 23308100 		sd	s0,0(sp)
+ 550              		.cfi_offset 1, -8
+ 551              		.cfi_offset 8, -16
+ 552 025c 13040101 		addi	s0,sp,16
+GAS LISTING /tmp/cc8VIPma.s 			page 13
+
+
+ 553              		.cfi_def_cfa 8, 0
+ 117:src/c_api.cpp ****     return helperRet8(0x41);
+ 554              		.loc 1 117 5
+ 555              		.loc 1 117 22 is_stmt 0
+ 556 0260 13051004 		li	a0,65
+ 557 0264 97000000 		call	_Z10helperRet8m
+ 557      E7800000 
+ 558              	.LVL29:
+ 118:src/c_api.cpp **** }
+ 559              		.loc 1 118 1
+ 560 026c 83308100 		ld	ra,8(sp)
+ 561              		.cfi_restore 1
+ 562 0270 03340100 		ld	s0,0(sp)
+ 563              		.cfi_restore 8
+ 564              		.cfi_def_cfa 2, 16
+ 565 0274 13010101 		addi	sp,sp,16
+ 566              		.cfi_def_cfa_offset 0
+ 567 0278 67800000 		jr	ra
+ 568              		.cfi_endproc
+ 569              	.LFE17:
+ 571              		.align	2
+ 572              		.globl	_Z4putcc
+ 574              	_Z4putcc:
+ 575              	.LFB18:
+ 119:src/c_api.cpp **** 
+ 120:src/c_api.cpp **** void putc(char c)
+ 121:src/c_api.cpp **** {
+ 576              		.loc 1 121 1 is_stmt 1
+ 577              		.cfi_startproc
+ 578              	.LVL30:
+ 579 027c 130101FE 		addi	sp,sp,-32
+ 580              		.cfi_def_cfa_offset 32
+ 581 0280 233C1100 		sd	ra,24(sp)
+ 582 0284 23388100 		sd	s0,16(sp)
+ 583              		.cfi_offset 1, -8
+ 584              		.cfi_offset 8, -16
+ 585 0288 13040102 		addi	s0,sp,32
+ 586              		.cfi_def_cfa 8, 0
+ 122:src/c_api.cpp ****     uint64 a;
+ 587              		.loc 1 122 5
+ 123:src/c_api.cpp ****     *((char*)(&a)) = c;
+ 588              		.loc 1 123 5
+ 589              		.loc 1 123 20 is_stmt 0
+ 590 028c 2304A4FE 		sb	a0,-24(s0)
+ 124:src/c_api.cpp **** 
+ 125:src/c_api.cpp ****     helperP164(0x42, a);
+ 591              		.loc 1 125 5 is_stmt 1
+ 592              		.loc 1 125 15 is_stmt 0
+ 593 0290 833584FE 		ld	a1,-24(s0)
+ 594 0294 13052004 		li	a0,66
+ 595              	.LVL31:
+ 596 0298 97000000 		call	_Z10helperP164mm
+ 596      E7800000 
+ 597              	.LVL32:
+ 126:src/c_api.cpp **** }...
+ 598              		.loc 1 126 1
+ 599 02a0 83308101 		ld	ra,24(sp)
+GAS LISTING /tmp/cc8VIPma.s 			page 14
+
+
+ 600              		.cfi_restore 1
+ 601 02a4 03340101 		ld	s0,16(sp)
+ 602              		.cfi_restore 8
+ 603              		.cfi_def_cfa 2, 32
+ 604 02a8 13010102 		addi	sp,sp,32
+ 605              		.cfi_def_cfa_offset 0
+ 606 02ac 67800000 		jr	ra
+ 607              		.cfi_endproc
+ 608              	.LFE18:
+ 610              	.Letext0:
+ 611              		.file 2 "src/../h/../lib/hw.h"
+ 612              		.file 3 "src/../h/c_api.h"
+GAS LISTING /tmp/cc8VIPma.s 			page 15
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 c_api.cpp
-     /tmp/ccb4iuiZ.s:8      .text:0000000000000000 _ZL15helperRet64P164mm
-     /tmp/ccb4iuiZ.s:12     .text:0000000000000000 .L0 
-     /tmp/ccb4iuiZ.s:14     .text:0000000000000000 .L0 
-     /tmp/ccb4iuiZ.s:15     .text:0000000000000004 .L0 
-     /tmp/ccb4iuiZ.s:17     .text:0000000000000008 .L0 
-     /tmp/ccb4iuiZ.s:19     .text:000000000000000c .L0 
-     /tmp/ccb4iuiZ.s:21     .text:000000000000000c .L0 
-       src/c_api.cpp:34     .text:000000000000000c .L0 
-     /tmp/ccb4iuiZ.s:27     .text:0000000000000010 .L0 
-       src/c_api.cpp:35     .text:0000000000000010 .L0 
-     /tmp/ccb4iuiZ.s:32     .text:0000000000000014 .L0 
-       src/c_api.cpp:37     .text:0000000000000014 .L0 
-     /tmp/ccb4iuiZ.s:37     .text:0000000000000018 .L0 
-       src/c_api.cpp:39     .text:0000000000000018 .L0 
-     /tmp/ccb4iuiZ.s:42     .text:000000000000001c .L0 
-     /tmp/ccb4iuiZ.s:43     .text:000000000000001c .L0 
-       src/c_api.cpp:42     .text:000000000000001c .L0 
-     /tmp/ccb4iuiZ.s:49     .text:0000000000000020 .L0 
-     /tmp/ccb4iuiZ.s:51     .text:0000000000000020 .L0 
-     /tmp/ccb4iuiZ.s:52     .text:0000000000000024 .L0 
-     /tmp/ccb4iuiZ.s:53     .text:0000000000000024 .L0 
-     /tmp/ccb4iuiZ.s:55     .text:0000000000000028 .L0 
-     /tmp/ccb4iuiZ.s:57     .text:000000000000002c .L0 
-     /tmp/ccb4iuiZ.s:62     .text:000000000000002c _ZL11helperRet32m
-     /tmp/ccb4iuiZ.s:65     .text:000000000000002c .L0 
-     /tmp/ccb4iuiZ.s:67     .text:000000000000002c .L0 
-     /tmp/ccb4iuiZ.s:68     .text:0000000000000030 .L0 
-     /tmp/ccb4iuiZ.s:70     .text:0000000000000034 .L0 
-     /tmp/ccb4iuiZ.s:72     .text:0000000000000038 .L0 
-     /tmp/ccb4iuiZ.s:74     .text:0000000000000038 .L0 
-       src/c_api.cpp:49     .text:0000000000000038 .L0 
-     /tmp/ccb4iuiZ.s:80     .text:000000000000003c .L0 
-       src/c_api.cpp:51     .text:000000000000003c .L0 
-     /tmp/ccb4iuiZ.s:85     .text:0000000000000040 .L0 
-     /tmp/ccb4iuiZ.s:86     .text:0000000000000040 .L0 
-       src/c_api.cpp:54     .text:0000000000000040 .L0 
-     /tmp/ccb4iuiZ.s:92     .text:0000000000000044 .L0 
-     /tmp/ccb4iuiZ.s:94     .text:0000000000000044 .L0 
-     /tmp/ccb4iuiZ.s:96     .text:000000000000004c .L0 
-     /tmp/ccb4iuiZ.s:97     .text:000000000000004c .L0 
-     /tmp/ccb4iuiZ.s:99     .text:0000000000000050 .L0 
-     /tmp/ccb4iuiZ.s:101    .text:0000000000000054 .L0 
-     /tmp/ccb4iuiZ.s:106    .text:0000000000000054 _ZL6helperm
-     /tmp/ccb4iuiZ.s:109    .text:0000000000000054 .L0 
-     /tmp/ccb4iuiZ.s:111    .text:0000000000000054 .L0 
-     /tmp/ccb4iuiZ.s:112    .text:0000000000000058 .L0 
-     /tmp/ccb4iuiZ.s:114    .text:000000000000005c .L0 
-     /tmp/ccb4iuiZ.s:116    .text:0000000000000060 .L0 
-     /tmp/ccb4iuiZ.s:118    .text:0000000000000060 .L0 
-       src/c_api.cpp:61     .text:0000000000000060 .L0 
-     /tmp/ccb4iuiZ.s:124    .text:0000000000000064 .L0 
-       src/c_api.cpp:62     .text:0000000000000064 .L0 
-     /tmp/ccb4iuiZ.s:129    .text:0000000000000068 .L0 
-       src/c_api.cpp:64     .text:0000000000000068 .L0 
-     /tmp/ccb4iuiZ.s:135    .text:000000000000006c .L0 
-GAS LISTING /tmp/ccb4iuiZ.s 			page 13
+     /tmp/cc8VIPma.s:8      .text:0000000000000000 _ZL15helperRet64P164mm
+     /tmp/cc8VIPma.s:12     .text:0000000000000000 .L0 
+     /tmp/cc8VIPma.s:14     .text:0000000000000000 .L0 
+     /tmp/cc8VIPma.s:15     .text:0000000000000004 .L0 
+     /tmp/cc8VIPma.s:17     .text:0000000000000008 .L0 
+     /tmp/cc8VIPma.s:19     .text:000000000000000c .L0 
+     /tmp/cc8VIPma.s:21     .text:000000000000000c .L0 
+       src/c_api.cpp:47     .text:000000000000000c .L0 
+     /tmp/cc8VIPma.s:27     .text:0000000000000010 .L0 
+       src/c_api.cpp:48     .text:0000000000000010 .L0 
+     /tmp/cc8VIPma.s:32     .text:0000000000000014 .L0 
+       src/c_api.cpp:50     .text:0000000000000014 .L0 
+     /tmp/cc8VIPma.s:37     .text:0000000000000018 .L0 
+       src/c_api.cpp:52     .text:0000000000000018 .L0 
+     /tmp/cc8VIPma.s:42     .text:000000000000001c .L0 
+     /tmp/cc8VIPma.s:43     .text:000000000000001c .L0 
+       src/c_api.cpp:55     .text:000000000000001c .L0 
+     /tmp/cc8VIPma.s:49     .text:0000000000000020 .L0 
+     /tmp/cc8VIPma.s:51     .text:0000000000000020 .L0 
+     /tmp/cc8VIPma.s:52     .text:0000000000000024 .L0 
+     /tmp/cc8VIPma.s:53     .text:0000000000000024 .L0 
+     /tmp/cc8VIPma.s:55     .text:0000000000000028 .L0 
+     /tmp/cc8VIPma.s:57     .text:000000000000002c .L0 
+     /tmp/cc8VIPma.s:62     .text:000000000000002c _ZL11helperRet32m
+     /tmp/cc8VIPma.s:65     .text:000000000000002c .L0 
+     /tmp/cc8VIPma.s:67     .text:000000000000002c .L0 
+     /tmp/cc8VIPma.s:68     .text:0000000000000030 .L0 
+     /tmp/cc8VIPma.s:70     .text:0000000000000034 .L0 
+     /tmp/cc8VIPma.s:72     .text:0000000000000038 .L0 
+     /tmp/cc8VIPma.s:74     .text:0000000000000038 .L0 
+       src/c_api.cpp:62     .text:0000000000000038 .L0 
+     /tmp/cc8VIPma.s:80     .text:000000000000003c .L0 
+       src/c_api.cpp:64     .text:000000000000003c .L0 
+     /tmp/cc8VIPma.s:85     .text:0000000000000040 .L0 
+     /tmp/cc8VIPma.s:86     .text:0000000000000040 .L0 
+       src/c_api.cpp:67     .text:0000000000000040 .L0 
+     /tmp/cc8VIPma.s:92     .text:0000000000000044 .L0 
+     /tmp/cc8VIPma.s:94     .text:0000000000000044 .L0 
+     /tmp/cc8VIPma.s:96     .text:000000000000004c .L0 
+     /tmp/cc8VIPma.s:97     .text:000000000000004c .L0 
+     /tmp/cc8VIPma.s:99     .text:0000000000000050 .L0 
+     /tmp/cc8VIPma.s:101    .text:0000000000000054 .L0 
+     /tmp/cc8VIPma.s:106    .text:0000000000000054 _ZL6helperm
+     /tmp/cc8VIPma.s:109    .text:0000000000000054 .L0 
+     /tmp/cc8VIPma.s:111    .text:0000000000000054 .L0 
+     /tmp/cc8VIPma.s:112    .text:0000000000000058 .L0 
+     /tmp/cc8VIPma.s:114    .text:000000000000005c .L0 
+     /tmp/cc8VIPma.s:116    .text:0000000000000060 .L0 
+     /tmp/cc8VIPma.s:118    .text:0000000000000060 .L0 
+       src/c_api.cpp:74     .text:0000000000000060 .L0 
+     /tmp/cc8VIPma.s:124    .text:0000000000000064 .L0 
+       src/c_api.cpp:75     .text:0000000000000064 .L0 
+     /tmp/cc8VIPma.s:129    .text:0000000000000068 .L0 
+       src/c_api.cpp:77     .text:0000000000000068 .L0 
+     /tmp/cc8VIPma.s:135    .text:000000000000006c .L0 
+GAS LISTING /tmp/cc8VIPma.s 			page 16
 
 
-     /tmp/ccb4iuiZ.s:136    .text:0000000000000070 .L0 
-     /tmp/ccb4iuiZ.s:137    .text:0000000000000070 .L0 
-     /tmp/ccb4iuiZ.s:139    .text:0000000000000074 .L0 
-     /tmp/ccb4iuiZ.s:141    .text:0000000000000078 .L0 
-     /tmp/ccb4iuiZ.s:147    .text:0000000000000078 _Z10helperP164mm
-     /tmp/ccb4iuiZ.s:150    .text:0000000000000078 .L0 
-     /tmp/ccb4iuiZ.s:152    .text:0000000000000078 .L0 
-     /tmp/ccb4iuiZ.s:153    .text:000000000000007c .L0 
-     /tmp/ccb4iuiZ.s:155    .text:0000000000000080 .L0 
-     /tmp/ccb4iuiZ.s:157    .text:0000000000000084 .L0 
-     /tmp/ccb4iuiZ.s:159    .text:0000000000000084 .L0 
-       src/c_api.cpp:9      .text:0000000000000084 .L0 
-     /tmp/ccb4iuiZ.s:165    .text:0000000000000088 .L0 
-       src/c_api.cpp:10     .text:0000000000000088 .L0 
-     /tmp/ccb4iuiZ.s:170    .text:000000000000008c .L0 
-       src/c_api.cpp:12     .text:000000000000008c .L0 
-     /tmp/ccb4iuiZ.s:176    .text:0000000000000090 .L0 
-     /tmp/ccb4iuiZ.s:177    .text:0000000000000094 .L0 
-     /tmp/ccb4iuiZ.s:178    .text:0000000000000094 .L0 
-     /tmp/ccb4iuiZ.s:180    .text:0000000000000098 .L0 
-     /tmp/ccb4iuiZ.s:182    .text:000000000000009c .L0 
-     /tmp/ccb4iuiZ.s:188    .text:000000000000009c _Z23helperRet32P164P264P364mmmm
-     /tmp/ccb4iuiZ.s:191    .text:000000000000009c .L0 
-     /tmp/ccb4iuiZ.s:193    .text:000000000000009c .L0 
-     /tmp/ccb4iuiZ.s:194    .text:00000000000000a0 .L0 
-     /tmp/ccb4iuiZ.s:196    .text:00000000000000a4 .L0 
-     /tmp/ccb4iuiZ.s:198    .text:00000000000000a8 .L0 
-     /tmp/ccb4iuiZ.s:200    .text:00000000000000a8 .L0 
-       src/c_api.cpp:17     .text:00000000000000a8 .L0 
-     /tmp/ccb4iuiZ.s:206    .text:00000000000000ac .L0 
-       src/c_api.cpp:18     .text:00000000000000ac .L0 
-     /tmp/ccb4iuiZ.s:211    .text:00000000000000b0 .L0 
-       src/c_api.cpp:19     .text:00000000000000b0 .L0 
-     /tmp/ccb4iuiZ.s:216    .text:00000000000000b4 .L0 
-       src/c_api.cpp:20     .text:00000000000000b4 .L0 
-     /tmp/ccb4iuiZ.s:221    .text:00000000000000b8 .L0 
-       src/c_api.cpp:22     .text:00000000000000b8 .L0 
-     /tmp/ccb4iuiZ.s:226    .text:00000000000000bc .L0 
-       src/c_api.cpp:24     .text:00000000000000bc .L0 
-     /tmp/ccb4iuiZ.s:231    .text:00000000000000c0 .L0 
-     /tmp/ccb4iuiZ.s:232    .text:00000000000000c0 .L0 
-       src/c_api.cpp:27     .text:00000000000000c0 .L0 
-     /tmp/ccb4iuiZ.s:238    .text:00000000000000c4 .L0 
-     /tmp/ccb4iuiZ.s:240    .text:00000000000000c4 .L0 
-     /tmp/ccb4iuiZ.s:242    .text:00000000000000cc .L0 
-     /tmp/ccb4iuiZ.s:243    .text:00000000000000cc .L0 
-     /tmp/ccb4iuiZ.s:245    .text:00000000000000d0 .L0 
-     /tmp/ccb4iuiZ.s:247    .text:00000000000000d4 .L0 
-     /tmp/ccb4iuiZ.s:253    .text:00000000000000d4 _Z9mem_allocm
-     /tmp/ccb4iuiZ.s:256    .text:00000000000000d4 .L0 
-     /tmp/ccb4iuiZ.s:258    .text:00000000000000d4 .L0 
-     /tmp/ccb4iuiZ.s:259    .text:00000000000000d8 .L0 
-     /tmp/ccb4iuiZ.s:262    .text:00000000000000e0 .L0 
-     /tmp/ccb4iuiZ.s:263    .text:00000000000000e0 .L0 
-     /tmp/ccb4iuiZ.s:265    .text:00000000000000e4 .L0 
-     /tmp/ccb4iuiZ.s:268    .text:00000000000000e8 .L0 
-     /tmp/ccb4iuiZ.s:269    .text:00000000000000e8 .L0 
-GAS LISTING /tmp/ccb4iuiZ.s 			page 14
+     /tmp/cc8VIPma.s:136    .text:0000000000000070 .L0 
+     /tmp/cc8VIPma.s:137    .text:0000000000000070 .L0 
+     /tmp/cc8VIPma.s:139    .text:0000000000000074 .L0 
+     /tmp/cc8VIPma.s:141    .text:0000000000000078 .L0 
+     /tmp/cc8VIPma.s:147    .text:0000000000000078 _Z10helperRet8m
+     /tmp/cc8VIPma.s:150    .text:0000000000000078 .L0 
+     /tmp/cc8VIPma.s:152    .text:0000000000000078 .L0 
+     /tmp/cc8VIPma.s:153    .text:000000000000007c .L0 
+     /tmp/cc8VIPma.s:155    .text:0000000000000080 .L0 
+     /tmp/cc8VIPma.s:157    .text:0000000000000084 .L0 
+     /tmp/cc8VIPma.s:159    .text:0000000000000084 .L0 
+       src/c_api.cpp:10     .text:0000000000000084 .L0 
+     /tmp/cc8VIPma.s:165    .text:0000000000000088 .L0 
+       src/c_api.cpp:12     .text:0000000000000088 .L0 
+     /tmp/cc8VIPma.s:170    .text:000000000000008c .L0 
+     /tmp/cc8VIPma.s:171    .text:000000000000008c .L0 
+       src/c_api.cpp:15     .text:000000000000008c .L0 
+     /tmp/cc8VIPma.s:177    .text:0000000000000090 .L0 
+     /tmp/cc8VIPma.s:179    .text:0000000000000090 .L0 
+     /tmp/cc8VIPma.s:181    .text:0000000000000098 .L0 
+     /tmp/cc8VIPma.s:182    .text:0000000000000098 .L0 
+     /tmp/cc8VIPma.s:184    .text:000000000000009c .L0 
+     /tmp/cc8VIPma.s:186    .text:00000000000000a0 .L0 
+     /tmp/cc8VIPma.s:192    .text:00000000000000a0 _Z10helperP164mm
+     /tmp/cc8VIPma.s:195    .text:00000000000000a0 .L0 
+     /tmp/cc8VIPma.s:197    .text:00000000000000a0 .L0 
+     /tmp/cc8VIPma.s:198    .text:00000000000000a4 .L0 
+     /tmp/cc8VIPma.s:200    .text:00000000000000a8 .L0 
+     /tmp/cc8VIPma.s:202    .text:00000000000000ac .L0 
+     /tmp/cc8VIPma.s:204    .text:00000000000000ac .L0 
+       src/c_api.cpp:22     .text:00000000000000ac .L0 
+     /tmp/cc8VIPma.s:210    .text:00000000000000b0 .L0 
+       src/c_api.cpp:23     .text:00000000000000b0 .L0 
+     /tmp/cc8VIPma.s:215    .text:00000000000000b4 .L0 
+       src/c_api.cpp:25     .text:00000000000000b4 .L0 
+     /tmp/cc8VIPma.s:221    .text:00000000000000b8 .L0 
+     /tmp/cc8VIPma.s:222    .text:00000000000000bc .L0 
+     /tmp/cc8VIPma.s:223    .text:00000000000000bc .L0 
+     /tmp/cc8VIPma.s:225    .text:00000000000000c0 .L0 
+     /tmp/cc8VIPma.s:227    .text:00000000000000c4 .L0 
+     /tmp/cc8VIPma.s:233    .text:00000000000000c4 _Z23helperRet32P164P264P364mmmm
+     /tmp/cc8VIPma.s:236    .text:00000000000000c4 .L0 
+     /tmp/cc8VIPma.s:238    .text:00000000000000c4 .L0 
+     /tmp/cc8VIPma.s:239    .text:00000000000000c8 .L0 
+     /tmp/cc8VIPma.s:241    .text:00000000000000cc .L0 
+     /tmp/cc8VIPma.s:243    .text:00000000000000d0 .L0 
+     /tmp/cc8VIPma.s:245    .text:00000000000000d0 .L0 
+       src/c_api.cpp:30     .text:00000000000000d0 .L0 
+     /tmp/cc8VIPma.s:251    .text:00000000000000d4 .L0 
+       src/c_api.cpp:31     .text:00000000000000d4 .L0 
+     /tmp/cc8VIPma.s:256    .text:00000000000000d8 .L0 
+       src/c_api.cpp:32     .text:00000000000000d8 .L0 
+     /tmp/cc8VIPma.s:261    .text:00000000000000dc .L0 
+       src/c_api.cpp:33     .text:00000000000000dc .L0 
+     /tmp/cc8VIPma.s:266    .text:00000000000000e0 .L0 
+       src/c_api.cpp:35     .text:00000000000000e0 .L0 
+     /tmp/cc8VIPma.s:271    .text:00000000000000e4 .L0 
+GAS LISTING /tmp/cc8VIPma.s 			page 17
 
 
-     /tmp/ccb4iuiZ.s:274    .text:00000000000000f4 .L0 
-     /tmp/ccb4iuiZ.s:275    .text:00000000000000f8 .L0 
-     /tmp/ccb4iuiZ.s:277    .text:00000000000000fc .L0 
-     /tmp/ccb4iuiZ.s:278    .text:00000000000000fc .L0 
-     /tmp/ccb4iuiZ.s:280    .text:0000000000000100 .L0 
-     /tmp/ccb4iuiZ.s:282    .text:0000000000000104 .L0 
-     /tmp/ccb4iuiZ.s:288    .text:0000000000000104 _Z8mem_freePv
-     /tmp/ccb4iuiZ.s:291    .text:0000000000000104 .L0 
-     /tmp/ccb4iuiZ.s:293    .text:0000000000000104 .L0 
-     /tmp/ccb4iuiZ.s:294    .text:0000000000000108 .L0 
-     /tmp/ccb4iuiZ.s:297    .text:0000000000000110 .L0 
-     /tmp/ccb4iuiZ.s:298    .text:0000000000000110 .L0 
-     /tmp/ccb4iuiZ.s:300    .text:0000000000000114 .L0 
-     /tmp/ccb4iuiZ.s:303    .text:0000000000000118 .L0 
-     /tmp/ccb4iuiZ.s:304    .text:0000000000000118 .L0 
-     /tmp/ccb4iuiZ.s:309    .text:0000000000000124 .L0 
-     /tmp/ccb4iuiZ.s:311    .text:000000000000012c .L0 
-     /tmp/ccb4iuiZ.s:313    .text:0000000000000130 .L0 
-     /tmp/ccb4iuiZ.s:314    .text:0000000000000130 .L0 
-     /tmp/ccb4iuiZ.s:316    .text:0000000000000134 .L0 
-     /tmp/ccb4iuiZ.s:318    .text:0000000000000138 .L0 
-     /tmp/ccb4iuiZ.s:324    .text:0000000000000138 _Z15thread_dispatchv
-     /tmp/ccb4iuiZ.s:327    .text:0000000000000138 .L0 
-     /tmp/ccb4iuiZ.s:328    .text:0000000000000138 .L0 
-     /tmp/ccb4iuiZ.s:329    .text:000000000000013c .L0 
-     /tmp/ccb4iuiZ.s:332    .text:0000000000000144 .L0 
-     /tmp/ccb4iuiZ.s:333    .text:0000000000000144 .L0 
-     /tmp/ccb4iuiZ.s:335    .text:0000000000000148 .L0 
-     /tmp/ccb4iuiZ.s:337    .text:0000000000000148 .L0 
-     /tmp/ccb4iuiZ.s:338    .text:0000000000000148 .L0 
-     /tmp/ccb4iuiZ.s:342    .text:0000000000000154 .L0 
-     /tmp/ccb4iuiZ.s:343    .text:0000000000000158 .L0 
-     /tmp/ccb4iuiZ.s:345    .text:000000000000015c .L0 
-     /tmp/ccb4iuiZ.s:346    .text:000000000000015c .L0 
-     /tmp/ccb4iuiZ.s:348    .text:0000000000000160 .L0 
-     /tmp/ccb4iuiZ.s:350    .text:0000000000000164 .L0 
-     /tmp/ccb4iuiZ.s:356    .text:0000000000000164 _Z11thread_exitv
-     /tmp/ccb4iuiZ.s:359    .text:0000000000000164 .L0 
-     /tmp/ccb4iuiZ.s:360    .text:0000000000000164 .L0 
-     /tmp/ccb4iuiZ.s:361    .text:0000000000000168 .L0 
-     /tmp/ccb4iuiZ.s:364    .text:0000000000000170 .L0 
-     /tmp/ccb4iuiZ.s:365    .text:0000000000000170 .L0 
-     /tmp/ccb4iuiZ.s:367    .text:0000000000000174 .L0 
-     /tmp/ccb4iuiZ.s:369    .text:0000000000000174 .L0 
-     /tmp/ccb4iuiZ.s:370    .text:0000000000000174 .L0 
-     /tmp/ccb4iuiZ.s:374    .text:0000000000000180 .L0 
-     /tmp/ccb4iuiZ.s:375    .text:0000000000000184 .L0 
-     /tmp/ccb4iuiZ.s:377    .text:0000000000000188 .L0 
-     /tmp/ccb4iuiZ.s:378    .text:0000000000000188 .L0 
-     /tmp/ccb4iuiZ.s:380    .text:000000000000018c .L0 
-     /tmp/ccb4iuiZ.s:382    .text:0000000000000190 .L0 
-     /tmp/ccb4iuiZ.s:388    .text:0000000000000190 _Z13thread_createPmPFvPvES0_
-     /tmp/ccb4iuiZ.s:391    .text:0000000000000190 .L0 
-     /tmp/ccb4iuiZ.s:393    .text:0000000000000190 .L0 
-     /tmp/ccb4iuiZ.s:394    .text:0000000000000194 .L0 
-     /tmp/ccb4iuiZ.s:397    .text:000000000000019c .L0 
-     /tmp/ccb4iuiZ.s:398    .text:000000000000019c .L0 
-GAS LISTING /tmp/ccb4iuiZ.s 			page 15
+       src/c_api.cpp:37     .text:00000000000000e4 .L0 
+     /tmp/cc8VIPma.s:276    .text:00000000000000e8 .L0 
+     /tmp/cc8VIPma.s:277    .text:00000000000000e8 .L0 
+       src/c_api.cpp:40     .text:00000000000000e8 .L0 
+     /tmp/cc8VIPma.s:283    .text:00000000000000ec .L0 
+     /tmp/cc8VIPma.s:285    .text:00000000000000ec .L0 
+     /tmp/cc8VIPma.s:287    .text:00000000000000f4 .L0 
+     /tmp/cc8VIPma.s:288    .text:00000000000000f4 .L0 
+     /tmp/cc8VIPma.s:290    .text:00000000000000f8 .L0 
+     /tmp/cc8VIPma.s:292    .text:00000000000000fc .L0 
+     /tmp/cc8VIPma.s:298    .text:00000000000000fc _Z9mem_allocm
+     /tmp/cc8VIPma.s:301    .text:00000000000000fc .L0 
+     /tmp/cc8VIPma.s:303    .text:00000000000000fc .L0 
+     /tmp/cc8VIPma.s:304    .text:0000000000000100 .L0 
+     /tmp/cc8VIPma.s:307    .text:0000000000000108 .L0 
+     /tmp/cc8VIPma.s:308    .text:0000000000000108 .L0 
+     /tmp/cc8VIPma.s:310    .text:000000000000010c .L0 
+     /tmp/cc8VIPma.s:313    .text:0000000000000110 .L0 
+     /tmp/cc8VIPma.s:314    .text:0000000000000110 .L0 
+     /tmp/cc8VIPma.s:319    .text:000000000000011c .L0 
+     /tmp/cc8VIPma.s:320    .text:0000000000000120 .L0 
+     /tmp/cc8VIPma.s:322    .text:0000000000000124 .L0 
+     /tmp/cc8VIPma.s:323    .text:0000000000000124 .L0 
+     /tmp/cc8VIPma.s:325    .text:0000000000000128 .L0 
+     /tmp/cc8VIPma.s:327    .text:000000000000012c .L0 
+     /tmp/cc8VIPma.s:333    .text:000000000000012c _Z8mem_freePv
+     /tmp/cc8VIPma.s:336    .text:000000000000012c .L0 
+     /tmp/cc8VIPma.s:338    .text:000000000000012c .L0 
+     /tmp/cc8VIPma.s:339    .text:0000000000000130 .L0 
+     /tmp/cc8VIPma.s:342    .text:0000000000000138 .L0 
+     /tmp/cc8VIPma.s:343    .text:0000000000000138 .L0 
+     /tmp/cc8VIPma.s:345    .text:000000000000013c .L0 
+     /tmp/cc8VIPma.s:348    .text:0000000000000140 .L0 
+     /tmp/cc8VIPma.s:349    .text:0000000000000140 .L0 
+     /tmp/cc8VIPma.s:354    .text:000000000000014c .L0 
+     /tmp/cc8VIPma.s:356    .text:0000000000000154 .L0 
+     /tmp/cc8VIPma.s:358    .text:0000000000000158 .L0 
+     /tmp/cc8VIPma.s:359    .text:0000000000000158 .L0 
+     /tmp/cc8VIPma.s:361    .text:000000000000015c .L0 
+     /tmp/cc8VIPma.s:363    .text:0000000000000160 .L0 
+     /tmp/cc8VIPma.s:369    .text:0000000000000160 _Z15thread_dispatchv
+     /tmp/cc8VIPma.s:372    .text:0000000000000160 .L0 
+     /tmp/cc8VIPma.s:373    .text:0000000000000160 .L0 
+     /tmp/cc8VIPma.s:374    .text:0000000000000164 .L0 
+     /tmp/cc8VIPma.s:377    .text:000000000000016c .L0 
+     /tmp/cc8VIPma.s:378    .text:000000000000016c .L0 
+     /tmp/cc8VIPma.s:380    .text:0000000000000170 .L0 
+     /tmp/cc8VIPma.s:382    .text:0000000000000170 .L0 
+     /tmp/cc8VIPma.s:383    .text:0000000000000170 .L0 
+     /tmp/cc8VIPma.s:387    .text:000000000000017c .L0 
+     /tmp/cc8VIPma.s:388    .text:0000000000000180 .L0 
+     /tmp/cc8VIPma.s:390    .text:0000000000000184 .L0 
+     /tmp/cc8VIPma.s:391    .text:0000000000000184 .L0 
+     /tmp/cc8VIPma.s:393    .text:0000000000000188 .L0 
+     /tmp/cc8VIPma.s:395    .text:000000000000018c .L0 
+     /tmp/cc8VIPma.s:401    .text:000000000000018c _Z11thread_exitv
+     /tmp/cc8VIPma.s:404    .text:000000000000018c .L0 
+GAS LISTING /tmp/cc8VIPma.s 			page 18
 
 
-     /tmp/ccb4iuiZ.s:400    .text:00000000000001a0 .L0 
-     /tmp/ccb4iuiZ.s:403    .text:00000000000001a4 .L0 
-     /tmp/ccb4iuiZ.s:404    .text:00000000000001a4 .L0 
-     /tmp/ccb4iuiZ.s:413    .text:00000000000001b8 .L0 
-     /tmp/ccb4iuiZ.s:414    .text:00000000000001bc .L0 
-     /tmp/ccb4iuiZ.s:416    .text:00000000000001c0 .L0 
-     /tmp/ccb4iuiZ.s:417    .text:00000000000001c0 .L0 
-     /tmp/ccb4iuiZ.s:419    .text:00000000000001c4 .L0 
-     /tmp/ccb4iuiZ.s:421    .text:00000000000001c8 .L0 
-     /tmp/ccb4iuiZ.s:427    .text:00000000000001c8 _Z11thread_joinm
-     /tmp/ccb4iuiZ.s:430    .text:00000000000001c8 .L0 
-     /tmp/ccb4iuiZ.s:432    .text:00000000000001c8 .L0 
-     /tmp/ccb4iuiZ.s:433    .text:00000000000001cc .L0 
-     /tmp/ccb4iuiZ.s:436    .text:00000000000001d4 .L0 
-     /tmp/ccb4iuiZ.s:437    .text:00000000000001d4 .L0 
-     /tmp/ccb4iuiZ.s:439    .text:00000000000001d8 .L0 
-     /tmp/ccb4iuiZ.s:442    .text:00000000000001dc .L0 
-     /tmp/ccb4iuiZ.s:443    .text:00000000000001dc .L0 
-     /tmp/ccb4iuiZ.s:448    .text:00000000000001e8 .L0 
-     /tmp/ccb4iuiZ.s:449    .text:00000000000001ec .L0 
-     /tmp/ccb4iuiZ.s:451    .text:00000000000001f0 .L0 
-     /tmp/ccb4iuiZ.s:452    .text:00000000000001f0 .L0 
-     /tmp/ccb4iuiZ.s:454    .text:00000000000001f4 .L0 
-     /tmp/ccb4iuiZ.s:456    .text:00000000000001f8 .L0 
-     /tmp/ccb4iuiZ.s:462    .text:00000000000001f8 _Z9test_callm
-     /tmp/ccb4iuiZ.s:465    .text:00000000000001f8 .L0 
-     /tmp/ccb4iuiZ.s:467    .text:00000000000001f8 .L0 
-     /tmp/ccb4iuiZ.s:468    .text:00000000000001fc .L0 
-     /tmp/ccb4iuiZ.s:471    .text:0000000000000204 .L0 
-     /tmp/ccb4iuiZ.s:472    .text:0000000000000204 .L0 
-     /tmp/ccb4iuiZ.s:474    .text:0000000000000208 .L0 
-     /tmp/ccb4iuiZ.s:477    .text:000000000000020c .L0 
-     /tmp/ccb4iuiZ.s:478    .text:000000000000020c .L0 
-     /tmp/ccb4iuiZ.s:483    .text:0000000000000218 .L0 
-     /tmp/ccb4iuiZ.s:484    .text:000000000000021c .L0 
-     /tmp/ccb4iuiZ.s:486    .text:0000000000000220 .L0 
-     /tmp/ccb4iuiZ.s:487    .text:0000000000000220 .L0 
-     /tmp/ccb4iuiZ.s:489    .text:0000000000000224 .L0 
-     /tmp/ccb4iuiZ.s:491    .text:0000000000000228 .L0 
-     /tmp/ccb4iuiZ.s:497    .text:0000000000000228 .L0 
-     /tmp/ccb4iuiZ.s:1054   .debug_abbrev:0000000000000000 .Ldebug_abbrev0
-     /tmp/ccb4iuiZ.s:1708   .debug_str:000000000000025a .LASF44
-     /tmp/ccb4iuiZ.s:1698   .debug_str:0000000000000224 .LASF45
-     /tmp/ccb4iuiZ.s:1690   .debug_str:00000000000001db .LASF46
-     /tmp/ccb4iuiZ.s:5      .text:0000000000000000 .Ltext0
-     /tmp/ccb4iuiZ.s:494    .text:0000000000000228 .Letext0
-     /tmp/ccb4iuiZ.s:1620   .debug_line:0000000000000000 .Ldebug_line0
-     /tmp/ccb4iuiZ.s:1672   .debug_str:000000000000014e .LASF0
-     /tmp/ccb4iuiZ.s:1680   .debug_str:0000000000000187 .LASF1
-     /tmp/ccb4iuiZ.s:1668   .debug_str:000000000000012d .LASF2
-     /tmp/ccb4iuiZ.s:1662   .debug_str:000000000000010e .LASF4
-     /tmp/ccb4iuiZ.s:1700   .debug_str:0000000000000232 .LASF3
-     /tmp/ccb4iuiZ.s:1630   .debug_str:000000000000003d .LASF5
-     /tmp/ccb4iuiZ.s:1684   .debug_str:00000000000001ab .LASF6
-     /tmp/ccb4iuiZ.s:1670   .debug_str:000000000000013b .LASF7
-     /tmp/ccb4iuiZ.s:1712   .debug_str:000000000000032d .LASF8
-     /tmp/ccb4iuiZ.s:1658   .debug_str:00000000000000f4 .LASF9
-GAS LISTING /tmp/ccb4iuiZ.s 			page 16
+     /tmp/cc8VIPma.s:405    .text:000000000000018c .L0 
+     /tmp/cc8VIPma.s:406    .text:0000000000000190 .L0 
+     /tmp/cc8VIPma.s:409    .text:0000000000000198 .L0 
+     /tmp/cc8VIPma.s:410    .text:0000000000000198 .L0 
+     /tmp/cc8VIPma.s:412    .text:000000000000019c .L0 
+     /tmp/cc8VIPma.s:414    .text:000000000000019c .L0 
+     /tmp/cc8VIPma.s:415    .text:000000000000019c .L0 
+     /tmp/cc8VIPma.s:419    .text:00000000000001a8 .L0 
+     /tmp/cc8VIPma.s:420    .text:00000000000001ac .L0 
+     /tmp/cc8VIPma.s:422    .text:00000000000001b0 .L0 
+     /tmp/cc8VIPma.s:423    .text:00000000000001b0 .L0 
+     /tmp/cc8VIPma.s:425    .text:00000000000001b4 .L0 
+     /tmp/cc8VIPma.s:427    .text:00000000000001b8 .L0 
+     /tmp/cc8VIPma.s:433    .text:00000000000001b8 _Z13thread_createPmPFvPvES0_
+     /tmp/cc8VIPma.s:436    .text:00000000000001b8 .L0 
+     /tmp/cc8VIPma.s:438    .text:00000000000001b8 .L0 
+     /tmp/cc8VIPma.s:439    .text:00000000000001bc .L0 
+     /tmp/cc8VIPma.s:442    .text:00000000000001c4 .L0 
+     /tmp/cc8VIPma.s:443    .text:00000000000001c4 .L0 
+     /tmp/cc8VIPma.s:445    .text:00000000000001c8 .L0 
+     /tmp/cc8VIPma.s:448    .text:00000000000001cc .L0 
+     /tmp/cc8VIPma.s:449    .text:00000000000001cc .L0 
+     /tmp/cc8VIPma.s:458    .text:00000000000001e0 .L0 
+     /tmp/cc8VIPma.s:459    .text:00000000000001e4 .L0 
+     /tmp/cc8VIPma.s:461    .text:00000000000001e8 .L0 
+     /tmp/cc8VIPma.s:462    .text:00000000000001e8 .L0 
+     /tmp/cc8VIPma.s:464    .text:00000000000001ec .L0 
+     /tmp/cc8VIPma.s:466    .text:00000000000001f0 .L0 
+     /tmp/cc8VIPma.s:472    .text:00000000000001f0 _Z11thread_joinm
+     /tmp/cc8VIPma.s:475    .text:00000000000001f0 .L0 
+     /tmp/cc8VIPma.s:477    .text:00000000000001f0 .L0 
+     /tmp/cc8VIPma.s:478    .text:00000000000001f4 .L0 
+     /tmp/cc8VIPma.s:481    .text:00000000000001fc .L0 
+     /tmp/cc8VIPma.s:482    .text:00000000000001fc .L0 
+     /tmp/cc8VIPma.s:484    .text:0000000000000200 .L0 
+     /tmp/cc8VIPma.s:487    .text:0000000000000204 .L0 
+     /tmp/cc8VIPma.s:488    .text:0000000000000204 .L0 
+     /tmp/cc8VIPma.s:493    .text:0000000000000210 .L0 
+     /tmp/cc8VIPma.s:494    .text:0000000000000214 .L0 
+     /tmp/cc8VIPma.s:496    .text:0000000000000218 .L0 
+     /tmp/cc8VIPma.s:497    .text:0000000000000218 .L0 
+     /tmp/cc8VIPma.s:499    .text:000000000000021c .L0 
+     /tmp/cc8VIPma.s:501    .text:0000000000000220 .L0 
+     /tmp/cc8VIPma.s:507    .text:0000000000000220 _Z9test_callm
+     /tmp/cc8VIPma.s:510    .text:0000000000000220 .L0 
+     /tmp/cc8VIPma.s:512    .text:0000000000000220 .L0 
+     /tmp/cc8VIPma.s:513    .text:0000000000000224 .L0 
+     /tmp/cc8VIPma.s:516    .text:000000000000022c .L0 
+     /tmp/cc8VIPma.s:517    .text:000000000000022c .L0 
+     /tmp/cc8VIPma.s:519    .text:0000000000000230 .L0 
+     /tmp/cc8VIPma.s:522    .text:0000000000000234 .L0 
+     /tmp/cc8VIPma.s:523    .text:0000000000000234 .L0 
+     /tmp/cc8VIPma.s:528    .text:0000000000000240 .L0 
+     /tmp/cc8VIPma.s:529    .text:0000000000000244 .L0 
+     /tmp/cc8VIPma.s:531    .text:0000000000000248 .L0 
+     /tmp/cc8VIPma.s:532    .text:0000000000000248 .L0 
+     /tmp/cc8VIPma.s:534    .text:000000000000024c .L0 
+GAS LISTING /tmp/cc8VIPma.s 			page 19
 
 
-     /tmp/ccb4iuiZ.s:1688   .debug_str:00000000000001cc .LASF10
-     /tmp/ccb4iuiZ.s:1710   .debug_str:000000000000031e .LASF11
-     /tmp/ccb4iuiZ.s:1632   .debug_str:0000000000000044 .LASF12
-     /tmp/ccb4iuiZ.s:1626   .debug_str:0000000000000021 .LASF13
-     /tmp/ccb4iuiZ.s:1634   .debug_str:0000000000000054 .LASF14
-     /tmp/ccb4iuiZ.s:1696   .debug_str:000000000000020e .LASF15
-     /tmp/ccb4iuiZ.s:1646   .debug_str:000000000000009f .LASF16
-     /tmp/ccb4iuiZ.s:1622   .debug_str:0000000000000000 .LASF17
-     /tmp/ccb4iuiZ.s:1652   .debug_str:00000000000000cc .LASF18
-     /tmp/ccb4iuiZ.s:1678   .debug_str:000000000000017d .LASF20
-     /tmp/ccb4iuiZ.s:1694   .debug_str:0000000000000200 .LASF22
-     /tmp/ccb4iuiZ.s:463    .text:00000000000001f8 .LFB15
-     /tmp/ccb4iuiZ.s:492    .text:0000000000000228 .LFE15
-     /tmp/ccb4iuiZ.s:1439   .debug_loc:0000000000000000 .LLST9
-     /tmp/ccb4iuiZ.s:481    .text:0000000000000218 .LVL26
-     /tmp/ccb4iuiZ.s:1660   .debug_str:0000000000000102 .LASF27
-     /tmp/ccb4iuiZ.s:1664   .debug_str:0000000000000115 .LASF29
-     /tmp/ccb4iuiZ.s:428    .text:00000000000001c8 .LFB14
-     /tmp/ccb4iuiZ.s:457    .text:00000000000001f8 .LFE14
-     /tmp/ccb4iuiZ.s:1704   .debug_str:000000000000024e .LASF19
-     /tmp/ccb4iuiZ.s:1457   .debug_loc:000000000000004c .LLST8
-     /tmp/ccb4iuiZ.s:446    .text:00000000000001e8 .LVL23
-     /tmp/ccb4iuiZ.s:1648   .debug_str:00000000000000b5 .LASF21
-     /tmp/ccb4iuiZ.s:1676   .debug_str:0000000000000160 .LASF23
-     /tmp/ccb4iuiZ.s:389    .text:0000000000000190 .LFB13
-     /tmp/ccb4iuiZ.s:422    .text:00000000000001c8 .LFE13
-     /tmp/ccb4iuiZ.s:1475   .debug_loc:0000000000000098 .LLST5
-     /tmp/ccb4iuiZ.s:1656   .debug_str:00000000000000e6 .LASF24
-     /tmp/ccb4iuiZ.s:1493   .debug_loc:00000000000000e4 .LLST6
-     /tmp/ccb4iuiZ.s:1511   .debug_loc:0000000000000130 .LLST7
-     /tmp/ccb4iuiZ.s:411    .text:00000000000001b8 .LVL20
-     /tmp/ccb4iuiZ.s:1628   .debug_str:0000000000000031 .LASF25
-     /tmp/ccb4iuiZ.s:1682   .debug_str:000000000000019a .LASF26
-     /tmp/ccb4iuiZ.s:357    .text:0000000000000164 .LFB12
-     /tmp/ccb4iuiZ.s:383    .text:0000000000000190 .LFE12
-     /tmp/ccb4iuiZ.s:372    .text:0000000000000180 .LVL15
-     /tmp/ccb4iuiZ.s:1636   .debug_str:0000000000000060 .LASF28
-     /tmp/ccb4iuiZ.s:1654   .debug_str:00000000000000d1 .LASF30
-     /tmp/ccb4iuiZ.s:325    .text:0000000000000138 .LFB11
-     /tmp/ccb4iuiZ.s:351    .text:0000000000000164 .LFE11
-     /tmp/ccb4iuiZ.s:340    .text:0000000000000154 .LVL14
-     /tmp/ccb4iuiZ.s:1650   .debug_str:00000000000000c3 .LASF31
-     /tmp/ccb4iuiZ.s:1686   .debug_str:00000000000001be .LASF32
-     /tmp/ccb4iuiZ.s:289    .text:0000000000000104 .LFB10
-     /tmp/ccb4iuiZ.s:319    .text:0000000000000138 .LFE10
-     /tmp/ccb4iuiZ.s:1529   .debug_loc:000000000000017c .LLST4
-     /tmp/ccb4iuiZ.s:307    .text:0000000000000124 .LVL13
-     /tmp/ccb4iuiZ.s:1702   .debug_str:0000000000000244 .LASF33
-     /tmp/ccb4iuiZ.s:1644   .debug_str:0000000000000091 .LASF34
-     /tmp/ccb4iuiZ.s:254    .text:00000000000000d4 .LFB9
-     /tmp/ccb4iuiZ.s:283    .text:0000000000000104 .LFE9
-     /tmp/ccb4iuiZ.s:1706   .debug_str:0000000000000255 .LASF35
-     /tmp/ccb4iuiZ.s:1547   .debug_loc:00000000000001c8 .LLST3
-     /tmp/ccb4iuiZ.s:272    .text:00000000000000f4 .LVL10
-     /tmp/ccb4iuiZ.s:1666   .debug_str:0000000000000126 .LASF47
-     /tmp/ccb4iuiZ.s:107    .text:0000000000000054 .LFB8
-     /tmp/ccb4iuiZ.s:142    .text:0000000000000078 .LFE8
-GAS LISTING /tmp/ccb4iuiZ.s 			page 17
+     /tmp/cc8VIPma.s:536    .text:0000000000000250 .L0 
+     /tmp/cc8VIPma.s:542    .text:0000000000000250 _Z4getcv
+     /tmp/cc8VIPma.s:545    .text:0000000000000250 .L0 
+     /tmp/cc8VIPma.s:546    .text:0000000000000250 .L0 
+     /tmp/cc8VIPma.s:547    .text:0000000000000254 .L0 
+     /tmp/cc8VIPma.s:550    .text:000000000000025c .L0 
+     /tmp/cc8VIPma.s:551    .text:000000000000025c .L0 
+     /tmp/cc8VIPma.s:553    .text:0000000000000260 .L0 
+     /tmp/cc8VIPma.s:555    .text:0000000000000260 .L0 
+     /tmp/cc8VIPma.s:556    .text:0000000000000260 .L0 
+     /tmp/cc8VIPma.s:560    .text:000000000000026c .L0 
+     /tmp/cc8VIPma.s:561    .text:0000000000000270 .L0 
+     /tmp/cc8VIPma.s:563    .text:0000000000000274 .L0 
+     /tmp/cc8VIPma.s:564    .text:0000000000000274 .L0 
+     /tmp/cc8VIPma.s:566    .text:0000000000000278 .L0 
+     /tmp/cc8VIPma.s:568    .text:000000000000027c .L0 
+     /tmp/cc8VIPma.s:574    .text:000000000000027c _Z4putcc
+     /tmp/cc8VIPma.s:577    .text:000000000000027c .L0 
+     /tmp/cc8VIPma.s:579    .text:000000000000027c .L0 
+     /tmp/cc8VIPma.s:580    .text:0000000000000280 .L0 
+     /tmp/cc8VIPma.s:583    .text:0000000000000288 .L0 
+     /tmp/cc8VIPma.s:584    .text:0000000000000288 .L0 
+     /tmp/cc8VIPma.s:586    .text:000000000000028c .L0 
+     /tmp/cc8VIPma.s:588    .text:000000000000028c .L0 
+     /tmp/cc8VIPma.s:589    .text:000000000000028c .L0 
+     /tmp/cc8VIPma.s:590    .text:000000000000028c .L0 
+     /tmp/cc8VIPma.s:592    .text:0000000000000290 .L0 
+     /tmp/cc8VIPma.s:593    .text:0000000000000290 .L0 
+     /tmp/cc8VIPma.s:599    .text:00000000000002a0 .L0 
+     /tmp/cc8VIPma.s:600    .text:00000000000002a4 .L0 
+     /tmp/cc8VIPma.s:602    .text:00000000000002a8 .L0 
+     /tmp/cc8VIPma.s:603    .text:00000000000002a8 .L0 
+     /tmp/cc8VIPma.s:605    .text:00000000000002ac .L0 
+     /tmp/cc8VIPma.s:607    .text:00000000000002b0 .L0 
+     /tmp/cc8VIPma.s:613    .text:00000000000002b0 .L0 
+     /tmp/cc8VIPma.s:1270   .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+     /tmp/cc8VIPma.s:1988   .debug_str:0000000000000286 .LASF53
+     /tmp/cc8VIPma.s:1978   .debug_str:0000000000000250 .LASF54
+     /tmp/cc8VIPma.s:1970   .debug_str:0000000000000207 .LASF55
+     /tmp/cc8VIPma.s:5      .text:0000000000000000 .Ltext0
+     /tmp/cc8VIPma.s:610    .text:00000000000002b0 .Letext0
+     /tmp/cc8VIPma.s:1888   .debug_line:0000000000000000 .Ldebug_line0
+     /tmp/cc8VIPma.s:1950   .debug_str:0000000000000175 .LASF0
+     /tmp/cc8VIPma.s:1958   .debug_str:00000000000001ae .LASF1
+     /tmp/cc8VIPma.s:1944   .debug_str:000000000000014f .LASF2
+     /tmp/cc8VIPma.s:1938   .debug_str:0000000000000130 .LASF4
+     /tmp/cc8VIPma.s:1980   .debug_str:000000000000025e .LASF3
+     /tmp/cc8VIPma.s:1906   .debug_str:000000000000006b .LASF5
+     /tmp/cc8VIPma.s:1962   .debug_str:00000000000001d2 .LASF6
+     /tmp/cc8VIPma.s:1948   .debug_str:0000000000000162 .LASF7
+     /tmp/cc8VIPma.s:1992   .debug_str:0000000000000359 .LASF8
+     /tmp/cc8VIPma.s:1934   .debug_str:0000000000000116 .LASF9
+     /tmp/cc8VIPma.s:1968   .debug_str:00000000000001f8 .LASF10
+     /tmp/cc8VIPma.s:1990   .debug_str:000000000000034a .LASF11
+     /tmp/cc8VIPma.s:1908   .debug_str:0000000000000072 .LASF12
+     /tmp/cc8VIPma.s:1894   .debug_str:0000000000000021 .LASF13
+     /tmp/cc8VIPma.s:1910   .debug_str:0000000000000082 .LASF14
+GAS LISTING /tmp/cc8VIPma.s 			page 20
 
 
-     /tmp/ccb4iuiZ.s:1674   .debug_str:000000000000015b .LASF36
-     /tmp/ccb4iuiZ.s:1714   .debug_str:000000000000033d .LASF37
-     /tmp/ccb4iuiZ.s:63     .text:000000000000002c .LFB7
-     /tmp/ccb4iuiZ.s:102    .text:0000000000000054 .LFE7
-     /tmp/ccb4iuiZ.s:1565   .debug_loc:0000000000000214 .LLST1
-     /tmp/ccb4iuiZ.s:1716   .debug_str:0000000000000349 .LASF38
-     /tmp/ccb4iuiZ.s:9      .text:0000000000000000 .LFB6
-     /tmp/ccb4iuiZ.s:58     .text:000000000000002c .LFE6
-     /tmp/ccb4iuiZ.s:1579   .debug_loc:000000000000024d .LLST0
-     /tmp/ccb4iuiZ.s:1638   .debug_str:0000000000000070 .LASF39
-     /tmp/ccb4iuiZ.s:1624   .debug_str:0000000000000009 .LASF40
-     /tmp/ccb4iuiZ.s:1720   .debug_str:0000000000000364 .LASF41
-     /tmp/ccb4iuiZ.s:189    .text:000000000000009c .LFB5
-     /tmp/ccb4iuiZ.s:248    .text:00000000000000d4 .LFE5
-     /tmp/ccb4iuiZ.s:1593   .debug_loc:0000000000000286 .LLST2
-     /tmp/ccb4iuiZ.s:1640   .debug_str:000000000000007b .LASF42
-     /tmp/ccb4iuiZ.s:1642   .debug_str:0000000000000086 .LASF43
-     /tmp/ccb4iuiZ.s:1718   .debug_str:0000000000000359 .LASF48
-     /tmp/ccb4iuiZ.s:1692   .debug_str:00000000000001ef .LASF49
-     /tmp/ccb4iuiZ.s:148    .text:0000000000000078 .LFB4
-     /tmp/ccb4iuiZ.s:183    .text:000000000000009c .LFE4
-     /tmp/ccb4iuiZ.s:466    .text:00000000000001f8 .LVL24
-     /tmp/ccb4iuiZ.s:479    .text:0000000000000210 .LVL25
-     /tmp/ccb4iuiZ.s:431    .text:00000000000001c8 .LVL21
-     /tmp/ccb4iuiZ.s:444    .text:00000000000001e0 .LVL22
-     /tmp/ccb4iuiZ.s:392    .text:0000000000000190 .LVL16
-     /tmp/ccb4iuiZ.s:409    .text:00000000000001b0 .LVL19
-     /tmp/ccb4iuiZ.s:407    .text:00000000000001ac .LVL18
-     /tmp/ccb4iuiZ.s:405    .text:00000000000001a8 .LVL17
-     /tmp/ccb4iuiZ.s:292    .text:0000000000000104 .LVL11
-     /tmp/ccb4iuiZ.s:305    .text:000000000000011c .LVL12
-     /tmp/ccb4iuiZ.s:257    .text:00000000000000d4 .LVL8
-     /tmp/ccb4iuiZ.s:270    .text:00000000000000ec .LVL9
-     /tmp/ccb4iuiZ.s:66     .text:000000000000002c .LVL2
-     /tmp/ccb4iuiZ.s:90     .text:0000000000000044 .LVL3
-     /tmp/ccb4iuiZ.s:13     .text:0000000000000000 .LVL0
-     /tmp/ccb4iuiZ.s:47     .text:0000000000000020 .LVL1
-     /tmp/ccb4iuiZ.s:192    .text:000000000000009c .LVL6
-     /tmp/ccb4iuiZ.s:236    .text:00000000000000c4 .LVL7
-     /tmp/ccb4iuiZ.s:498    .debug_info:0000000000000000 .Ldebug_info0
+     /tmp/cc8VIPma.s:1976   .debug_str:000000000000023a .LASF15
+     /tmp/cc8VIPma.s:1922   .debug_str:00000000000000cd .LASF16
+     /tmp/cc8VIPma.s:1890   .debug_str:0000000000000000 .LASF17
+     /tmp/cc8VIPma.s:1928   .debug_str:00000000000000fa .LASF18
+     /tmp/cc8VIPma.s:1946   .debug_str:000000000000015d .LASF24
+     /tmp/cc8VIPma.s:1930   .debug_str:00000000000000ff .LASF26
+     /tmp/cc8VIPma.s:575    .text:000000000000027c .LFB18
+     /tmp/cc8VIPma.s:608    .text:00000000000002b0 .LFE18
+     /tmp/cc8VIPma.s:1674   .debug_loc:0000000000000000 .LLST11
+     /tmp/cc8VIPma.s:597    .text:00000000000002a0 .LVL32
+     /tmp/cc8VIPma.s:1964   .debug_str:00000000000001e5 .LASF19
+     /tmp/cc8VIPma.s:1896   .debug_str:0000000000000031 .LASF20
+     /tmp/cc8VIPma.s:1904   .debug_str:0000000000000062 .LASF22
+     /tmp/cc8VIPma.s:543    .text:0000000000000250 .LFB17
+     /tmp/cc8VIPma.s:569    .text:000000000000027c .LFE17
+     /tmp/cc8VIPma.s:558    .text:000000000000026c .LVL29
+     /tmp/cc8VIPma.s:1956   .debug_str:00000000000001a4 .LASF21
+     /tmp/cc8VIPma.s:1974   .debug_str:000000000000022c .LASF23
+     /tmp/cc8VIPma.s:508    .text:0000000000000220 .LFB16
+     /tmp/cc8VIPma.s:537    .text:0000000000000250 .LFE16
+     /tmp/cc8VIPma.s:1693   .debug_loc:000000000000004d .LLST10
+     /tmp/cc8VIPma.s:526    .text:0000000000000240 .LVL28
+     /tmp/cc8VIPma.s:1936   .debug_str:0000000000000124 .LASF25
+     /tmp/cc8VIPma.s:1940   .debug_str:0000000000000137 .LASF27
+     /tmp/cc8VIPma.s:473    .text:00000000000001f0 .LFB15
+     /tmp/cc8VIPma.s:502    .text:0000000000000220 .LFE15
+     /tmp/cc8VIPma.s:1984   .debug_str:000000000000027a .LASF28
+     /tmp/cc8VIPma.s:1711   .debug_loc:0000000000000099 .LLST9
+     /tmp/cc8VIPma.s:491    .text:0000000000000210 .LVL25
+     /tmp/cc8VIPma.s:1924   .debug_str:00000000000000e3 .LASF29
+     /tmp/cc8VIPma.s:1954   .debug_str:0000000000000187 .LASF30
+     /tmp/cc8VIPma.s:434    .text:00000000000001b8 .LFB14
+     /tmp/cc8VIPma.s:467    .text:00000000000001f0 .LFE14
+     /tmp/cc8VIPma.s:1729   .debug_loc:00000000000000e5 .LLST6
+     /tmp/cc8VIPma.s:1932   .debug_str:0000000000000108 .LASF31
+     /tmp/cc8VIPma.s:1747   .debug_loc:0000000000000131 .LLST7
+     /tmp/cc8VIPma.s:1765   .debug_loc:000000000000017d .LLST8
+     /tmp/cc8VIPma.s:456    .text:00000000000001e0 .LVL22
+     /tmp/cc8VIPma.s:1900   .debug_str:0000000000000041 .LASF32
+     /tmp/cc8VIPma.s:1960   .debug_str:00000000000001c1 .LASF33
+     /tmp/cc8VIPma.s:402    .text:000000000000018c .LFB13
+     /tmp/cc8VIPma.s:428    .text:00000000000001b8 .LFE13
+     /tmp/cc8VIPma.s:417    .text:00000000000001a8 .LVL17
+     /tmp/cc8VIPma.s:1912   .debug_str:000000000000008e .LASF34
+     /tmp/cc8VIPma.s:1902   .debug_str:000000000000004d .LASF35
+     /tmp/cc8VIPma.s:370    .text:0000000000000160 .LFB12
+     /tmp/cc8VIPma.s:396    .text:000000000000018c .LFE12
+     /tmp/cc8VIPma.s:385    .text:000000000000017c .LVL16
+     /tmp/cc8VIPma.s:1926   .debug_str:00000000000000f1 .LASF36
+     /tmp/cc8VIPma.s:1966   .debug_str:00000000000001ea .LASF37
+     /tmp/cc8VIPma.s:334    .text:000000000000012c .LFB11
+     /tmp/cc8VIPma.s:364    .text:0000000000000160 .LFE11
+     /tmp/cc8VIPma.s:1783   .debug_loc:00000000000001c9 .LLST5
+     /tmp/cc8VIPma.s:352    .text:000000000000014c .LVL15
+     /tmp/cc8VIPma.s:1982   .debug_str:0000000000000270 .LASF38
+     /tmp/cc8VIPma.s:1920   .debug_str:00000000000000bf .LASF39
+     /tmp/cc8VIPma.s:299    .text:00000000000000fc .LFB10
+GAS LISTING /tmp/cc8VIPma.s 			page 21
+
+
+     /tmp/cc8VIPma.s:328    .text:000000000000012c .LFE10
+     /tmp/cc8VIPma.s:1986   .debug_str:0000000000000281 .LASF40
+     /tmp/cc8VIPma.s:1801   .debug_loc:0000000000000215 .LLST4
+     /tmp/cc8VIPma.s:317    .text:000000000000011c .LVL12
+     /tmp/cc8VIPma.s:1942   .debug_str:0000000000000148 .LASF56
+     /tmp/cc8VIPma.s:107    .text:0000000000000054 .LFB9
+     /tmp/cc8VIPma.s:142    .text:0000000000000078 .LFE9
+     /tmp/cc8VIPma.s:1952   .debug_str:0000000000000182 .LASF41
+     /tmp/cc8VIPma.s:1994   .debug_str:0000000000000369 .LASF42
+     /tmp/cc8VIPma.s:63     .text:000000000000002c .LFB8
+     /tmp/cc8VIPma.s:102    .text:0000000000000054 .LFE8
+     /tmp/cc8VIPma.s:1819   .debug_loc:0000000000000261 .LLST1
+     /tmp/cc8VIPma.s:1996   .debug_str:0000000000000375 .LASF43
+     /tmp/cc8VIPma.s:9      .text:0000000000000000 .LFB7
+     /tmp/cc8VIPma.s:58     .text:000000000000002c .LFE7
+     /tmp/cc8VIPma.s:1833   .debug_loc:000000000000029a .LLST0
+     /tmp/cc8VIPma.s:1914   .debug_str:000000000000009e .LASF44
+     /tmp/cc8VIPma.s:1892   .debug_str:0000000000000009 .LASF45
+     /tmp/cc8VIPma.s:2002   .debug_str:00000000000003a0 .LASF46
+     /tmp/cc8VIPma.s:234    .text:00000000000000c4 .LFB6
+     /tmp/cc8VIPma.s:293    .text:00000000000000fc .LFE6
+     /tmp/cc8VIPma.s:1847   .debug_loc:00000000000002d3 .LLST3
+     /tmp/cc8VIPma.s:1916   .debug_str:00000000000000a9 .LASF47
+     /tmp/cc8VIPma.s:1918   .debug_str:00000000000000b4 .LASF48
+     /tmp/cc8VIPma.s:2000   .debug_str:0000000000000395 .LASF49
+     /tmp/cc8VIPma.s:1972   .debug_str:000000000000021b .LASF50
+     /tmp/cc8VIPma.s:193    .text:00000000000000a0 .LFB5
+     /tmp/cc8VIPma.s:228    .text:00000000000000c4 .LFE5
+     /tmp/cc8VIPma.s:1898   .debug_str:0000000000000036 .LASF51
+     /tmp/cc8VIPma.s:1998   .debug_str:0000000000000385 .LASF52
+     /tmp/cc8VIPma.s:148    .text:0000000000000078 .LFB4
+     /tmp/cc8VIPma.s:187    .text:00000000000000a0 .LFE4
+     /tmp/cc8VIPma.s:1861   .debug_loc:000000000000030c .LLST2
+     /tmp/cc8VIPma.s:578    .text:000000000000027c .LVL30
+     /tmp/cc8VIPma.s:595    .text:0000000000000298 .LVL31
+     /tmp/cc8VIPma.s:511    .text:0000000000000220 .LVL26
+     /tmp/cc8VIPma.s:524    .text:0000000000000238 .LVL27
+     /tmp/cc8VIPma.s:476    .text:00000000000001f0 .LVL23
+     /tmp/cc8VIPma.s:489    .text:0000000000000208 .LVL24
+     /tmp/cc8VIPma.s:437    .text:00000000000001b8 .LVL18
+     /tmp/cc8VIPma.s:454    .text:00000000000001d8 .LVL21
+     /tmp/cc8VIPma.s:452    .text:00000000000001d4 .LVL20
+     /tmp/cc8VIPma.s:450    .text:00000000000001d0 .LVL19
+     /tmp/cc8VIPma.s:337    .text:000000000000012c .LVL13
+     /tmp/cc8VIPma.s:350    .text:0000000000000144 .LVL14
+     /tmp/cc8VIPma.s:302    .text:00000000000000fc .LVL10
+     /tmp/cc8VIPma.s:315    .text:0000000000000114 .LVL11
+     /tmp/cc8VIPma.s:66     .text:000000000000002c .LVL2
+     /tmp/cc8VIPma.s:90     .text:0000000000000044 .LVL3
+     /tmp/cc8VIPma.s:13     .text:0000000000000000 .LVL0
+     /tmp/cc8VIPma.s:47     .text:0000000000000020 .LVL1
+     /tmp/cc8VIPma.s:237    .text:00000000000000c4 .LVL8
+     /tmp/cc8VIPma.s:281    .text:00000000000000ec .LVL9
+     /tmp/cc8VIPma.s:151    .text:0000000000000078 .LVL5
+     /tmp/cc8VIPma.s:175    .text:0000000000000090 .LVL6
+     /tmp/cc8VIPma.s:614    .debug_info:0000000000000000 .Ldebug_info0
+
+GAS LISTING /tmp/cc8VIPma.s 			page 22
+
 
 NO UNDEFINED SYMBOLS

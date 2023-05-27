@@ -19,10 +19,11 @@ public:
     enum State { RUNNING = 0, SUSPENDED, READY, INITIALIZING, TERMINATING, NONEXISTENT };
 
     typedef void(*Body)(void*);
-    typedef uint64 Context[50+1]; // the +1 is for the sepc // temp 50
 
     static bool switchedToUserThread;
-    static uint64* pRunningContext;
+//    static uint64** pRunningSp;
+//    static uint64* runningSp;
+    static uint64** pRunningSp;
     static uint64 timeSliceCounter;
     static Thread* pAllThreads[MAX_NR_TOTAL_THREADS];
     static uint64 nrTotalThreads;
@@ -37,13 +38,16 @@ public:
 
     State state;
     Body body;
-    Context context;
+    uint64 sepc;
     void* pStackStart; // start in terms of the data structure. This adress is the highest one in the stack
     uint64 timeSlice; // private
     uint64 id;
     Thread* pNext;
     Thread* pWaitingHead;
     bool done;
+//    uint64** pSp;
+
+    uint64* sp;
 
     Thread(Body body, void* arg);
     Thread() : pStackStart(nullptr), pNext(nullptr) {} // move to private?. Mind the kernel thread

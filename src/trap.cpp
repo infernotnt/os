@@ -1,6 +1,7 @@
 #include "../h/thread.h"
 #include "../h/scheduler.h"
 #include "../h/alloc.h"
+#include "../h/0_console.h"
 
 uint64 gTimer = 0;
 
@@ -10,6 +11,55 @@ uint64 testCall(uint64 n)
 {
     return fib(n);
 }
+
+void  cConsoleInterruptRoutine()
+{
+    uint64 scause;
+    __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
+
+//    int isExternal = (scause & (0x1UL << 63)) != 0;
+    int cause = scause & (~(1UL << 63));
+
+
+    assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
+
+    assert(cause == 9);
+
+    __asm__ volatile ("csrc sip, 0xA"); // clears the 9th bit in register sip. (the bit signifies external interupt)
+
+    console_handler();
+    __asm__ volatile ("mv x10, x10");
+
+//    Console::get()->consoleHandler();
+
+}
+
+void cTimerInterruptRoutine()
+{
+    uint64 scause;
+    __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
+
+    int cause = scause & (~(1UL << 63));
+
+    __asm__ volatile ("csrc sip, 0xA"); // clears the 9th bit in register sip. (the bit signifies external interupt)
+//    __asm__ volatile ("csrc sstatus, 0x02");
+
+    assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
+    if(cause == 1)
+    { // timer
+        __asm__ volatile("mv x10, x10");
+    }
+    else if (cause == 9)
+    { // console
+        plic_claim();
+//        Console::get()->consoleHandler();
+//        console_handler();
+//        __asm__ volatile("mv x10, x10");
+    }
+
+    __asm__ volatile("mv x10, x10");
+}
+
 
 void cInternalInterruptRoutine()
 {
@@ -29,11 +79,17 @@ void cInternalInterruptRoutine()
 
 
     __asm__ volatile ("mv x1, x1");
-    if(&(Thread::getPRunning()->context[0]) != Thread::pRunningContext) // temp, maybe changes registers?
-    {
-        __asm__ volatile ("mv x10, x10");
-        assert(false);
-    }
+
+//    Thread::getPRunning()->sp = Thread::runningSp;
+//    uint64* sp = Thread::getPRunning()->sp;
+//    uint64* runningSp = Thread::runningSp;
+//    if(sp != runningSp) // temp, maybe changes registers?
+//    {
+//        __asm__ volatile ("mv x10, x10");
+//        assert(false);
+//    }
+    assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
+
     __asm__ volatile ("mv x1, x1");
 
     if(cause != 8 && cause != 9)
@@ -104,6 +160,14 @@ void cInternalInterruptRoutine()
     {
         Thread::join((uint64)parameter1);
     }
+    else if (code == 65) // getc
+    {
+
+    }
+    else if (code == 66) // putc
+    {
+
+    }
     else
     {
         assert(false); // unknown code
@@ -134,61 +198,28 @@ void cInternalInterruptRoutine()
         assert(false);
     }
 
+    __asm__ volatile ("mv x10, x10");
 }
 
 
-void cExternalInterruptRoutine()
-{
-    assert(false);
 
-    uint64 scause;
-    __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
-
-//    int isExternal = (scause & (0x1UL << 63)) != 0;
-    int cause = scause & (~(1UL << 63));
-
-    __asm__ volatile ("csrc sip, 0xA"); // clears the 9th bit in register sip. (the bit signifies external interupt)
-
-    if(&(Thread::getPRunning()->context[0]) != Thread::pRunningContext) // temp, maybe changes registers?
-    {
-        assert(false);
-    }
-
-    __asm__ volatile ("csrc sstatus, 0x02"); // sets the "sie" bit to 0
-
-    if (cause == 1)
-    {
-        Thread::timeSliceCounter++;
-        gTimer++;
-        if(gTimer == 10)
-        {
-            __asm__ volatile ("mv x1, x1");
-        }
-
-        if (gTimer % 10 == 0)
-        {
-            putString("Time: ");
-            putInt(gTimer / 10);
-            putString("s");
-            putNewline();
-        }
+//    Thread::timeSliceCounter++;
+//    gTimer++;
+//    if(gTimer == 10)
+//    {
+//        __asm__ volatile ("mv x1, x1");
+//    }
+//
+//    if (gTimer % 10 == 0)
+//    {
+//        putString("Time: ");
+//        putInt(gTimer / 10);
+//        putString("s");
+//        putNewline();
+//    }
 
 //        if (Thread::timeSliceCounter >= Thread::pRunning->getTimeSlice())
 //        {
 //            Thread::timeSliceCounter = 0;
 //            Scheduler::dispatchToNext();
 //        }
-    }
-    else if (cause == 9)
-    {
-        console_handler();
-    }
-    else
-    {
-        putString("=== Error: unknown external interrupt");
-        putNewline();
-        assert(false);
-    }
-}
-
-

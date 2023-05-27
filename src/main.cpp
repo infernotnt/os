@@ -3,10 +3,12 @@
 #include "../h/thread.h"
 #include "../h/c_api.h"
 #include "../h/scheduler.h"
+#include "../h/0_console.h"
 
 extern "C" void trapRoutine();
 
-void userMain();
+void myUserMain();
+//void userMain();
 void doInitialAsserts();
 void initInterruptVector();
 
@@ -18,13 +20,38 @@ char kernelStack[ACTUAL_STACK_SIZE + 16];
 
 void userWrapper(void* p)
 {
-//    volatile uint64 a;
-//    __asm__ volatile ("csrr %[name], sstatus" : [name] "=r"(a));
-//    assert(p == nullptr);
+    __asm__ volatile("mv x10, x10");
+    plic_complete(10);
 
-//    enableExternalInterrupts();
+    plic_claim(); // temp
 
-    userMain();
+    assert(p == nullptr);
+    assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
+
+    plic_claim(); // temp
+
+    enableExternalInterrupts();
+
+    plic_claim(); // temp
+
+    __asm__ volatile ("mv x10, x10");
+
+    plic_claim(); // temp
+
+    myUserMain();
+
+//    for(int i=0; i<10; i++)
+//    {
+//        Console::get()->putc(i + '0');
+//
+//        Console::get()->putc(' ');
+//        Console::get()->putc('b');
+//        Console::get()->putc('a');
+//        Console::get()->putc('b');
+//        Console::get()->putc('a');
+//
+//        Console::get()->putc('\n');
+//    }
 }
 
 int main()
@@ -34,7 +61,11 @@ int main()
     initInterruptVector();
     doInitialAsserts();
 
+    uint64* sp;
+    __asm__ volatile ("mv %[name], sp" : [name] "=r"(sp));
+    kernelThread.sp = sp;
     Thread::setPRunning(&kernelThread);
+    assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
     kernelThread.id = 0;
     Thread::pAllThreads[0] = &kernelThread;
 
@@ -43,9 +74,12 @@ int main()
 
     Thread::initialUserMemoryUsage = MemAlloc::get()->getUserlandUsage();
 
+    plic_claim(); // temp
+
+    plic_complete(10);
+
     __asm__ volatile ("li a0, 4"); // this is a system call that calls Thread::switchToUser()
     __asm__ volatile ("ecall");
-
 
     __asm__ volatile ("csrw sscratch, x0"); //TEST permissions
 
