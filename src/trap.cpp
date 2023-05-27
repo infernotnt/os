@@ -139,6 +139,8 @@ void cInternalInterruptRoutine()
 
 void cExternalInterruptRoutine()
 {
+    assert(false);
+
     uint64 scause;
     __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
 

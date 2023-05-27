@@ -12,25 +12,16 @@ void userMain()
 {
 //    __asm__ volatile ("csrw sscratch, x1"); // set spie bit to 1. spie signifies that we dont want to mask external interrupts after sret
 
-    putString("App started");
+    putString("=== App started");
     putNewline();
     assert(MemAlloc::get()->getUserlandUsage() == Thread::initialUserMemoryUsage);
 
-
-//    volatile uint64 i = 0;
-//    while(i < 10)
-//    {
-//        putString("putString() in APP");
-//        putNewline();
-//        i++;
-//    }
-
-//    testSystemCalls();
-//    testMemoryAllocator();
+    testSystemCalls();
+    testMemoryAllocator();
     testSyncCall();
 
 //    assert(MemAlloc::get()->getUserlandUsage() == Thread::initialUserMemoryUsage); // TODO: enable after thread_exit
-    putString("App ended");
+    putString("=== App ended");
     putNewline();
 }
 
@@ -54,27 +45,38 @@ void testSyncCall()
     thread_create(&b, doB, &argB);
     thread_dispatch();
 
-    putString("thread_t a = ");
-    putU64(a);
-    putNewline();
-    putString("thread_t b = ");
-    putU64(b);
-    putNewline();
+//    putString("thread_t a = ");
+//    putU64(a);
+//    putNewline();
+//    putString("thread_t b = ");
+//    putU64(b);
+//    putNewline();
 
-//    thread_join(a);
-//    thread_join(b);
+    thread_join(b);
+    thread_join(a);
 //    assert(Thread::pAllThreads[a]->id == Thread::pAllThreads[b]->id-1);
 //    assert(MemAlloc::get()->getUserlandUsage() == Thread::initialUserMemoryUsage);
 
 //    enableExternalInterrupts();
     __asm__ volatile("mv x10, x10");
+
+    putString("=== Success in testing \"testSyncCall\"");
 }
 
 
 void doA(void* p)
 {
     assert(*((int*)p) == 69);
-    thread_dispatch();
+
+    for(int i=0; i<=5; i++)
+    {
+//        putString("A i=");
+//        putU64(i);
+//        putNewline();
+
+        assert(fib(i) == test_call(i));
+        thread_dispatch();
+    }
 
     __asm__ volatile("mv x10, x10");
     thread_exit();
@@ -84,40 +86,21 @@ void doA(void* p)
 void doB(void* p)
 {
     assert(*((int*)p) == 420);
-    thread_dispatch();
 
-    __asm__ volatile("mv x10, x10");
+    for(int i=0; i<=10; i++)
+    {
+//        putString("B i=");
+//        putU64(i);
+//        putNewline();
+
+        assert(fib(i) == test_call(i));
+        thread_dispatch();
+    }
+
     thread_exit();
     assert(false);
 }
 
-//
-//    for(int i=0; ; i++)
-//    {
-//        putString("A i=");
-//        putU64(i);
-//        putNewline();
-//
-//        assert(fib(i) == test_call(i));
-//        if(i == 5)
-//        {
-//            break;
-//            assert(false);
-//        }
-//        thread_dispatch();
-//    }
-//for(int i=0; ; i++)
-//{
-//putString("B i=");
-//putU64(i);
-//putNewline();
-//
-//assert(fib(i) == test_call(i));
-//thread_dispatch();
-//
-//if(i == 10)
-//break;
-//}
 
 uint64 fib(uint64 n)
 {
@@ -160,7 +143,7 @@ void testSystemCalls()
     }
 
     assert(MemAlloc::get()->getUserlandUsage() == Thread::initialUserMemoryUsage);
-    putString("====== Done testing system calls");
+    putString("=== Success in testing system calls");
     putNewline();
 }
 
@@ -213,6 +196,6 @@ void testMemoryAllocator()
     assert(t == 0);
 
     assert(MemAlloc::get()->getUserlandUsage() == Thread::initialUserMemoryUsage);
-    putString("=== Done testing memory allocator");
+    putString("=== Success in testing memory allocator");
     putNewline();
 }

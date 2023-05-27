@@ -32,7 +32,7 @@ void Thread::join(uint64 id)
     extern Thread kernelThread;
     assert(oldRunning != &kernelThread); // you're only supposed to open user threads with system call with code 4
 
-    putU64(id);
+//    putU64(id);
 
     if(t->done == true)
         return;
