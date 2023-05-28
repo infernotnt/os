@@ -6,6 +6,7 @@
 void testSystemCalls();
 void testMemoryAllocator();
 void testSyncCall();
+void testTimeSlice();
 uint64 fib(uint64);
 extern uint64 gTimer;
 
@@ -15,15 +16,13 @@ void myUserMain()
 
     __asm__ volatile ("mv x10, x10");
 
-    void testTimeSlice();
+    putString("=== App started");
+    putNewline();
+
+    testSystemCalls();
+    testMemoryAllocator();
+    testSyncCall();
     testTimeSlice();
-//    putString("=== App started");
-//    putNewline();
-
-//    testSystemCalls();
-//    testMemoryAllocator();
-//    testSyncCall();
-
 
     putString("=== App ended");
     putNewline();
@@ -34,10 +33,13 @@ int sliceSecondCounter = 0;
 
 void testTimeSlice()
 {
+    putString("=== Testing \"testTimeSlice\"");
+    putNewline();
+
     void doP(void*);
     void doQ(void*);
 
-    uint64 n = 100000000;
+    uint64 n = 150000000;
 
     void doSliceFirst(void*);
     void doSliceSecond(void*);
@@ -51,14 +53,21 @@ void testTimeSlice()
     thread_join(sliceFirst);
     thread_join(sliceSecond);
 
-    assert(sliceFirstCounter == sliceSecondCounter); // TODO: namesti da bude signurniji check
+    int dif = (sliceFirstCounter - sliceSecondCounter);
+    if(dif < 0) // dif = abs(dif);
+        dif = -dif;
+
+    assert(dif < sliceFirstCounter * 8/10); // WARNING: not 100% check, depends on "n" and many other stuff
+
+    putString("=== PASS in testing \"testTimeSlice\"");
+    putNewline();
 }
 
 
 void doSliceFirst(void* n)
 {
     uint64 oldTimer = gTimer;
-    for(uint64 i=0; i<*(uint64*)n; i++)
+    for(uint64 i=0; i<(*((uint64*)n)); i++)
     {
         if(oldTimer != gTimer)
         {
@@ -73,9 +82,14 @@ void doSliceFirst(void* n)
 
 void doSliceSecond(void* n)
 {
+    uint64 newN = *(uint64*)n;
+
     uint64 oldTimer = gTimer;
-    for(uint64 i=0; i<*(uint64*)n; i++)
+    for(uint64 i=0; i<newN; i++)
     {
+        __asm__ volatile("mv x10, x10");
+        assert((*((uint64*)n)) == newN);
+
         if(oldTimer != gTimer)
         {
             __asm__ volatile("mv x10, x10");
@@ -84,6 +98,8 @@ void doSliceSecond(void* n)
             assert((((int)sliceFirstCounter) - ((int)sliceSecondCounter)) <= 1);
             oldTimer = gTimer;
         }
+
+        __asm__ volatile("mv x10, x10");
     }
 
     assert(sliceSecondCounter > 0); // "n" in test too small probably
@@ -91,7 +107,7 @@ void doSliceSecond(void* n)
 
 void testSyncCall()
 {
-//    disableExternalInterrupts();
+    disableExternalInterrupts();
 
 //    assert(MemAlloc::get()->getUserlandUsage() == IThread::initialUserMemoryUsage);
 
@@ -112,12 +128,11 @@ void testSyncCall()
     thread_join(b);
     thread_join(a);
 
-//    enableExternalInterrupts();
-
-    putString("=== Success in testing \"testSyncCall\"");
+    putString("=== PASS in testing \"testSyncCall\"");
     putNewline();
-}
 
+    enableExternalInterrupts();
+}
 
 void doA(void* p)
 {
@@ -190,7 +205,7 @@ void testSystemCalls()
     }
 
 //    assert(MemAlloc::get()->getUserlandUsage() == IThread::initialUserMemoryUsage);
-    putString("=== Success in testing system calls");
+    putString("=== PASS in testing system calls");
     putNewline();
 }
 
@@ -243,6 +258,6 @@ void testMemoryAllocator()
     assert(t == 0);
 
 //    assert(MemAlloc::get()->getUserlandUsage() == IThread::initialUserMemoryUsage);
-    putString("=== Success in testing memory allocator");
+    putString("=== PASS in testing memory allocator");
     putNewline();
 }

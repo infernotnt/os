@@ -85,13 +85,10 @@ void Scheduler::put(IThread* p)
 
 IThread* Scheduler::getNext()
 {
-//    if(!pHead)
-//    {
-//        assert(false); // disabled because maby you can get the thread* and do something wrong with it assuming its a legit thread.
-//        return spinThread;
-//    }
-
     IThread* ret = get()->pHead;
+
+    assert(ret != nullptr);
+
     get()->pHead = get()->pHead->pNext;
 
     return ret;

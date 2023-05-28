@@ -101,7 +101,7 @@ int thread_exit()
 
 int thread_create(thread_t* handle, void(*start_routine)(void*), void*arg)
 {
-    return helperRet32P164P264P364(0x11, (uint64)handle, (uint64)start_routine, (uint64)arg);
+    return helperRet32P164P264P364(0x11, (uint64)handle, (uint64)start_routine, *((uint64*)&arg));
 }
 
 void thread_join(thread_t handle)

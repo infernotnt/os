@@ -9,6 +9,7 @@
 
 [[noreturn]] void stopKernel()
 {
+    __asm__ volatile("mv x10, x10");
     putNewline();
     putString("====== Stopping the kernel ======");
 

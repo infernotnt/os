@@ -76,6 +76,9 @@ void IThread::switchToUser()
 
     assert(IThread::pRunning->id == 0);
 
+    Scheduler* s = Scheduler::get(); // temp
+    assert(s); // temp
+
     Scheduler::dispatchToNext();
 
     assert(IThread::getPRunning()->id == 1);
@@ -165,13 +168,13 @@ void IThread::init(Body body, void* arg, void* pLogicalStack) // this is used as
 
     // skipping a0 to pass arguments as it is will be not be restored in the context switch because it is assumed to hold return values of a sys. call
 
-    for(int i=0; i<32; i++)
+    for(int i=0; i<32; i++) // temp
     {
         *((uint64*)pLogicalStack + i) = i;
     }
 
     *((uint64*)pLogicalStack + 11) = (uint64)body;
-    *((uint64*)pLogicalStack + 12) = (uint64)arg;
+    *((uint64*)pLogicalStack + 12) = *((uint64*)&arg);
     *((uint64*)pLogicalStack + 32) = (uint64)&wrapper;
 
     state = READY;

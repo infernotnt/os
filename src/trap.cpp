@@ -122,6 +122,7 @@ void cInternalInterruptRoutine()
         assert(false);
     }
 
+    IThread* pOld = IThread::getPRunning();
 
     uint64 ret = -1;
     if(code == 1)
@@ -148,7 +149,9 @@ void cInternalInterruptRoutine()
     }
     else if (code == 18)
     {
+        __asm__ volatile("mv x10, x10");
         *((int*)&ret) = IThread::exit();
+        assert(*((int*)&ret) == 0);
     }
     else if (code == 19) // 19, thread_dispatch
     {
@@ -186,7 +189,9 @@ void cInternalInterruptRoutine()
 
         assert(ret != (uint64)-1); // not 100% check
 
-        __asm__ volatile ("mv a0, %[name]" : : [name] "r" (ret));
+        *(((uint64*)(pOld->sp))+10) = ret; // set r0, or x10, to the return value
+
+//        __asm__ volatile ("mv a0, %[name]" : : [name] "r" (ret));
     }
     else if(normalCallWithoutReturn || customCallWithoutReturn) // this exists for safety reasons
     {
