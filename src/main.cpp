@@ -20,23 +20,10 @@ char kernelStack[ACTUAL_STACK_SIZE + 16];
 
 void userWrapper(void* p)
 {
-    __asm__ volatile("mv x10, x10");
-    plic_complete(10);
-
-    plic_claim(); // temp
-
     assert(p == nullptr);
     assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
 
-    plic_claim(); // temp
-
     enableExternalInterrupts();
-
-    plic_claim(); // temp
-
-    __asm__ volatile ("mv x10, x10");
-
-    plic_claim(); // temp
 
     myUserMain();
 
@@ -74,8 +61,7 @@ int main()
 
     Thread::initialUserMemoryUsage = MemAlloc::get()->getUserlandUsage();
 
-    plic_claim(); // temp
-
+    plic_claim();
     plic_complete(10);
 
     __asm__ volatile ("li a0, 4"); // this is a system call that calls Thread::switchToUser()
