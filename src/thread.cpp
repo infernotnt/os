@@ -80,6 +80,8 @@ void IThread::switchToUser()
 
     Scheduler::dispatchToNext();
 
+    IThread* t = IThread::getPRunning();
+    assert(t);
     assert(IThread::getPRunning()->id == USER_THREAD_ID);
 
 //    __asm__ volatile ("csrs sstatus, 0x6"); // TODO: probably should be removed when i add permissions

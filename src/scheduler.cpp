@@ -74,8 +74,6 @@ void Scheduler::dispatchToNext() // WARNING: different than sys. call thread_dis
     extern IThread kernelThread;
     assert(pNew != &kernelThread);
 
-    assert(pNew->state == IThread::READY);
-
     bool existReadyThread = (pNew != nullptr);
     bool existSleeper = (Scheduler::get()->pSleepHead != nullptr);
 
@@ -89,19 +87,24 @@ void Scheduler::dispatchToNext() // WARNING: different than sys. call thread_dis
         assert(IThread::pAllThreads[0] == &kernelThread);
         IThread::pAllThreads[0]->state = IThread::READY;
 
+        pNew = IThread::pAllThreads[0];
+
         // TODO: set permission
     }
     else if(existReadyThread == false && existSleeper == true)
     {
         assert(existReadyThread == false && existSleeper == true);
 
-        Scheduler::put(IThread::pAllThreads[BUSY_WAIT_THREAD_ID]);
+        pNew = IThread::pAllThreads[BUSY_WAIT_THREAD_ID];
+        Scheduler::put(pNew);
     }
+
+    assert(pNew->state == IThread::READY);
 
     pOld->state = IThread::READY; // must be in this order (maby)
     pNew->state = IThread::RUNNING;
 
-    Scheduler::put(pOld);
+    IThread::setPRunning(pNew);
 }
 
 void Scheduler::put(IThread* p)

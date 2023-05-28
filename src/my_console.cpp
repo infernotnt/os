@@ -13,6 +13,8 @@
     putNewline();
     putString("====== Stopping the kernel ======");
 
+    IConsole::get()->writeToConsole();
+
     disableExternalInterrupts();
 
     volatile int a = 1;
@@ -25,6 +27,7 @@
 void putNewline()
 {
     putc('\n');
+    IConsole::get()->writeToConsole();
 }
 
 void putString(const char* s)
@@ -33,45 +36,11 @@ void putString(const char* s)
     while(true)
     {
         if(s[i] == '\0')
-            return;
+            break;
         else putc(s[i++]);
     }
-}
 
-void putBinary(uint64 n)
-{
-    assert(false);
-    if(n < 0)
-    {
-        putString("===== FATAL PRINTING ERROR IN FUNCTION putU64. NEGATIVE VALUE. Stoping the kernel ====");
-        putNewline();
-        stopKernel();
-    }
-    else if(n == 0 || n == 1)
-    {
-        putc('0' + n);
-    }
-    else
-    {
-       uint64 initial = 1 << 30;
-       putString("AAA");
-//       putInt(initial);
-       putNewline();
-       putInt(sizeof(uint64));
-
-        bool alreadyWritten = false;
-        while(initial > 0)
-        {
-            bool digit = n / initial;
-            if (digit > 0 || alreadyWritten)
-            {
-                alreadyWritten = true;
-                putc(digit + '0');
-                n = n % initial;
-            }
-            initial = ((initial) >> 1);
-        }
-    }
+    IConsole::get()->writeToConsole();
 }
 
 void putU64(uint64 n)
@@ -107,6 +76,7 @@ void putU64(uint64 n)
             initial /= 10;
         }
     }
+    IConsole::get()->writeToConsole();
 }
 
 void putInt(int n)
@@ -141,5 +111,5 @@ void putInt(int n)
             initial /= 10;
         }
     }
-
+    IConsole::get()->writeToConsole();
 }

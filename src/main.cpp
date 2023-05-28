@@ -20,11 +20,13 @@ void userWrapper(void* p)
     assert(p == nullptr);
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 
-    enableExternalInterrupts();
+//    enableExternalInterrupts();
 
-    putString("Cigane");
+    putString("!!!!");
     putNewline();
-    IConsole::get()->writeToConsole();
+    IConsole::get()->actualWriteToConsole();
+
+//    IConsole::get()->writeToConsole();
 
     myUserMain();
 }
@@ -57,6 +59,11 @@ int main()
 
 //    plic_claim();
 //    plic_complete(10);
+
+//    putString("BABAA");
+//    putNewline();
+//    putU64(69420);
+//    putNewline();
 
     IThread* a = Scheduler::get()->pHead;
 //    IThread* b = Scheduler::get()->getNext();
@@ -114,6 +121,7 @@ void initInterruptVector()
 }
 
 
+/*
 void consoleStuff(void* p)
 {
     assert(false);
@@ -174,3 +182,4 @@ void consoleStuff(void* p)
         assert(readyRead || readyWrite);
     }
 }
+ */

@@ -140,8 +140,8 @@ void putc(char c)
 //
 //    helperP164(0x42, a);
 
-//    __putc(c);
-    IConsole::get()->putc(c);
+//    IConsole::get()->putc(c);
+    __putc(c);
 }
 
 uint64 test_call(uint64 n)

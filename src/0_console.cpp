@@ -3,10 +3,12 @@
 
 void IConsole::writeToConsole()
 {
-//    int a = plic_claim();
-//    assert(a == 10);
 
-    if( ((*((char *) CONSOLE_STATUS)) & CONSOLE_TX_STATUS_BIT) != 0 )
+}
+
+void IConsole::actualWriteToConsole()
+{
+    while( ((*((char *) CONSOLE_STATUS)) & CONSOLE_TX_STATUS_BIT) != 0 )
     {
         if(putBufferItems > 0)
         {
@@ -15,8 +17,8 @@ void IConsole::writeToConsole()
             putBufferItems--;
             putBufferTail = (putBufferTail+1) % BUFFER_SIZE;
         }
+        else break;
     }
-//    plic_complete(10);
 }
 
 void IConsole::consoleHandler()
@@ -28,7 +30,7 @@ void IConsole::consoleHandler()
 
     if(a == 0)
     {
-        assert(false); // greska
+        assert(false);
         return;
     }
 

@@ -25,6 +25,7 @@ public:
     void putc(char c);
     char getc();
     void consoleHandler();
+    void actualWriteToConsole();
 
 private:
     IConsole()

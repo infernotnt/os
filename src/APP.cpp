@@ -21,15 +21,11 @@ void myUserMain()
     putString("=== App started");
     putNewline();
 
-//    testSystemCalls();
-//    testMemoryAllocator();
-//    testSyncCall();
+    testSystemCalls();
+    testMemoryAllocator();
+    testSyncCall();
 //    testTimeSlice();
 //    testTimeSleep();
-
-    __asm__ volatile ("mv x10, x10");
-    time_sleep(500);
-    __asm__ volatile ("mv x10, x10");
 
     putString("=== App ended");
     putNewline();
@@ -157,7 +153,7 @@ void doSliceSecond(void* n)
 
 void testSyncCall()
 {
-    disableExternalInterrupts();
+//    disableExternalInterrupts();
 
 //    assert(MemAlloc::get()->getUserlandUsage() == IThread::initialUserMemoryUsage);
 
@@ -181,7 +177,7 @@ void testSyncCall()
     putString("=== PASS in testing \"testSyncCall\"");
     putNewline();
 
-    enableExternalInterrupts();
+//    enableExternalInterrupts();
 }
 
 void doA(void* p)
