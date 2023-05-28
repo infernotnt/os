@@ -1,44 +1,77 @@
 #include "../h/0_console.h"
 #include "../h/my_console.h"
 
-void Console::consoleHandler()
+void IConsole::consoleHandler()
 {
+    bool readyWrite = false;
+    bool readyRead = false;
+
     int a = plic_claim();
+
+    if(a == 0)
+    {
+//        plic_complete(0);
+        return;
+    }
+
     assert(a == 10);
-//    assert(a != 0 || a == 0);
 
     if( ((*((char *) CONSOLE_STATUS)) & CONSOLE_TX_STATUS_BIT) != 0 )
     {
+        readyWrite = true;
         if(putBufferItems > 0)
         {
             *((char *) CONSOLE_TX_DATA) = putBuffer[putBufferTail];
 
             putBufferItems--;
-            putBufferTail = (putBufferTail+1) % PUT_BUFFER_SIZE;
+            putBufferTail = (putBufferTail+1) % BUFFER_SIZE;
         }
     }
 
     if( ((*((char *) CONSOLE_STATUS)) & CONSOLE_RX_STATUS_BIT) != 0 )
     {
+        assert(getBufferItems < BUFFER_SIZE-1);
+
+        readyRead = true;
         char c = *((char *) CONSOLE_TX_DATA); // ovde nista ne radim zapravo, samo retriev-ujem karakter
-        assert(c != ' ');
+
+        getBuffer[getBufferHead] = c;
+
+        getBufferHead = (getBufferHead + 1) % BUFFER_SIZE;
+        getBufferItems++;
     }
 
     plic_complete(10);
+
+    assert(readyRead || readyWrite);
 }
 
-void Console::putc(char c)
+void IConsole::putc(char c)
 {
-    assert(putBufferItems < PUT_BUFFER_SIZE);
+    assert(putBufferItems < BUFFER_SIZE);
 
     putBuffer[putBufferHead] = c;
 
     putBufferItems++;
-    putBufferHead = (putBufferHead+1) % PUT_BUFFER_SIZE;
+    putBufferHead = (putBufferHead+1) % BUFFER_SIZE;
 }
 
-char Console::getc()
+char IConsole::getc()
 {
-    assert(false);
-    return 'a';
+//    while(getBufferItems < 0)
+//    assert(getBufferItems > 0);
+
+    disableExternalInterrupts(); // TODO: remove after making this a sys call
+    char ret;
+
+    while(getBufferItems == 0)
+    { }
+
+    ret = getBuffer[getBufferTail];
+
+    getBufferItems--;
+    getBufferTail = (getBufferTail + 1) % BUFFER_SIZE;
+
+    enableExternalInterrupts(); // TODO: remove this after making this a sys call
+    return ret;
 }

@@ -1,3 +1,10 @@
+# 1 "src/trap_routine.S"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 31 "<command-line>"
+# 1 "/usr/riscv64-linux-gnu/include/stdc-predef.h" 1 3
+# 32 "<command-line>" 2
+# 1 "src/trap_routine.S"
 .global trapRoutine
 
 .extern _Z25cInternalInterruptRoutinev
@@ -8,20 +15,20 @@
 
 .align 4
 trapRoutine:
-    j internalInterruptRoutine  # 0
-    j timerInterruptRoutine     # 1
-    nop                         # 2
-    nop                         # 3
-    nop                         # 4
-    nop                         # 5
-    nop                         # 6
-    nop                         # 7
-    UNIMP                       # 8
-    j timerInterruptRoutine     # 9
+    j internalInterruptRoutine # 0
+    j timerInterruptRoutine # 1
+    nop # 2
+    nop # 3
+    nop # 4
+    nop # 5
+    nop # 6
+    nop # 7
+    UNIMP # 8
+    j timerInterruptRoutine # 9
     UNIMP
 
-    #j consoleInterruptRoutine   # 9
-    #j timerInterruptRoutine     # 1
+    #j consoleInterruptRoutine # 9
+    #j timerInterruptRoutine # 1
 
 externalGay:
     csrc sip, 0xA

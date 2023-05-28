@@ -1,11 +1,23 @@
 #include "../h/scheduler.h"
 
+void Scheduler::dispatchUserVersion()
+{
+    extern IThread kernelThread;
+    assert(IThread::getPRunning() !=
+           &kernelThread); // you're only supposed to open user threads with system call with code 4
+
+    IThread::getPRunning()->state = IThread::READY;
+    Scheduler::put(IThread::getPRunning());
+
+    Scheduler::dispatchToNext();
+}
+
 void Scheduler::printState()
 {
-    putU64(Thread::getPRunning()->id);
+    putU64(IThread::getPRunning()->id);
     putString(":  ");
 
-    Thread* pCur = get()->pHead;
+    IThread* pCur = get()->pHead;
     while(pCur)
     {
         putU64(pCur->id);
@@ -27,33 +39,33 @@ void Scheduler::printState()
 
 void Scheduler::dispatchToNext() // WARNING: different than sys. call dispatch()
 {
-    assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
+    assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 
-    Thread *pOld = Thread::getPRunning();
-    Thread *pNew = Scheduler::getNext();
+    IThread *pOld = IThread::getPRunning();
+    IThread *pNew = Scheduler::getNext();
 
-    assert(pNew->state == Thread::READY);
+    assert(pNew->state == IThread::READY);
 
-    Thread::setPRunning(pNew);
+    IThread::setPRunning(pNew);
 
     if(pOld != pNew) // split into two cases for safety
     {
-        pNew->state = Thread::RUNNING;
+        pNew->state = IThread::RUNNING;
     }
     else
     {
-        pNew->state = Thread::RUNNING;
+        pNew->state = IThread::RUNNING;
     }
 }
 
-void Scheduler::put(Thread* p)
+void Scheduler::put(IThread* p)
 {
     if(!p)
     {
         assert(false);
     }
 
-    assert(p->state == Thread::READY);
+    assert(p->state == IThread::READY);
 
     p->pNext = nullptr; // ensure no thread is after this one (and ensure no random pointers)
 
@@ -63,7 +75,7 @@ void Scheduler::put(Thread* p)
         return;
     }
 
-    Thread* pCur = get()->pHead;
+    IThread* pCur = get()->pHead;
     while(pCur->pNext)
     {
         pCur = pCur->pNext;
@@ -71,7 +83,7 @@ void Scheduler::put(Thread* p)
     pCur->pNext = p;
 }
 
-Thread* Scheduler::getNext()
+IThread* Scheduler::getNext()
 {
 //    if(!pHead)
 //    {
@@ -79,7 +91,7 @@ Thread* Scheduler::getNext()
 //        return spinThread;
 //    }
 
-    Thread* ret = get()->pHead;
+    IThread* ret = get()->pHead;
     get()->pHead = get()->pHead->pNext;
 
     return ret;

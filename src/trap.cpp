@@ -3,6 +3,8 @@
 #include "../h/alloc.h"
 #include "../h/0_console.h"
 
+#include "../lib/console.h"
+
 uint64 gTimer = 0;
 
 uint64 fib(uint64 n);
@@ -12,27 +14,23 @@ uint64 testCall(uint64 n)
     return fib(n);
 }
 
-void  cConsoleInterruptRoutine()
+void doTimerStuff()
 {
-    assert(false);
-    uint64 scause;
-    __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
+    IThread::timeSliceCounter++;
+    if(IThread::timeSliceCounter == 2)
+    {
+        IThread::timeSliceCounter = 0;
+        Scheduler::dispatchUserVersion();
+    }
 
-//    int isExternal = (scause & (0x1UL << 63)) != 0;
-    int cause = scause & (~(1UL << 63));
-
-
-    assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
-
-    assert(cause == 9);
-
-    __asm__ volatile ("csrc sip, 0xA"); // clears the 9th bit in register sip. (the bit signifies external interupt)
-
-//    console_handler();
-    __asm__ volatile ("mv x10, x10");
-
-//    Console::get()->consoleHandler();
-
+    gTimer++;
+    if (gTimer % 10 == 0)
+    {
+        putString("Time: ");
+        putInt(gTimer / 10);
+        putString("s");
+        putNewline();
+    }
 }
 
 void cTimerInterruptRoutine()
@@ -47,24 +45,16 @@ void cTimerInterruptRoutine()
     __asm__ volatile ("csrc sip, 0xA"); // clears the 9th bit in register sip. (the bit signifies external interupt)
 //    __asm__ volatile ("csrc sstatus, 0x02");
 
-    assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
+    assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
     if(cause == 1)
-    { // timer
-        __asm__ volatile("mv x10, x10");
+    {
+        doTimerStuff();
+//        doUnsleepThreads();
     }
     else if (cause == 9)
-    { // console
-        Console::get()->consoleHandler();
-//        plic_claim();
-//        plic_complete(10);
-
-//        Console::get()->consoleHandler();
+    {
 //        console_handler();
-//        plic_claim();
-//        Console::get()->consoleHandler();
-//        console_handler();
-//        __asm__ volatile("mv x10, x10");
-//        plic_complete(10);
+        IConsole::get()->consoleHandler();
     }
     else
     {
@@ -94,15 +84,15 @@ void cInternalInterruptRoutine()
 
     __asm__ volatile ("mv x1, x1");
 
-//    Thread::getPRunning()->sp = Thread::runningSp;
-//    uint64* sp = Thread::getPRunning()->sp;
-//    uint64* runningSp = Thread::runningSp;
+//    IThread::getPRunning()->sp = IThread::runningSp;
+//    uint64* sp = IThread::getPRunning()->sp;
+//    uint64* runningSp = IThread::runningSp;
 //    if(sp != runningSp) // temp, maybe changes registers?
 //    {
 //        __asm__ volatile ("mv x10, x10");
 //        assert(false);
 //    }
-    assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
+    assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 
     __asm__ volatile ("mv x1, x1");
 
@@ -150,29 +140,24 @@ void cInternalInterruptRoutine()
 #endif
     else if (code == 4)
     {
-        Thread::switchToUser();
+        IThread::switchToUser();
     }
     else if (code == 17) // 17
     {
-        *((int*)&ret) = Thread::createThread((uint64*)parameter1, (Thread::Body)parameter2, (void*)parameter3);
+        *((int*)&ret) = IThread::createThread((uint64*)parameter1, (IThread::Body)parameter2, (void*)parameter3);
     }
     else if (code == 18)
     {
-        *((int*)&ret) = Thread::exit();
+        *((int*)&ret) = IThread::exit();
     }
     else if (code == 19) // 19, thread_dispatch
     {
-        extern Thread kernelThread;
-        assert(Thread::getPRunning() != &kernelThread); // you're only supposed to open user threads with system call with code 4
+        Scheduler::dispatchUserVersion();
 
-        Thread::getPRunning()->state = Thread::READY;
-        Scheduler::put(Thread::getPRunning());
-
-        Scheduler::dispatchToNext();
     }
     else if (code == 20)
     {
-        Thread::join((uint64)parameter1);
+        IThread::join((uint64)parameter1);
     }
     else if (code == 65) // getc
     {
@@ -217,23 +202,34 @@ void cInternalInterruptRoutine()
 
 
 
-//    Thread::timeSliceCounter++;
-//    gTimer++;
-//    if(gTimer == 10)
-//    {
-//        __asm__ volatile ("mv x1, x1");
-//    }
-//
-//    if (gTimer % 10 == 0)
-//    {
-//        putString("Time: ");
-//        putInt(gTimer / 10);
-//        putString("s");
-//        putNewline();
-//    }
+//    IThread::timeSliceCounter++;
 
-//        if (Thread::timeSliceCounter >= Thread::pRunning->getTimeSlice())
+//        if (IThread::timeSliceCounter >= IThread::pRunning->getTimeSlice())
 //        {
-//            Thread::timeSliceCounter = 0;
+//            IThread::timeSliceCounter = 0;
 //            Scheduler::dispatchToNext();
 //        }
+
+void  cConsoleInterruptRoutine()
+{
+    assert(false);
+    uint64 scause;
+    __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
+
+//    int isExternal = (scause & (0x1UL << 63)) != 0;
+    int cause = scause & (~(1UL << 63));
+
+
+    assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
+
+    assert(cause == 9);
+
+    __asm__ volatile ("csrc sip, 0xA"); // clears the 9th bit in register sip. (the bit signifies external interupt)
+
+//    console_handler();
+    __asm__ volatile ("mv x10, x10");
+
+//    IConsole::get()->consoleHandler();
+
+}
+

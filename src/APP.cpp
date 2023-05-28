@@ -1,5 +1,5 @@
 #include "../h/my_console.h"
-#include "../h/c_api.h"
+#include "../h/syscall_c.hpp"
 #include "../h/alloc.h"
 #include "../h/thread.h"
 
@@ -7,6 +7,7 @@ void testSystemCalls();
 void testMemoryAllocator();
 void testSyncCall();
 uint64 fib(uint64);
+extern uint64 gTimer;
 
 void myUserMain()
 {
@@ -14,31 +15,85 @@ void myUserMain()
 
     __asm__ volatile ("mv x10, x10");
 
+    void testTimeSlice();
+    testTimeSlice();
 //    putString("=== App started");
 //    putNewline();
-    assert(MemAlloc::get()->getUserlandUsage() == Thread::initialUserMemoryUsage);
 
-    for(int i=0; i<1000000000; i++)
-    {
-        __asm__ volatile ("mv x10, x10");
-    }
-
-    testSystemCalls();
-    testMemoryAllocator();
-    testSyncCall();
-
-//    assert(MemAlloc::get()->getUserlandUsage() == Thread::initialUserMemoryUsage); // TODO: enable after thread_exit
+//    testSystemCalls();
+//    testMemoryAllocator();
+//    testSyncCall();
 
 
     putString("=== App ended");
     putNewline();
 }
 
+int sliceFirstCounter = 0;
+int sliceSecondCounter = 0;
+
+void testTimeSlice()
+{
+    void doP(void*);
+    void doQ(void*);
+
+    uint64 n = 100000000;
+
+    void doSliceFirst(void*);
+    void doSliceSecond(void*);
+
+    thread_t sliceFirst;
+    thread_create(&sliceFirst, &doSliceFirst, &n);
+
+    thread_t sliceSecond;
+    thread_create(&sliceSecond, &doSliceSecond, &n);
+
+    thread_join(sliceFirst);
+    thread_join(sliceSecond);
+
+    assert(sliceFirstCounter == sliceSecondCounter); // TODO: namesti da bude signurniji check
+}
+
+
+void doSliceFirst(void* n)
+{
+    uint64 oldTimer = gTimer;
+    for(uint64 i=0; i<*(uint64*)n; i++)
+    {
+        if(oldTimer != gTimer)
+        {
+            __asm__ volatile("mv x10, x10");
+
+            sliceFirstCounter++;
+            oldTimer = gTimer;
+        }
+    }
+    assert(sliceFirstCounter > 0); // "n" in test too small probably
+}
+
+void doSliceSecond(void* n)
+{
+    uint64 oldTimer = gTimer;
+    for(uint64 i=0; i<*(uint64*)n; i++)
+    {
+        if(oldTimer != gTimer)
+        {
+            __asm__ volatile("mv x10, x10");
+
+            sliceSecondCounter++;
+            assert((((int)sliceFirstCounter) - ((int)sliceSecondCounter)) <= 1);
+            oldTimer = gTimer;
+        }
+    }
+
+    assert(sliceSecondCounter > 0); // "n" in test too small probably
+}
+
 void testSyncCall()
 {
 //    disableExternalInterrupts();
 
-//    assert(MemAlloc::get()->getUserlandUsage() == Thread::initialUserMemoryUsage);
+//    assert(MemAlloc::get()->getUserlandUsage() == IThread::initialUserMemoryUsage);
 
     putString("=== Testing \"testSyncCall\"");
     putNewline();
@@ -54,20 +109,10 @@ void testSyncCall()
     thread_create(&b, doB, &argB);
     thread_dispatch();
 
-//    putString("thread_t a = ");
-//    putU64(a);
-//    putNewline();
-//    putString("thread_t b = ");
-//    putU64(b);
-//    putNewline();
-
     thread_join(b);
     thread_join(a);
-//    assert(Thread::pAllThreads[a]->id == Thread::pAllThreads[b]->id-1);
-//    assert(MemAlloc::get()->getUserlandUsage() == Thread::initialUserMemoryUsage);
 
 //    enableExternalInterrupts();
-    __asm__ volatile("mv x10, x10");
 
     putString("=== Success in testing \"testSyncCall\"");
     putNewline();
@@ -80,10 +125,6 @@ void doA(void* p)
 
     for(int i=0; i<=5; i++)
     {
-//        putString("A i=");
-//        putU64(i);
-//        putNewline();
-
         assert(fib(i) == test_call(i));
         thread_dispatch();
     }
@@ -99,10 +140,6 @@ void doB(void* p)
 
     for(int i=0; i<=10; i++)
     {
-//        putString("B i=");
-//        putU64(i);
-//        putNewline();
-
         assert(fib(i) == test_call(i));
         thread_dispatch();
     }
@@ -152,7 +189,7 @@ void testSystemCalls()
         assert(a == b);
     }
 
-    assert(MemAlloc::get()->getUserlandUsage() == Thread::initialUserMemoryUsage);
+//    assert(MemAlloc::get()->getUserlandUsage() == IThread::initialUserMemoryUsage);
     putString("=== Success in testing system calls");
     putNewline();
 }
@@ -205,7 +242,7 @@ void testMemoryAllocator()
     t = mem_free(a);
     assert(t == 0);
 
-    assert(MemAlloc::get()->getUserlandUsage() == Thread::initialUserMemoryUsage);
+//    assert(MemAlloc::get()->getUserlandUsage() == IThread::initialUserMemoryUsage);
     putString("=== Success in testing memory allocator");
     putNewline();
 }

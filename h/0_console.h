@@ -2,27 +2,31 @@
 
 #include "../lib/hw.h"
 
-#define PUT_BUFFER_SIZE 1000
+#define BUFFER_SIZE 1000
 
-class Console // singleton class
+class IConsole // singleton class
 {
 public:
-    static Console* get()
+    static IConsole* get()
     {
-        static Console instance;
+        static IConsole instance;
         return &instance;
     }
 
     uint64 putBufferHead, putBufferTail;
-    char putBuffer[PUT_BUFFER_SIZE];
+    char putBuffer[BUFFER_SIZE];
     uint64 putBufferItems;
+
+    char getBuffer[BUFFER_SIZE];
+    uint64 getBufferItems;
+    uint64 getBufferHead, getBufferTail;
 
     void putc(char c);
     char getc();
     void consoleHandler();
 
 private:
-    Console()
+    IConsole()
         : putBufferHead(0), putBufferTail(0), putBufferItems(0)
     { }
 };

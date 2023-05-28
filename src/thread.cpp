@@ -2,18 +2,20 @@
 #include "../h/alloc.h"
 #include "../h/scheduler.h"
 
-Thread* Thread::pRunning = nullptr;
-//uint64* Thread::runningSp = nullptr;
-uint64** Thread::pRunningSp = nullptr;
-uint64 Thread::timeSliceCounter = 0;
-bool Thread::switchedToUserThread = 0;
-uint64 Thread::nrTotalThreads = 1;
-Thread* Thread::pAllThreads[MAX_NR_TOTAL_THREADS];
-uint64 Thread::initialUserMemoryUsage;
+IThread* IThread::pSleepHead = nullptr;
+uint64 IThread::timeSliceCounter = 0;
 
-void Thread::signalDone()
+IThread* IThread::pRunning = nullptr;
+uint64** IThread::pRunningSp = nullptr;
+uint64 IThread::nrTotalThreads = 1;
+IThread* IThread::pAllThreads[MAX_NR_TOTAL_THREADS];
+uint64 IThread::initialUserMemoryUsage;
+//uint64* IThread::runningSp = nullptr;
+bool IThread::switchedToUserThread = 0;
+
+void IThread::signalDone()
 {
-    Thread* pCur = pWaitingHead;
+    IThread* pCur = pWaitingHead;
 
     while(pCur)
     {
@@ -24,13 +26,13 @@ void Thread::signalDone()
     }
 }
 
-void Thread::join(uint64 id)
+void IThread::join(uint64 id)
 {
-    Thread* oldRunning = Thread::getPRunning();
+    IThread* oldRunning = IThread::getPRunning();
 
-    Thread* t = pAllThreads[id];
+    IThread* t = pAllThreads[id];
 
-    extern Thread kernelThread;
+    extern IThread kernelThread;
     assert(oldRunning != &kernelThread); // you're only supposed to open user threads with system call with code 4
 
 //    putU64(id);
@@ -44,7 +46,7 @@ void Thread::join(uint64 id)
     }
     else
     {
-        Thread* pCur = t->pWaitingHead;
+        IThread* pCur = t->pWaitingHead;
         while(pCur->pNext)
         {
             pCur = pCur->pNext;
@@ -59,7 +61,7 @@ void Thread::join(uint64 id)
     Scheduler::dispatchToNext();
 }
 
-void Thread::switchToUser()
+void IThread::switchToUser()
 {
     uint64 scause;
     __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
@@ -68,15 +70,15 @@ void Thread::switchToUser()
     if(!cameFromKernelMode) // if user thread calls this it does nothing
     {
         assert(false); // temp
-        assert(Thread::pRunning->id != 0);
+        assert(IThread::pRunning->id != 0);
         return;
     }
 
-    assert(Thread::pRunning->id == 0);
+    assert(IThread::pRunning->id == 0);
 
     Scheduler::dispatchToNext();
 
-    assert(Thread::getPRunning()->id == 1);
+    assert(IThread::getPRunning()->id == 1);
 
 //    __asm__ volatile ("csrs sstatus, 0x6"); // TODO: probably should be removed when i add permissions
 //    __asm__ volatile ("mv x10, x10");
@@ -89,17 +91,17 @@ void Thread::switchToUser()
 //    __asm__ volatile ("csrw sstatus, 0"); // TODO: radi preko csrc jer ovako menjam sve
 }
 
-void Thread::setPRunning(Thread* p)
+void IThread::setPRunning(IThread* p)
 {
     pRunning = p;
     pRunningSp = &(p->sp);
 }
 
-int Thread::createThread(uint64* id, Body body, void* arg)
+int IThread::createThread(uint64* id, Body body, void* arg)
 {
     assert(nrTotalThreads < MAX_NR_TOTAL_THREADS);
 
-    Thread* t = (Thread*)MemAlloc::get()->allocMem(sizeof(Thread));
+    IThread* t = (IThread*)MemAlloc::get()->allocMem(sizeof(IThread));
     pAllThreads[nrTotalThreads] = t;
 
     t->pStackStart = nullptr;
@@ -114,13 +116,13 @@ int Thread::createThread(uint64* id, Body body, void* arg)
     return 0;
 }
 
-Thread* Thread::getPRunning()
+IThread* IThread::getPRunning()
 {
     __asm__ volatile("mv x10, x10"); // to avoid inline
     return pRunning;
 }
 
-void* Thread::allocStack()
+void* IThread::allocStack()
 {
     assert(pStackStart == nullptr); // error: this threads stack may have already been allocated
 
@@ -138,13 +140,13 @@ void* Thread::allocStack()
 
 }
 
-void wrapper(uint64 __DO_NOT_USE, Thread::Body body, void* arg) // this entire function can be run from USER thread
+void wrapper(uint64 __DO_NOT_USE, IThread::Body body, void* arg) // this entire function can be run from USER thread
 {
     (*body)(arg);
     thread_exit();
 }
 
-void Thread::init(Body body, void* arg, void* pLogicalStack) // this is used as a "constructor", except for kernel thread
+void IThread::init(Body body, void* arg, void* pLogicalStack) // this is used as a "constructor", except for kernel thread
 {
     assert(nrTotalThreads < MAX_NR_TOTAL_THREADS);
     id = nrTotalThreads;
@@ -175,9 +177,9 @@ void Thread::init(Body body, void* arg, void* pLogicalStack) // this is used as 
     state = READY;
 }
 
-int Thread::exit()
+int IThread::exit()
 {
-    Thread* t = Thread::getPRunning();
+    IThread* t = IThread::getPRunning();
     assert(t->state == RUNNING);
     assert(t->done == false);
     t->done = true;
@@ -192,10 +194,10 @@ int Thread::exit()
         putString("=== NO MORE THREADS EXIST. RETURNING TO KERNEL THREAD");
         putNewline();
 
-        extern Thread kernelThread;
+        extern IThread kernelThread;
         assert(pAllThreads[0] == &kernelThread);
         pAllThreads[0]->state = READY;
-        Scheduler::put(Thread::pAllThreads[0]);
+        Scheduler::put(IThread::pAllThreads[0]);
 
         // ovo je nesto pogresno
 //        __asm__ volatile ("csrc sstatus, 0x6"); // set spie bit to 1. spie signifies that we dont want to mask external interrupts after sret

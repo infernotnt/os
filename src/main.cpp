@@ -1,44 +1,27 @@
 #include "../h/alloc.h"
-#include "../h/c_api.h"
+#include "../h/syscall_c.hpp"
 #include "../h/thread.h"
-#include "../h/c_api.h"
 #include "../h/scheduler.h"
 #include "../h/0_console.h"
 
 extern "C" void trapRoutine();
 
 void myUserMain();
-//void userMain();
 void doInitialAsserts();
 void initInterruptVector();
 
 uint64 fib(uint64 n);
-void testAsyncCall();
 
-Thread kernelThread;
-char kernelStack[ACTUAL_STACK_SIZE + 16];
+IThread kernelThread;
 
 void userWrapper(void* p)
 {
     assert(p == nullptr);
-    assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
+    assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 
     enableExternalInterrupts();
 
     myUserMain();
-
-//    for(int i=0; i<10; i++)
-//    {
-//        Console::get()->putc(i + '0');
-//
-//        Console::get()->putc(' ');
-//        Console::get()->putc('b');
-//        Console::get()->putc('a');
-//        Console::get()->putc('b');
-//        Console::get()->putc('a');
-//
-//        Console::get()->putc('\n');
-//    }
 }
 
 int main()
@@ -51,20 +34,20 @@ int main()
     uint64* sp;
     __asm__ volatile ("mv %[name], sp" : [name] "=r"(sp));
     kernelThread.sp = sp;
-    Thread::setPRunning(&kernelThread);
-    assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
+    IThread::setPRunning(&kernelThread);
+    assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
     kernelThread.id = 0;
-    Thread::pAllThreads[0] = &kernelThread;
+    IThread::pAllThreads[0] = &kernelThread;
 
     thread_t t;
     thread_create(&t, &userWrapper, nullptr);
 
-    Thread::initialUserMemoryUsage = MemAlloc::get()->getUserlandUsage();
+    IThread::initialUserMemoryUsage = MemAlloc::get()->getUserlandUsage();
 
     plic_claim();
     plic_complete(10);
 
-    __asm__ volatile ("li a0, 4"); // this is a system call that calls Thread::switchToUser()
+    __asm__ volatile ("li a0, 4"); // this is a system call that calls IThread::switchToUser()
     __asm__ volatile ("ecall");
 
     __asm__ volatile ("csrw sscratch, x0"); //TEST permissions
@@ -91,7 +74,6 @@ void doC(void* p)
 
 void testAsyncCall()
 {
-    enableExternalInterrupts();
 
     assert(MemAlloc::get()->getUserlandUsage() == 0);
 
@@ -105,7 +87,7 @@ void testAsyncCall()
 //    thread_create(&b, doB, &argB);
     thread_dispatch();
 
-//    assert(Thread::pAllThreads[a]->id == Thread::pAllThreads[b]->id-1);
+//    assert(IThread::pAllThreads[a]->id == IThread::pAllThreads[b]->id-1);
     assert(MemAlloc::get()->getUserlandUsage() == 0);
 }
 
@@ -116,7 +98,7 @@ void doInitialAsserts()
     assert(DEFAULT_STACK_SIZE == 4096);
     assert(DEFAULT_TIME_SLICE == 2);
     assert(sizeof(char) == 1);
-    assert(sizeof(Thread) < 1000);
+    assert(sizeof(IThread) < 1000);
     assert(sizeof(int) == 4);
     assert(sizeof(uint64) == 8);
 }
@@ -130,4 +112,66 @@ void initInterruptVector()
 // set MODE to 1 - vector mode
     __asm__ volatile ("csrs stvec, 0x1");
     __asm__ volatile ("csrc stvec, 0x2");
+}
+
+
+void consoleStuff(void* p)
+{
+    assert(false);
+
+    assert(p == nullptr);
+
+    IConsole* cons = IConsole::get();
+
+    while(true)
+    {
+        thread_dispatch();
+
+        bool readyWrite = false;
+        bool readyRead = false;
+
+//        int a = plic_claim();
+//
+//        if (a == 0)
+//            continue;
+//
+//        assert(a == 10);
+
+        if (((*((char *) CONSOLE_STATUS)) & CONSOLE_TX_STATUS_BIT) != 0) {
+            readyWrite = true;
+            if (cons->putBufferItems > 0)
+            {
+                int a = plic_claim();
+
+                char output = cons->putBuffer[cons->putBufferTail];
+                *((char *) CONSOLE_TX_DATA) = output;
+
+                __asm__ volatile ("mv x10, x10");
+                assert(a == 10);
+
+                cons->putBufferItems--;
+                cons->putBufferTail = (cons->putBufferTail + 1) % BUFFER_SIZE;
+            }
+        }
+
+        if (((*((char *) CONSOLE_STATUS)) & CONSOLE_RX_STATUS_BIT) != 0)
+        {
+            assert(false);
+            assert(cons->getBufferItems < BUFFER_SIZE - 1);
+
+            readyRead = true;
+            char c = *((char *) CONSOLE_TX_DATA); // ovde nista ne radim zapravo, samo retriev-ujem karakter
+
+            cons->getBuffer[cons->getBufferHead] = c;
+
+            cons->getBufferHead = (cons->getBufferHead + 1) % BUFFER_SIZE;
+            cons->getBufferItems++;
+        }
+
+        __asm__ volatile ("mv x10, x10");
+
+        plic_complete(10);
+
+        assert(readyRead || readyWrite);
+    }
 }

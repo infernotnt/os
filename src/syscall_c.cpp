@@ -1,7 +1,8 @@
-#include "../h/c_api.h"
+#include "../h/syscall_c.hpp"
 #include "../h/my_console.h"
 #include "../h/thread.h"
 #include "../h/0_console.h"
+#include "../lib/console.h"
 
 uint64 fib(uint64);
 
@@ -115,7 +116,8 @@ uint64 test_call(uint64 n)
 
 char getc()
 {
-    return helperRet8(0x41);
+//    return __getc();
+    return 'a';
 }
 
 void putc(char c)
@@ -124,5 +126,7 @@ void putc(char c)
 //    *((char*)(&a)) = c;
 //
 //    helperP164(0x42, a);
-    Console::get()->putc(c);
+
+//    __putc(c);
+    IConsole::get()->putc(c);
 }

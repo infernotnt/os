@@ -1,0 +1,1327 @@
+GAS LISTING /tmp/ccy8svc6.s 			page 1
+
+
+   1              		.file	"syscall_c.cpp"
+   2              		.option pic
+   3              		.option norelax
+   4              		.text
+   5              	.Ltext0:
+   6              		.align	2
+   8              	_ZL15helperRet64P164mm:
+   9              	.LFB11:
+  10              		.file 1 "src/syscall_c.cpp"
+   1:src/syscall_c.cpp **** #include "../h/syscall_c.hpp"
+   2:src/syscall_c.cpp **** #include "../h/my_console.h"
+   3:src/syscall_c.cpp **** #include "../h/thread.h"
+   4:src/syscall_c.cpp **** #include "../h/0_console.h"
+   5:src/syscall_c.cpp **** #include "../lib/console.h"
+   6:src/syscall_c.cpp **** 
+   7:src/syscall_c.cpp **** uint64 fib(uint64);
+   8:src/syscall_c.cpp **** 
+   9:src/syscall_c.cpp **** char helperRet8(uint64 code)
+  10:src/syscall_c.cpp **** {
+  11:src/syscall_c.cpp **** 
+  12:src/syscall_c.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
+  13:src/syscall_c.cpp **** 
+  14:src/syscall_c.cpp ****     __asm__ volatile ("ecall");
+  15:src/syscall_c.cpp **** 
+  16:src/syscall_c.cpp ****     uint64 ret;
+  17:src/syscall_c.cpp ****     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+  18:src/syscall_c.cpp **** 
+  19:src/syscall_c.cpp ****     return *((char*)&ret);
+  20:src/syscall_c.cpp **** }
+  21:src/syscall_c.cpp **** 
+  22:src/syscall_c.cpp **** void helperP164(uint64 code, uint64 parameter1)
+  23:src/syscall_c.cpp **** {
+  24:src/syscall_c.cpp ****     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+  25:src/syscall_c.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
+  26:src/syscall_c.cpp **** 
+  27:src/syscall_c.cpp ****     __asm__ volatile ("ecall");
+  28:src/syscall_c.cpp **** }
+  29:src/syscall_c.cpp **** 
+  30:src/syscall_c.cpp **** int helperRet32P164P264P364(uint64 code, uint64 parameter1, uint64 parameter2, uint64 parameter3)
+  31:src/syscall_c.cpp **** {
+  32:src/syscall_c.cpp ****     __asm__ volatile ("mv a3, %[name]" : : [name] "r" (parameter3));
+  33:src/syscall_c.cpp ****     __asm__ volatile ("mv a2, %[name]" : : [name] "r" (parameter2));
+  34:src/syscall_c.cpp ****     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+  35:src/syscall_c.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
+  36:src/syscall_c.cpp **** 
+  37:src/syscall_c.cpp ****     __asm__ volatile ("ecall");
+  38:src/syscall_c.cpp **** 
+  39:src/syscall_c.cpp ****     __asm__ volatile("mv x10, x10"); // temp
+  40:src/syscall_c.cpp **** 
+  41:src/syscall_c.cpp ****     uint64 ret;
+  42:src/syscall_c.cpp ****     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+  43:src/syscall_c.cpp **** 
+  44:src/syscall_c.cpp ****     return *((int*)&ret);
+  45:src/syscall_c.cpp **** }
+  46:src/syscall_c.cpp **** 
+  47:src/syscall_c.cpp **** static uint64 helperRet64P164(uint64 code, uint64 parameter1) // returns 64bit and takes a 64bit pa
+  48:src/syscall_c.cpp **** {
+GAS LISTING /tmp/ccy8svc6.s 			page 2
+
+
+  11              		.loc 1 48 1
+  12              		.cfi_startproc
+  13              	.LVL0:
+  14 0000 130101FF 		addi	sp,sp,-16
+  15              		.cfi_def_cfa_offset 16
+  16 0004 23348100 		sd	s0,8(sp)
+  17              		.cfi_offset 8, -8
+  18 0008 13040101 		addi	s0,sp,16
+  19              		.cfi_def_cfa 8, 0
+  49:src/syscall_c.cpp ****     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+  20              		.loc 1 49 5
+  21              		.loc 1 49 68 is_stmt 0
+  22              	#APP
+  23              	# 49 "src/syscall_c.cpp" 1
+  50              	    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
+  24              		mv a1, a1
+  25              	# 0 "" 2
+  26              		.loc 1 50 5 is_stmt 1
+  27              		.loc 1 50 62 is_stmt 0
+  28              	# 50 "src/syscall_c.cpp" 1
+  51              	
+  52:src/syscall_c.cpp ****     __asm__ volatile ("ecall");
+  29              		mv a0, a0
+  30              	# 0 "" 2
+  31              		.loc 1 52 5 is_stmt 1
+  32              		.loc 1 52 31 is_stmt 0
+  33              	# 52 "src/syscall_c.cpp" 1
+  53              	
+  54:src/syscall_c.cpp ****     __asm__ volatile ("mv x10, x10");
+  34              		ecall
+  35              	# 0 "" 2
+  36              		.loc 1 54 5 is_stmt 1
+  37              		.loc 1 54 37 is_stmt 0
+  38              	# 54 "src/syscall_c.cpp" 1
+  55              	
+  56:src/syscall_c.cpp ****     uint64 ret;
+  39              		mv x10, x10
+  40              	# 0 "" 2
+  41              		.loc 1 56 5 is_stmt 1
+  57:src/syscall_c.cpp ****     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+  42              		.loc 1 57 5
+  43              		.loc 1 57 59 is_stmt 0
+  44              	# 57 "src/syscall_c.cpp" 1
+  58              	
+  45              		mv a0, a0
+  46              	# 0 "" 2
+  47              	.LVL1:
+  59:src/syscall_c.cpp ****     return ret;
+  48              		.loc 1 59 5 is_stmt 1
+  60:src/syscall_c.cpp **** }
+  49              		.loc 1 60 1 is_stmt 0
+  50              	#NO_APP
+  51 0020 03348100 		ld	s0,8(sp)
+  52              		.cfi_restore 8
+  53              		.cfi_def_cfa 2, 16
+  54 0024 13010101 		addi	sp,sp,16
+  55              		.cfi_def_cfa_offset 0
+GAS LISTING /tmp/ccy8svc6.s 			page 3
+
+
+  56 0028 67800000 		jr	ra
+  57              		.cfi_endproc
+  58              	.LFE11:
+  60              		.align	2
+  62              	_ZL11helperRet32m:
+  63              	.LFB12:
+  61:src/syscall_c.cpp **** 
+  62:src/syscall_c.cpp **** static int helperRet32(uint64 code) // returns 64bit and takes no params
+  63:src/syscall_c.cpp **** {
+  64              		.loc 1 63 1 is_stmt 1
+  65              		.cfi_startproc
+  66              	.LVL2:
+  67 002c 130101FF 		addi	sp,sp,-16
+  68              		.cfi_def_cfa_offset 16
+  69 0030 23348100 		sd	s0,8(sp)
+  70              		.cfi_offset 8, -8
+  71 0034 13040101 		addi	s0,sp,16
+  72              		.cfi_def_cfa 8, 0
+  64:src/syscall_c.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code));
+  73              		.loc 1 64 5
+  74              		.loc 1 64 62 is_stmt 0
+  75              	#APP
+  76              	# 64 "src/syscall_c.cpp" 1
+  65              	
+  66:src/syscall_c.cpp ****     __asm__ volatile ("ecall");
+  77              		mv a0, a0
+  78              	# 0 "" 2
+  79              		.loc 1 66 5 is_stmt 1
+  80              		.loc 1 66 31 is_stmt 0
+  81              	# 66 "src/syscall_c.cpp" 1
+  67              	
+  68:src/syscall_c.cpp ****     uint64 ret;
+  82              		ecall
+  83              	# 0 "" 2
+  84              		.loc 1 68 5 is_stmt 1
+  69:src/syscall_c.cpp ****     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+  85              		.loc 1 69 5
+  86              		.loc 1 69 59 is_stmt 0
+  87              	# 69 "src/syscall_c.cpp" 1
+  70              	
+  88              		mv a0, a0
+  89              	# 0 "" 2
+  90              	.LVL3:
+  71:src/syscall_c.cpp ****     return *((int*)&ret);
+  91              		.loc 1 71 5 is_stmt 1
+  72:src/syscall_c.cpp **** }
+  92              		.loc 1 72 1 is_stmt 0
+  93              	#NO_APP
+  94 0044 1B050500 		sext.w	a0,a0
+  95 0048 03348100 		ld	s0,8(sp)
+  96              		.cfi_restore 8
+  97              		.cfi_def_cfa 2, 16
+  98 004c 13010101 		addi	sp,sp,16
+  99              		.cfi_def_cfa_offset 0
+ 100 0050 67800000 		jr	ra
+ 101              		.cfi_endproc
+ 102              	.LFE12:
+GAS LISTING /tmp/ccy8svc6.s 			page 4
+
+
+ 104              		.align	2
+ 106              	_ZL6helperm:
+ 107              	.LFB13:
+  73:src/syscall_c.cpp **** 
+  74:src/syscall_c.cpp **** static void helper(uint64 code) // returns nothing and takes no parameters (eg thread_dispatch)
+  75:src/syscall_c.cpp **** {
+ 108              		.loc 1 75 1 is_stmt 1
+ 109              		.cfi_startproc
+ 110              	.LVL4:
+ 111 0054 130101FF 		addi	sp,sp,-16
+ 112              		.cfi_def_cfa_offset 16
+ 113 0058 23348100 		sd	s0,8(sp)
+ 114              		.cfi_offset 8, -8
+ 115 005c 13040101 		addi	s0,sp,16
+ 116              		.cfi_def_cfa 8, 0
+  76:src/syscall_c.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code));
+ 117              		.loc 1 76 5
+ 118              		.loc 1 76 62 is_stmt 0
+ 119              	#APP
+ 120              	# 76 "src/syscall_c.cpp" 1
+  77              	    __asm__ volatile ("ecall");
+ 121              		mv a0, a0
+ 122              	# 0 "" 2
+ 123              		.loc 1 77 5 is_stmt 1
+ 124              		.loc 1 77 31 is_stmt 0
+ 125              	# 77 "src/syscall_c.cpp" 1
+  78              	
+  79:src/syscall_c.cpp ****     __asm__ volatile ("mv x10, x10");
+ 126              		ecall
+ 127              	# 0 "" 2
+ 128              		.loc 1 79 5 is_stmt 1
+ 129              		.loc 1 79 37 is_stmt 0
+ 130              	# 79 "src/syscall_c.cpp" 1
+  80              	}
+ 131              		mv x10, x10
+ 132              	# 0 "" 2
+ 133              		.loc 1 80 1
+ 134              	#NO_APP
+ 135 006c 03348100 		ld	s0,8(sp)
+ 136              		.cfi_restore 8
+ 137              		.cfi_def_cfa 2, 16
+ 138 0070 13010101 		addi	sp,sp,16
+ 139              		.cfi_def_cfa_offset 0
+ 140 0074 67800000 		jr	ra
+ 141              		.cfi_endproc
+ 142              	.LFE13:
+ 144              		.align	2
+ 145              		.globl	_Z10helperRet8m
+ 147              	_Z10helperRet8m:
+ 148              	.LFB8:
+  10:src/syscall_c.cpp **** 
+ 149              		.loc 1 10 1 is_stmt 1
+ 150              		.cfi_startproc
+ 151              	.LVL5:
+ 152 0078 130101FF 		addi	sp,sp,-16
+ 153              		.cfi_def_cfa_offset 16
+ 154 007c 23348100 		sd	s0,8(sp)
+GAS LISTING /tmp/ccy8svc6.s 			page 5
+
+
+ 155              		.cfi_offset 8, -8
+ 156 0080 13040101 		addi	s0,sp,16
+ 157              		.cfi_def_cfa 8, 0
+  12:src/syscall_c.cpp **** 
+ 158              		.loc 1 12 5
+  12:src/syscall_c.cpp **** 
+ 159              		.loc 1 12 62 is_stmt 0
+ 160              	#APP
+ 161              	# 12 "src/syscall_c.cpp" 1
+  14:src/syscall_c.cpp **** 
+ 162              		mv a0, a0
+ 163              	# 0 "" 2
+ 164              		.loc 1 14 5 is_stmt 1
+  14:src/syscall_c.cpp **** 
+ 165              		.loc 1 14 31 is_stmt 0
+ 166              	# 14 "src/syscall_c.cpp" 1
+  16:src/syscall_c.cpp ****     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+ 167              		ecall
+ 168              	# 0 "" 2
+ 169              		.loc 1 16 5 is_stmt 1
+  17:src/syscall_c.cpp **** 
+ 170              		.loc 1 17 5
+  17:src/syscall_c.cpp **** 
+ 171              		.loc 1 17 59 is_stmt 0
+ 172              	# 17 "src/syscall_c.cpp" 1
+ 173              		mv a0, a0
+ 174              	# 0 "" 2
+ 175              	.LVL6:
+  19:src/syscall_c.cpp **** }
+ 176              		.loc 1 19 5 is_stmt 1
+  20:src/syscall_c.cpp **** 
+ 177              		.loc 1 20 1 is_stmt 0
+ 178              	#NO_APP
+ 179 0090 1375F50F 		andi	a0,a0,0xff
+ 180 0094 03348100 		ld	s0,8(sp)
+ 181              		.cfi_restore 8
+ 182              		.cfi_def_cfa 2, 16
+ 183 0098 13010101 		addi	sp,sp,16
+ 184              		.cfi_def_cfa_offset 0
+ 185 009c 67800000 		jr	ra
+ 186              		.cfi_endproc
+ 187              	.LFE8:
+ 189              		.align	2
+ 190              		.globl	_Z10helperP164mm
+ 192              	_Z10helperP164mm:
+ 193              	.LFB9:
+  23:src/syscall_c.cpp ****     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+ 194              		.loc 1 23 1 is_stmt 1
+ 195              		.cfi_startproc
+ 196              	.LVL7:
+ 197 00a0 130101FF 		addi	sp,sp,-16
+ 198              		.cfi_def_cfa_offset 16
+ 199 00a4 23348100 		sd	s0,8(sp)
+ 200              		.cfi_offset 8, -8
+ 201 00a8 13040101 		addi	s0,sp,16
+ 202              		.cfi_def_cfa 8, 0
+  24:src/syscall_c.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
+GAS LISTING /tmp/ccy8svc6.s 			page 6
+
+
+ 203              		.loc 1 24 5
+  24:src/syscall_c.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
+ 204              		.loc 1 24 68 is_stmt 0
+ 205              	#APP
+ 206              	# 24 "src/syscall_c.cpp" 1
+  25:src/syscall_c.cpp **** 
+ 207              		mv a1, a1
+ 208              	# 0 "" 2
+ 209              		.loc 1 25 5 is_stmt 1
+  25:src/syscall_c.cpp **** 
+ 210              		.loc 1 25 62 is_stmt 0
+ 211              	# 25 "src/syscall_c.cpp" 1
+  27:src/syscall_c.cpp **** }
+ 212              		mv a0, a0
+ 213              	# 0 "" 2
+ 214              		.loc 1 27 5 is_stmt 1
+  27:src/syscall_c.cpp **** }
+ 215              		.loc 1 27 31 is_stmt 0
+ 216              	# 27 "src/syscall_c.cpp" 1
+  28:src/syscall_c.cpp **** 
+ 217              		ecall
+ 218              	# 0 "" 2
+ 219              		.loc 1 28 1
+ 220              	#NO_APP
+ 221 00b8 03348100 		ld	s0,8(sp)
+ 222              		.cfi_restore 8
+ 223              		.cfi_def_cfa 2, 16
+ 224 00bc 13010101 		addi	sp,sp,16
+ 225              		.cfi_def_cfa_offset 0
+ 226 00c0 67800000 		jr	ra
+ 227              		.cfi_endproc
+ 228              	.LFE9:
+ 230              		.align	2
+ 231              		.globl	_Z23helperRet32P164P264P364mmmm
+ 233              	_Z23helperRet32P164P264P364mmmm:
+ 234              	.LFB10:
+  31:src/syscall_c.cpp ****     __asm__ volatile ("mv a3, %[name]" : : [name] "r" (parameter3));
+ 235              		.loc 1 31 1 is_stmt 1
+ 236              		.cfi_startproc
+ 237              	.LVL8:
+ 238 00c4 130101FF 		addi	sp,sp,-16
+ 239              		.cfi_def_cfa_offset 16
+ 240 00c8 23348100 		sd	s0,8(sp)
+ 241              		.cfi_offset 8, -8
+ 242 00cc 13040101 		addi	s0,sp,16
+ 243              		.cfi_def_cfa 8, 0
+  32:src/syscall_c.cpp ****     __asm__ volatile ("mv a2, %[name]" : : [name] "r" (parameter2));
+ 244              		.loc 1 32 5
+  32:src/syscall_c.cpp ****     __asm__ volatile ("mv a2, %[name]" : : [name] "r" (parameter2));
+ 245              		.loc 1 32 68 is_stmt 0
+ 246              	#APP
+ 247              	# 32 "src/syscall_c.cpp" 1
+  33:src/syscall_c.cpp ****     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+ 248              		mv a3, a3
+ 249              	# 0 "" 2
+ 250              		.loc 1 33 5 is_stmt 1
+  33:src/syscall_c.cpp ****     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+GAS LISTING /tmp/ccy8svc6.s 			page 7
+
+
+ 251              		.loc 1 33 68 is_stmt 0
+ 252              	# 33 "src/syscall_c.cpp" 1
+  34:src/syscall_c.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
+ 253              		mv a2, a2
+ 254              	# 0 "" 2
+ 255              		.loc 1 34 5 is_stmt 1
+  34:src/syscall_c.cpp ****     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be
+ 256              		.loc 1 34 68 is_stmt 0
+ 257              	# 34 "src/syscall_c.cpp" 1
+  35:src/syscall_c.cpp **** 
+ 258              		mv a1, a1
+ 259              	# 0 "" 2
+ 260              		.loc 1 35 5 is_stmt 1
+  35:src/syscall_c.cpp **** 
+ 261              		.loc 1 35 62 is_stmt 0
+ 262              	# 35 "src/syscall_c.cpp" 1
+  37:src/syscall_c.cpp **** 
+ 263              		mv a0, a0
+ 264              	# 0 "" 2
+ 265              		.loc 1 37 5 is_stmt 1
+  37:src/syscall_c.cpp **** 
+ 266              		.loc 1 37 31 is_stmt 0
+ 267              	# 37 "src/syscall_c.cpp" 1
+  39:src/syscall_c.cpp **** 
+ 268              		ecall
+ 269              	# 0 "" 2
+ 270              		.loc 1 39 5 is_stmt 1
+  39:src/syscall_c.cpp **** 
+ 271              		.loc 1 39 36 is_stmt 0
+ 272              	# 39 "src/syscall_c.cpp" 1
+  41:src/syscall_c.cpp ****     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+ 273              		mv x10, x10
+ 274              	# 0 "" 2
+ 275              		.loc 1 41 5 is_stmt 1
+  42:src/syscall_c.cpp **** 
+ 276              		.loc 1 42 5
+  42:src/syscall_c.cpp **** 
+ 277              		.loc 1 42 59 is_stmt 0
+ 278              	# 42 "src/syscall_c.cpp" 1
+ 279              		mv a0, a0
+ 280              	# 0 "" 2
+ 281              	.LVL9:
+  44:src/syscall_c.cpp **** }
+ 282              		.loc 1 44 5 is_stmt 1
+  45:src/syscall_c.cpp **** 
+ 283              		.loc 1 45 1 is_stmt 0
+ 284              	#NO_APP
+ 285 00ec 1B050500 		sext.w	a0,a0
+ 286 00f0 03348100 		ld	s0,8(sp)
+ 287              		.cfi_restore 8
+ 288              		.cfi_def_cfa 2, 16
+ 289 00f4 13010101 		addi	sp,sp,16
+ 290              		.cfi_def_cfa_offset 0
+ 291 00f8 67800000 		jr	ra
+ 292              		.cfi_endproc
+ 293              	.LFE10:
+ 295              		.align	2
+GAS LISTING /tmp/ccy8svc6.s 			page 8
+
+
+ 296              		.globl	_Z9mem_allocm
+ 298              	_Z9mem_allocm:
+ 299              	.LFB14:
+  81:src/syscall_c.cpp **** 
+  82:src/syscall_c.cpp **** void* mem_alloc(size_t size)
+  83:src/syscall_c.cpp **** {
+ 300              		.loc 1 83 1 is_stmt 1
+ 301              		.cfi_startproc
+ 302              	.LVL10:
+ 303 00fc 130101FF 		addi	sp,sp,-16
+ 304              		.cfi_def_cfa_offset 16
+ 305 0100 23341100 		sd	ra,8(sp)
+ 306 0104 23308100 		sd	s0,0(sp)
+ 307              		.cfi_offset 1, -8
+ 308              		.cfi_offset 8, -16
+ 309 0108 13040101 		addi	s0,sp,16
+ 310              		.cfi_def_cfa 8, 0
+ 311 010c 93050500 		mv	a1,a0
+  84:src/syscall_c.cpp ****     return (void*) helperRet64P164(1, size);
+ 312              		.loc 1 84 5
+ 313              		.loc 1 84 35 is_stmt 0
+ 314 0110 13051000 		li	a0,1
+ 315              	.LVL11:
+ 316 0114 97000000 		call	_ZL15helperRet64P164mm
+ 316      E7800000 
+ 317              	.LVL12:
+  85:src/syscall_c.cpp **** }
+ 318              		.loc 1 85 1
+ 319 011c 83308100 		ld	ra,8(sp)
+ 320              		.cfi_restore 1
+ 321 0120 03340100 		ld	s0,0(sp)
+ 322              		.cfi_restore 8
+ 323              		.cfi_def_cfa 2, 16
+ 324 0124 13010101 		addi	sp,sp,16
+ 325              		.cfi_def_cfa_offset 0
+ 326 0128 67800000 		jr	ra
+ 327              		.cfi_endproc
+ 328              	.LFE14:
+ 330              		.align	2
+ 331              		.globl	_Z8mem_freePv
+ 333              	_Z8mem_freePv:
+ 334              	.LFB15:
+  86:src/syscall_c.cpp **** 
+  87:src/syscall_c.cpp **** int mem_free(void* ptr)
+  88:src/syscall_c.cpp **** {
+ 335              		.loc 1 88 1 is_stmt 1
+ 336              		.cfi_startproc
+ 337              	.LVL13:
+ 338 012c 130101FF 		addi	sp,sp,-16
+ 339              		.cfi_def_cfa_offset 16
+ 340 0130 23341100 		sd	ra,8(sp)
+ 341 0134 23308100 		sd	s0,0(sp)
+ 342              		.cfi_offset 1, -8
+ 343              		.cfi_offset 8, -16
+ 344 0138 13040101 		addi	s0,sp,16
+ 345              		.cfi_def_cfa 8, 0
+ 346 013c 93050500 		mv	a1,a0
+GAS LISTING /tmp/ccy8svc6.s 			page 9
+
+
+  89:src/syscall_c.cpp ****     return helperRet64P164(2, (uint64) ptr);
+ 347              		.loc 1 89 5
+ 348              		.loc 1 89 27 is_stmt 0
+ 349 0140 13052000 		li	a0,2
+ 350              	.LVL14:
+ 351 0144 97000000 		call	_ZL15helperRet64P164mm
+ 351      E7800000 
+ 352              	.LVL15:
+  90:src/syscall_c.cpp **** }
+ 353              		.loc 1 90 1
+ 354 014c 1B050500 		sext.w	a0,a0
+ 355 0150 83308100 		ld	ra,8(sp)
+ 356              		.cfi_restore 1
+ 357 0154 03340100 		ld	s0,0(sp)
+ 358              		.cfi_restore 8
+ 359              		.cfi_def_cfa 2, 16
+ 360 0158 13010101 		addi	sp,sp,16
+ 361              		.cfi_def_cfa_offset 0
+ 362 015c 67800000 		jr	ra
+ 363              		.cfi_endproc
+ 364              	.LFE15:
+ 366              		.align	2
+ 367              		.globl	_Z15thread_dispatchv
+ 369              	_Z15thread_dispatchv:
+ 370              	.LFB16:
+  91:src/syscall_c.cpp **** 
+  92:src/syscall_c.cpp **** void thread_dispatch() // WARNING: different than Scheduler::dispatchToNext()
+  93:src/syscall_c.cpp **** {
+ 371              		.loc 1 93 1 is_stmt 1
+ 372              		.cfi_startproc
+ 373 0160 130101FF 		addi	sp,sp,-16
+ 374              		.cfi_def_cfa_offset 16
+ 375 0164 23341100 		sd	ra,8(sp)
+ 376 0168 23308100 		sd	s0,0(sp)
+ 377              		.cfi_offset 1, -8
+ 378              		.cfi_offset 8, -16
+ 379 016c 13040101 		addi	s0,sp,16
+ 380              		.cfi_def_cfa 8, 0
+  94:src/syscall_c.cpp ****     helper(0x13);
+ 381              		.loc 1 94 5
+ 382              		.loc 1 94 11 is_stmt 0
+ 383 0170 13053001 		li	a0,19
+ 384 0174 97000000 		call	_ZL6helperm
+ 384      E7800000 
+ 385              	.LVL16:
+  95:src/syscall_c.cpp **** }
+ 386              		.loc 1 95 1
+ 387 017c 83308100 		ld	ra,8(sp)
+ 388              		.cfi_restore 1
+ 389 0180 03340100 		ld	s0,0(sp)
+ 390              		.cfi_restore 8
+ 391              		.cfi_def_cfa 2, 16
+ 392 0184 13010101 		addi	sp,sp,16
+ 393              		.cfi_def_cfa_offset 0
+ 394 0188 67800000 		jr	ra
+ 395              		.cfi_endproc
+ 396              	.LFE16:
+GAS LISTING /tmp/ccy8svc6.s 			page 10
+
+
+ 398              		.align	2
+ 399              		.globl	_Z11thread_exitv
+ 401              	_Z11thread_exitv:
+ 402              	.LFB17:
+  96:src/syscall_c.cpp **** 
+  97:src/syscall_c.cpp **** int thread_exit()
+  98:src/syscall_c.cpp **** {
+ 403              		.loc 1 98 1 is_stmt 1
+ 404              		.cfi_startproc
+ 405 018c 130101FF 		addi	sp,sp,-16
+ 406              		.cfi_def_cfa_offset 16
+ 407 0190 23341100 		sd	ra,8(sp)
+ 408 0194 23308100 		sd	s0,0(sp)
+ 409              		.cfi_offset 1, -8
+ 410              		.cfi_offset 8, -16
+ 411 0198 13040101 		addi	s0,sp,16
+ 412              		.cfi_def_cfa 8, 0
+  99:src/syscall_c.cpp ****     return helperRet32(0x12);
+ 413              		.loc 1 99 5
+ 414              		.loc 1 99 23 is_stmt 0
+ 415 019c 13052001 		li	a0,18
+ 416 01a0 97000000 		call	_ZL11helperRet32m
+ 416      E7800000 
+ 417              	.LVL17:
+ 100:src/syscall_c.cpp **** }
+ 418              		.loc 1 100 1
+ 419 01a8 83308100 		ld	ra,8(sp)
+ 420              		.cfi_restore 1
+ 421 01ac 03340100 		ld	s0,0(sp)
+ 422              		.cfi_restore 8
+ 423              		.cfi_def_cfa 2, 16
+ 424 01b0 13010101 		addi	sp,sp,16
+ 425              		.cfi_def_cfa_offset 0
+ 426 01b4 67800000 		jr	ra
+ 427              		.cfi_endproc
+ 428              	.LFE17:
+ 430              		.align	2
+ 431              		.globl	_Z13thread_createPmPFvPvES0_
+ 433              	_Z13thread_createPmPFvPvES0_:
+ 434              	.LFB18:
+ 101:src/syscall_c.cpp **** 
+ 102:src/syscall_c.cpp **** int thread_create(thread_t* handle, void(*start_routine)(void*), void*arg)
+ 103:src/syscall_c.cpp **** {
+ 435              		.loc 1 103 1 is_stmt 1
+ 436              		.cfi_startproc
+ 437              	.LVL18:
+ 438 01b8 130101FF 		addi	sp,sp,-16
+ 439              		.cfi_def_cfa_offset 16
+ 440 01bc 23341100 		sd	ra,8(sp)
+ 441 01c0 23308100 		sd	s0,0(sp)
+ 442              		.cfi_offset 1, -8
+ 443              		.cfi_offset 8, -16
+ 444 01c4 13040101 		addi	s0,sp,16
+ 445              		.cfi_def_cfa 8, 0
+ 446 01c8 93060600 		mv	a3,a2
+ 104:src/syscall_c.cpp ****     return helperRet32P164P264P364(0x11, (uint64)handle, (uint64)start_routine, (uint64)arg);
+ 447              		.loc 1 104 5
+GAS LISTING /tmp/ccy8svc6.s 			page 11
+
+
+ 448              		.loc 1 104 35 is_stmt 0
+ 449 01cc 13860500 		mv	a2,a1
+ 450              	.LVL19:
+ 451 01d0 93050500 		mv	a1,a0
+ 452              	.LVL20:
+ 453 01d4 13051001 		li	a0,17
+ 454              	.LVL21:
+ 455 01d8 97000000 		call	_Z23helperRet32P164P264P364mmmm
+ 455      E7800000 
+ 456              	.LVL22:
+ 105:src/syscall_c.cpp **** }
+ 457              		.loc 1 105 1
+ 458 01e0 83308100 		ld	ra,8(sp)
+ 459              		.cfi_restore 1
+ 460 01e4 03340100 		ld	s0,0(sp)
+ 461              		.cfi_restore 8
+ 462              		.cfi_def_cfa 2, 16
+ 463 01e8 13010101 		addi	sp,sp,16
+ 464              		.cfi_def_cfa_offset 0
+ 465 01ec 67800000 		jr	ra
+ 466              		.cfi_endproc
+ 467              	.LFE18:
+ 469              		.align	2
+ 470              		.globl	_Z11thread_joinm
+ 472              	_Z11thread_joinm:
+ 473              	.LFB19:
+ 106:src/syscall_c.cpp **** 
+ 107:src/syscall_c.cpp **** void thread_join(thread_t handle)
+ 108:src/syscall_c.cpp **** {
+ 474              		.loc 1 108 1 is_stmt 1
+ 475              		.cfi_startproc
+ 476              	.LVL23:
+ 477 01f0 130101FF 		addi	sp,sp,-16
+ 478              		.cfi_def_cfa_offset 16
+ 479 01f4 23341100 		sd	ra,8(sp)
+ 480 01f8 23308100 		sd	s0,0(sp)
+ 481              		.cfi_offset 1, -8
+ 482              		.cfi_offset 8, -16
+ 483 01fc 13040101 		addi	s0,sp,16
+ 484              		.cfi_def_cfa 8, 0
+ 485 0200 93050500 		mv	a1,a0
+ 109:src/syscall_c.cpp ****     helperP164(0x14, handle);
+ 486              		.loc 1 109 5
+ 487              		.loc 1 109 15 is_stmt 0
+ 488 0204 13054001 		li	a0,20
+ 489              	.LVL24:
+ 490 0208 97000000 		call	_Z10helperP164mm
+ 490      E7800000 
+ 491              	.LVL25:
+ 110:src/syscall_c.cpp **** }
+ 492              		.loc 1 110 1
+ 493 0210 83308100 		ld	ra,8(sp)
+ 494              		.cfi_restore 1
+ 495 0214 03340100 		ld	s0,0(sp)
+ 496              		.cfi_restore 8
+ 497              		.cfi_def_cfa 2, 16
+ 498 0218 13010101 		addi	sp,sp,16
+GAS LISTING /tmp/ccy8svc6.s 			page 12
+
+
+ 499              		.cfi_def_cfa_offset 0
+ 500 021c 67800000 		jr	ra
+ 501              		.cfi_endproc
+ 502              	.LFE19:
+ 504              		.align	2
+ 505              		.globl	_Z9test_callm
+ 507              	_Z9test_callm:
+ 508              	.LFB20:
+ 111:src/syscall_c.cpp **** 
+ 112:src/syscall_c.cpp **** uint64 test_call(uint64 n)
+ 113:src/syscall_c.cpp **** {
+ 509              		.loc 1 113 1 is_stmt 1
+ 510              		.cfi_startproc
+ 511              	.LVL26:
+ 512 0220 130101FF 		addi	sp,sp,-16
+ 513              		.cfi_def_cfa_offset 16
+ 514 0224 23341100 		sd	ra,8(sp)
+ 515 0228 23308100 		sd	s0,0(sp)
+ 516              		.cfi_offset 1, -8
+ 517              		.cfi_offset 8, -16
+ 518 022c 13040101 		addi	s0,sp,16
+ 519              		.cfi_def_cfa 8, 0
+ 520 0230 93050500 		mv	a1,a0
+ 114:src/syscall_c.cpp ****     return helperRet64P164(3, n);
+ 521              		.loc 1 114 5
+ 522              		.loc 1 114 27 is_stmt 0
+ 523 0234 13053000 		li	a0,3
+ 524              	.LVL27:
+ 525 0238 97000000 		call	_ZL15helperRet64P164mm
+ 525      E7800000 
+ 526              	.LVL28:
+ 115:src/syscall_c.cpp **** }
+ 527              		.loc 1 115 1
+ 528 0240 83308100 		ld	ra,8(sp)
+ 529              		.cfi_restore 1
+ 530 0244 03340100 		ld	s0,0(sp)
+ 531              		.cfi_restore 8
+ 532              		.cfi_def_cfa 2, 16
+ 533 0248 13010101 		addi	sp,sp,16
+ 534              		.cfi_def_cfa_offset 0
+ 535 024c 67800000 		jr	ra
+ 536              		.cfi_endproc
+ 537              	.LFE20:
+ 539              		.align	2
+ 540              		.globl	_Z4getcv
+ 542              	_Z4getcv:
+ 543              	.LFB21:
+ 116:src/syscall_c.cpp **** 
+ 117:src/syscall_c.cpp **** char getc()
+ 118:src/syscall_c.cpp **** {
+ 544              		.loc 1 118 1 is_stmt 1
+ 545              		.cfi_startproc
+ 546 0250 130101FF 		addi	sp,sp,-16
+ 547              		.cfi_def_cfa_offset 16
+ 548 0254 23348100 		sd	s0,8(sp)
+ 549              		.cfi_offset 8, -8
+ 550 0258 13040101 		addi	s0,sp,16
+GAS LISTING /tmp/ccy8svc6.s 			page 13
+
+
+ 551              		.cfi_def_cfa 8, 0
+ 119:src/syscall_c.cpp **** //    return __getc();
+ 120:src/syscall_c.cpp ****     return 'a';
+ 552              		.loc 1 120 5
+ 121:src/syscall_c.cpp **** }
+ 553              		.loc 1 121 1 is_stmt 0
+ 554 025c 13051006 		li	a0,97
+ 555 0260 03348100 		ld	s0,8(sp)
+ 556              		.cfi_restore 8
+ 557              		.cfi_def_cfa 2, 16
+ 558 0264 13010101 		addi	sp,sp,16
+ 559              		.cfi_def_cfa_offset 0
+ 560 0268 67800000 		jr	ra
+ 561              		.cfi_endproc
+ 562              	.LFE21:
+ 564              		.align	2
+ 565              		.globl	_Z4putcc
+ 567              	_Z4putcc:
+ 568              	.LFB22:
+ 122:src/syscall_c.cpp **** 
+ 123:src/syscall_c.cpp **** void putc(char c)
+ 124:src/syscall_c.cpp **** {
+ 569              		.loc 1 124 1 is_stmt 1
+ 570              		.cfi_startproc
+ 571              	.LVL29:
+ 572 026c 130101FF 		addi	sp,sp,-16
+ 573              		.cfi_def_cfa_offset 16
+ 574 0270 23341100 		sd	ra,8(sp)
+ 575 0274 23308100 		sd	s0,0(sp)
+ 576              		.cfi_offset 1, -8
+ 577              		.cfi_offset 8, -16
+ 578 0278 13040101 		addi	s0,sp,16
+ 579              		.cfi_def_cfa 8, 0
+ 580 027c 93050500 		mv	a1,a0
+ 125:src/syscall_c.cpp **** //    uint64 a;
+ 126:src/syscall_c.cpp **** //    *((char*)(&a)) = c;
+ 127:src/syscall_c.cpp **** //
+ 128:src/syscall_c.cpp **** //    helperP164(0x42, a);
+ 129:src/syscall_c.cpp **** 
+ 130:src/syscall_c.cpp **** //    __putc(c);
+ 131:src/syscall_c.cpp ****     IConsole::get()->putc(c);
+ 581              		.loc 1 131 5
+ 582              	.LBB10:
+ 583              	.LBB11:
+ 584              		.file 2 "src/../h/0_console.h"
+   1:src/../h/0_console.h **** #pragma once
+   2:src/../h/0_console.h **** 
+   3:src/../h/0_console.h **** #include "../lib/hw.h"
+   4:src/../h/0_console.h **** 
+   5:src/../h/0_console.h **** #define BUFFER_SIZE 1000
+   6:src/../h/0_console.h **** 
+   7:src/../h/0_console.h **** class IConsole // singleton class
+   8:src/../h/0_console.h **** {
+   9:src/../h/0_console.h **** public:
+  10:src/../h/0_console.h ****     static IConsole* get()
+  11:src/../h/0_console.h ****     {
+  12:src/../h/0_console.h ****         static IConsole instance;
+GAS LISTING /tmp/ccy8svc6.s 			page 14
+
+
+ 585              		.loc 2 12 9
+ 586              		.loc 2 12 25 is_stmt 0
+ 587 0280 97070000 		lbu	a5,_ZGVZN8IConsole3getEvE8instance
+ 587      83C70700 
+ 588 0288 63920702 		bnez	a5,.L30
+ 589              	.LVL30:
+ 590              	.LBB12:
+ 591              	.LBB13:
+ 592              	.LBB14:
+  13:src/../h/0_console.h ****         return &instance;
+  14:src/../h/0_console.h ****     }
+  15:src/../h/0_console.h **** 
+  16:src/../h/0_console.h ****     uint64 putBufferHead, putBufferTail;
+  17:src/../h/0_console.h ****     char putBuffer[BUFFER_SIZE];
+  18:src/../h/0_console.h ****     uint64 putBufferItems;
+  19:src/../h/0_console.h **** 
+  20:src/../h/0_console.h ****     char getBuffer[BUFFER_SIZE];
+  21:src/../h/0_console.h ****     uint64 getBufferItems;
+  22:src/../h/0_console.h ****     uint64 getBufferHead, getBufferTail;
+  23:src/../h/0_console.h **** 
+  24:src/../h/0_console.h ****     void putc(char c);
+  25:src/../h/0_console.h ****     char getc();
+  26:src/../h/0_console.h ****     void consoleHandler();
+  27:src/../h/0_console.h **** 
+  28:src/../h/0_console.h **** private:
+  29:src/../h/0_console.h ****     IConsole()
+  30:src/../h/0_console.h ****         : putBufferHead(0), putBufferTail(0), putBufferItems(0)
+ 593              		.loc 2 30 63
+ 594 028c 97070000 		lla	a5,_ZZN8IConsole3getEvE8instance
+ 594      93870700 
+ 595 0294 23B00700 		sd	zero,0(a5)
+ 596 0298 23B40700 		sd	zero,8(a5)
+ 597 029c 23BC073E 		sd	zero,1016(a5)
+ 598              	.LVL31:
+ 599              	.LBE14:
+ 600              	.LBE13:
+ 601              	.LBE12:
+  12:src/../h/0_console.h ****         return &instance;
+ 602              		.loc 2 12 25
+ 603 02a0 93071000 		li	a5,1
+ 604 02a4 17070000 		sb	a5,_ZGVZN8IConsole3getEvE8instance,a4
+ 604      2300F700 
+ 605              	.L30:
+  13:src/../h/0_console.h ****         return &instance;
+ 606              		.loc 2 13 9 is_stmt 1
+ 607              	.LBE11:
+ 608              	.LBE10:
+ 609              		.loc 1 131 26 is_stmt 0
+ 610 02ac 17050000 		lla	a0,_ZZN8IConsole3getEvE8instance
+ 610      13050500 
+ 611              	.LVL32:
+ 612 02b4 97000000 		call	_ZN8IConsole4putcEc@plt
+ 612      E7800000 
+ 613              	.LVL33:
+ 132:src/syscall_c.cpp **** }...
+ 614              		.loc 1 132 1
+ 615 02bc 83308100 		ld	ra,8(sp)
+GAS LISTING /tmp/ccy8svc6.s 			page 15
+
+
+ 616              		.cfi_restore 1
+ 617 02c0 03340100 		ld	s0,0(sp)
+ 618              		.cfi_restore 8
+ 619              		.cfi_def_cfa 2, 16
+ 620 02c4 13010101 		addi	sp,sp,16
+ 621              		.cfi_def_cfa_offset 0
+ 622 02c8 67800000 		jr	ra
+ 623              		.cfi_endproc
+ 624              	.LFE22:
+ 626              		.weak	_ZGVZN8IConsole3getEvE8instance
+ 627              		.section	.bss._ZGVZN8IConsole3getEvE8instance,"awG",@nobits,_ZGVZN8IConsole3getEvE8instance,comdat
+ 628              		.align	3
+ 631              	_ZGVZN8IConsole3getEvE8instance:
+ 632 0000 00000000 		.zero	8
+ 632      00000000 
+ 633              		.weak	_ZZN8IConsole3getEvE8instance
+ 634              		.section	.bss._ZZN8IConsole3getEvE8instance,"awG",@nobits,_ZZN8IConsole3getEvE8instance,comdat
+ 635              		.align	3
+ 638              	_ZZN8IConsole3getEvE8instance:
+ 639 0000 00000000 		.zero	2048
+ 639      00000000 
+ 639      00000000 
+ 639      00000000 
+ 639      00000000 
+ 640              		.text
+ 641              	.Letext0:
+ 642              		.file 3 "src/../h/../lib/hw.h"
+ 643              		.file 4 "src/../h/syscall_c.hpp"
+GAS LISTING /tmp/ccy8svc6.s 			page 16
+
+
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 syscall_c.cpp
+     /tmp/ccy8svc6.s:8      .text:0000000000000000 _ZL15helperRet64P164mm
+     /tmp/ccy8svc6.s:12     .text:0000000000000000 .L0 
+     /tmp/ccy8svc6.s:14     .text:0000000000000000 .L0 
+     /tmp/ccy8svc6.s:15     .text:0000000000000004 .L0 
+     /tmp/ccy8svc6.s:17     .text:0000000000000008 .L0 
+     /tmp/ccy8svc6.s:19     .text:000000000000000c .L0 
+     /tmp/ccy8svc6.s:21     .text:000000000000000c .L0 
+   src/syscall_c.cpp:49     .text:000000000000000c .L0 
+     /tmp/ccy8svc6.s:27     .text:0000000000000010 .L0 
+   src/syscall_c.cpp:50     .text:0000000000000010 .L0 
+     /tmp/ccy8svc6.s:32     .text:0000000000000014 .L0 
+   src/syscall_c.cpp:52     .text:0000000000000014 .L0 
+     /tmp/ccy8svc6.s:37     .text:0000000000000018 .L0 
+   src/syscall_c.cpp:54     .text:0000000000000018 .L0 
+     /tmp/ccy8svc6.s:42     .text:000000000000001c .L0 
+     /tmp/ccy8svc6.s:43     .text:000000000000001c .L0 
+   src/syscall_c.cpp:57     .text:000000000000001c .L0 
+     /tmp/ccy8svc6.s:49     .text:0000000000000020 .L0 
+     /tmp/ccy8svc6.s:51     .text:0000000000000020 .L0 
+     /tmp/ccy8svc6.s:52     .text:0000000000000024 .L0 
+     /tmp/ccy8svc6.s:53     .text:0000000000000024 .L0 
+     /tmp/ccy8svc6.s:55     .text:0000000000000028 .L0 
+     /tmp/ccy8svc6.s:57     .text:000000000000002c .L0 
+     /tmp/ccy8svc6.s:62     .text:000000000000002c _ZL11helperRet32m
+     /tmp/ccy8svc6.s:65     .text:000000000000002c .L0 
+     /tmp/ccy8svc6.s:67     .text:000000000000002c .L0 
+     /tmp/ccy8svc6.s:68     .text:0000000000000030 .L0 
+     /tmp/ccy8svc6.s:70     .text:0000000000000034 .L0 
+     /tmp/ccy8svc6.s:72     .text:0000000000000038 .L0 
+     /tmp/ccy8svc6.s:74     .text:0000000000000038 .L0 
+   src/syscall_c.cpp:64     .text:0000000000000038 .L0 
+     /tmp/ccy8svc6.s:80     .text:000000000000003c .L0 
+   src/syscall_c.cpp:66     .text:000000000000003c .L0 
+     /tmp/ccy8svc6.s:85     .text:0000000000000040 .L0 
+     /tmp/ccy8svc6.s:86     .text:0000000000000040 .L0 
+   src/syscall_c.cpp:69     .text:0000000000000040 .L0 
+     /tmp/ccy8svc6.s:92     .text:0000000000000044 .L0 
+     /tmp/ccy8svc6.s:94     .text:0000000000000044 .L0 
+     /tmp/ccy8svc6.s:96     .text:000000000000004c .L0 
+     /tmp/ccy8svc6.s:97     .text:000000000000004c .L0 
+     /tmp/ccy8svc6.s:99     .text:0000000000000050 .L0 
+     /tmp/ccy8svc6.s:101    .text:0000000000000054 .L0 
+     /tmp/ccy8svc6.s:106    .text:0000000000000054 _ZL6helperm
+     /tmp/ccy8svc6.s:109    .text:0000000000000054 .L0 
+     /tmp/ccy8svc6.s:111    .text:0000000000000054 .L0 
+     /tmp/ccy8svc6.s:112    .text:0000000000000058 .L0 
+     /tmp/ccy8svc6.s:114    .text:000000000000005c .L0 
+     /tmp/ccy8svc6.s:116    .text:0000000000000060 .L0 
+     /tmp/ccy8svc6.s:118    .text:0000000000000060 .L0 
+   src/syscall_c.cpp:76     .text:0000000000000060 .L0 
+     /tmp/ccy8svc6.s:124    .text:0000000000000064 .L0 
+   src/syscall_c.cpp:77     .text:0000000000000064 .L0 
+     /tmp/ccy8svc6.s:129    .text:0000000000000068 .L0 
+   src/syscall_c.cpp:79     .text:0000000000000068 .L0 
+     /tmp/ccy8svc6.s:135    .text:000000000000006c .L0 
+GAS LISTING /tmp/ccy8svc6.s 			page 17
+
+
+     /tmp/ccy8svc6.s:136    .text:0000000000000070 .L0 
+     /tmp/ccy8svc6.s:137    .text:0000000000000070 .L0 
+     /tmp/ccy8svc6.s:139    .text:0000000000000074 .L0 
+     /tmp/ccy8svc6.s:141    .text:0000000000000078 .L0 
+     /tmp/ccy8svc6.s:147    .text:0000000000000078 _Z10helperRet8m
+     /tmp/ccy8svc6.s:150    .text:0000000000000078 .L0 
+     /tmp/ccy8svc6.s:152    .text:0000000000000078 .L0 
+     /tmp/ccy8svc6.s:153    .text:000000000000007c .L0 
+     /tmp/ccy8svc6.s:155    .text:0000000000000080 .L0 
+     /tmp/ccy8svc6.s:157    .text:0000000000000084 .L0 
+     /tmp/ccy8svc6.s:159    .text:0000000000000084 .L0 
+   src/syscall_c.cpp:12     .text:0000000000000084 .L0 
+     /tmp/ccy8svc6.s:165    .text:0000000000000088 .L0 
+   src/syscall_c.cpp:14     .text:0000000000000088 .L0 
+     /tmp/ccy8svc6.s:170    .text:000000000000008c .L0 
+     /tmp/ccy8svc6.s:171    .text:000000000000008c .L0 
+   src/syscall_c.cpp:17     .text:000000000000008c .L0 
+     /tmp/ccy8svc6.s:177    .text:0000000000000090 .L0 
+     /tmp/ccy8svc6.s:179    .text:0000000000000090 .L0 
+     /tmp/ccy8svc6.s:181    .text:0000000000000098 .L0 
+     /tmp/ccy8svc6.s:182    .text:0000000000000098 .L0 
+     /tmp/ccy8svc6.s:184    .text:000000000000009c .L0 
+     /tmp/ccy8svc6.s:186    .text:00000000000000a0 .L0 
+     /tmp/ccy8svc6.s:192    .text:00000000000000a0 _Z10helperP164mm
+     /tmp/ccy8svc6.s:195    .text:00000000000000a0 .L0 
+     /tmp/ccy8svc6.s:197    .text:00000000000000a0 .L0 
+     /tmp/ccy8svc6.s:198    .text:00000000000000a4 .L0 
+     /tmp/ccy8svc6.s:200    .text:00000000000000a8 .L0 
+     /tmp/ccy8svc6.s:202    .text:00000000000000ac .L0 
+     /tmp/ccy8svc6.s:204    .text:00000000000000ac .L0 
+   src/syscall_c.cpp:24     .text:00000000000000ac .L0 
+     /tmp/ccy8svc6.s:210    .text:00000000000000b0 .L0 
+   src/syscall_c.cpp:25     .text:00000000000000b0 .L0 
+     /tmp/ccy8svc6.s:215    .text:00000000000000b4 .L0 
+   src/syscall_c.cpp:27     .text:00000000000000b4 .L0 
+     /tmp/ccy8svc6.s:221    .text:00000000000000b8 .L0 
+     /tmp/ccy8svc6.s:222    .text:00000000000000bc .L0 
+     /tmp/ccy8svc6.s:223    .text:00000000000000bc .L0 
+     /tmp/ccy8svc6.s:225    .text:00000000000000c0 .L0 
+     /tmp/ccy8svc6.s:227    .text:00000000000000c4 .L0 
+     /tmp/ccy8svc6.s:233    .text:00000000000000c4 _Z23helperRet32P164P264P364mmmm
+     /tmp/ccy8svc6.s:236    .text:00000000000000c4 .L0 
+     /tmp/ccy8svc6.s:238    .text:00000000000000c4 .L0 
+     /tmp/ccy8svc6.s:239    .text:00000000000000c8 .L0 
+     /tmp/ccy8svc6.s:241    .text:00000000000000cc .L0 
+     /tmp/ccy8svc6.s:243    .text:00000000000000d0 .L0 
+     /tmp/ccy8svc6.s:245    .text:00000000000000d0 .L0 
+   src/syscall_c.cpp:32     .text:00000000000000d0 .L0 
+     /tmp/ccy8svc6.s:251    .text:00000000000000d4 .L0 
+   src/syscall_c.cpp:33     .text:00000000000000d4 .L0 
+     /tmp/ccy8svc6.s:256    .text:00000000000000d8 .L0 
+   src/syscall_c.cpp:34     .text:00000000000000d8 .L0 
+     /tmp/ccy8svc6.s:261    .text:00000000000000dc .L0 
+   src/syscall_c.cpp:35     .text:00000000000000dc .L0 
+     /tmp/ccy8svc6.s:266    .text:00000000000000e0 .L0 
+   src/syscall_c.cpp:37     .text:00000000000000e0 .L0 
+     /tmp/ccy8svc6.s:271    .text:00000000000000e4 .L0 
+GAS LISTING /tmp/ccy8svc6.s 			page 18
+
+
+   src/syscall_c.cpp:39     .text:00000000000000e4 .L0 
+     /tmp/ccy8svc6.s:276    .text:00000000000000e8 .L0 
+     /tmp/ccy8svc6.s:277    .text:00000000000000e8 .L0 
+   src/syscall_c.cpp:42     .text:00000000000000e8 .L0 
+     /tmp/ccy8svc6.s:283    .text:00000000000000ec .L0 
+     /tmp/ccy8svc6.s:285    .text:00000000000000ec .L0 
+     /tmp/ccy8svc6.s:287    .text:00000000000000f4 .L0 
+     /tmp/ccy8svc6.s:288    .text:00000000000000f4 .L0 
+     /tmp/ccy8svc6.s:290    .text:00000000000000f8 .L0 
+     /tmp/ccy8svc6.s:292    .text:00000000000000fc .L0 
+     /tmp/ccy8svc6.s:298    .text:00000000000000fc _Z9mem_allocm
+     /tmp/ccy8svc6.s:301    .text:00000000000000fc .L0 
+     /tmp/ccy8svc6.s:303    .text:00000000000000fc .L0 
+     /tmp/ccy8svc6.s:304    .text:0000000000000100 .L0 
+     /tmp/ccy8svc6.s:307    .text:0000000000000108 .L0 
+     /tmp/ccy8svc6.s:308    .text:0000000000000108 .L0 
+     /tmp/ccy8svc6.s:310    .text:000000000000010c .L0 
+     /tmp/ccy8svc6.s:313    .text:0000000000000110 .L0 
+     /tmp/ccy8svc6.s:314    .text:0000000000000110 .L0 
+     /tmp/ccy8svc6.s:319    .text:000000000000011c .L0 
+     /tmp/ccy8svc6.s:320    .text:0000000000000120 .L0 
+     /tmp/ccy8svc6.s:322    .text:0000000000000124 .L0 
+     /tmp/ccy8svc6.s:323    .text:0000000000000124 .L0 
+     /tmp/ccy8svc6.s:325    .text:0000000000000128 .L0 
+     /tmp/ccy8svc6.s:327    .text:000000000000012c .L0 
+     /tmp/ccy8svc6.s:333    .text:000000000000012c _Z8mem_freePv
+     /tmp/ccy8svc6.s:336    .text:000000000000012c .L0 
+     /tmp/ccy8svc6.s:338    .text:000000000000012c .L0 
+     /tmp/ccy8svc6.s:339    .text:0000000000000130 .L0 
+     /tmp/ccy8svc6.s:342    .text:0000000000000138 .L0 
+     /tmp/ccy8svc6.s:343    .text:0000000000000138 .L0 
+     /tmp/ccy8svc6.s:345    .text:000000000000013c .L0 
+     /tmp/ccy8svc6.s:348    .text:0000000000000140 .L0 
+     /tmp/ccy8svc6.s:349    .text:0000000000000140 .L0 
+     /tmp/ccy8svc6.s:354    .text:000000000000014c .L0 
+     /tmp/ccy8svc6.s:356    .text:0000000000000154 .L0 
+     /tmp/ccy8svc6.s:358    .text:0000000000000158 .L0 
+     /tmp/ccy8svc6.s:359    .text:0000000000000158 .L0 
+     /tmp/ccy8svc6.s:361    .text:000000000000015c .L0 
+     /tmp/ccy8svc6.s:363    .text:0000000000000160 .L0 
+     /tmp/ccy8svc6.s:369    .text:0000000000000160 _Z15thread_dispatchv
+     /tmp/ccy8svc6.s:372    .text:0000000000000160 .L0 
+     /tmp/ccy8svc6.s:373    .text:0000000000000160 .L0 
+     /tmp/ccy8svc6.s:374    .text:0000000000000164 .L0 
+     /tmp/ccy8svc6.s:377    .text:000000000000016c .L0 
+     /tmp/ccy8svc6.s:378    .text:000000000000016c .L0 
+     /tmp/ccy8svc6.s:380    .text:0000000000000170 .L0 
+     /tmp/ccy8svc6.s:382    .text:0000000000000170 .L0 
+     /tmp/ccy8svc6.s:383    .text:0000000000000170 .L0 
+     /tmp/ccy8svc6.s:387    .text:000000000000017c .L0 
+     /tmp/ccy8svc6.s:388    .text:0000000000000180 .L0 
+     /tmp/ccy8svc6.s:390    .text:0000000000000184 .L0 
+     /tmp/ccy8svc6.s:391    .text:0000000000000184 .L0 
+     /tmp/ccy8svc6.s:393    .text:0000000000000188 .L0 
+     /tmp/ccy8svc6.s:395    .text:000000000000018c .L0 
+     /tmp/ccy8svc6.s:401    .text:000000000000018c _Z11thread_exitv
+     /tmp/ccy8svc6.s:404    .text:000000000000018c .L0 
+GAS LISTING /tmp/ccy8svc6.s 			page 19
+
+
+     /tmp/ccy8svc6.s:405    .text:000000000000018c .L0 
+     /tmp/ccy8svc6.s:406    .text:0000000000000190 .L0 
+     /tmp/ccy8svc6.s:409    .text:0000000000000198 .L0 
+     /tmp/ccy8svc6.s:410    .text:0000000000000198 .L0 
+     /tmp/ccy8svc6.s:412    .text:000000000000019c .L0 
+     /tmp/ccy8svc6.s:414    .text:000000000000019c .L0 
+     /tmp/ccy8svc6.s:415    .text:000000000000019c .L0 
+     /tmp/ccy8svc6.s:419    .text:00000000000001a8 .L0 
+     /tmp/ccy8svc6.s:420    .text:00000000000001ac .L0 
+     /tmp/ccy8svc6.s:422    .text:00000000000001b0 .L0 
+     /tmp/ccy8svc6.s:423    .text:00000000000001b0 .L0 
+     /tmp/ccy8svc6.s:425    .text:00000000000001b4 .L0 
+     /tmp/ccy8svc6.s:427    .text:00000000000001b8 .L0 
+     /tmp/ccy8svc6.s:433    .text:00000000000001b8 _Z13thread_createPmPFvPvES0_
+     /tmp/ccy8svc6.s:436    .text:00000000000001b8 .L0 
+     /tmp/ccy8svc6.s:438    .text:00000000000001b8 .L0 
+     /tmp/ccy8svc6.s:439    .text:00000000000001bc .L0 
+     /tmp/ccy8svc6.s:442    .text:00000000000001c4 .L0 
+     /tmp/ccy8svc6.s:443    .text:00000000000001c4 .L0 
+     /tmp/ccy8svc6.s:445    .text:00000000000001c8 .L0 
+     /tmp/ccy8svc6.s:448    .text:00000000000001cc .L0 
+     /tmp/ccy8svc6.s:449    .text:00000000000001cc .L0 
+     /tmp/ccy8svc6.s:458    .text:00000000000001e0 .L0 
+     /tmp/ccy8svc6.s:459    .text:00000000000001e4 .L0 
+     /tmp/ccy8svc6.s:461    .text:00000000000001e8 .L0 
+     /tmp/ccy8svc6.s:462    .text:00000000000001e8 .L0 
+     /tmp/ccy8svc6.s:464    .text:00000000000001ec .L0 
+     /tmp/ccy8svc6.s:466    .text:00000000000001f0 .L0 
+     /tmp/ccy8svc6.s:472    .text:00000000000001f0 _Z11thread_joinm
+     /tmp/ccy8svc6.s:475    .text:00000000000001f0 .L0 
+     /tmp/ccy8svc6.s:477    .text:00000000000001f0 .L0 
+     /tmp/ccy8svc6.s:478    .text:00000000000001f4 .L0 
+     /tmp/ccy8svc6.s:481    .text:00000000000001fc .L0 
+     /tmp/ccy8svc6.s:482    .text:00000000000001fc .L0 
+     /tmp/ccy8svc6.s:484    .text:0000000000000200 .L0 
+     /tmp/ccy8svc6.s:487    .text:0000000000000204 .L0 
+     /tmp/ccy8svc6.s:488    .text:0000000000000204 .L0 
+     /tmp/ccy8svc6.s:493    .text:0000000000000210 .L0 
+     /tmp/ccy8svc6.s:494    .text:0000000000000214 .L0 
+     /tmp/ccy8svc6.s:496    .text:0000000000000218 .L0 
+     /tmp/ccy8svc6.s:497    .text:0000000000000218 .L0 
+     /tmp/ccy8svc6.s:499    .text:000000000000021c .L0 
+     /tmp/ccy8svc6.s:501    .text:0000000000000220 .L0 
+     /tmp/ccy8svc6.s:507    .text:0000000000000220 _Z9test_callm
+     /tmp/ccy8svc6.s:510    .text:0000000000000220 .L0 
+     /tmp/ccy8svc6.s:512    .text:0000000000000220 .L0 
+     /tmp/ccy8svc6.s:513    .text:0000000000000224 .L0 
+     /tmp/ccy8svc6.s:516    .text:000000000000022c .L0 
+     /tmp/ccy8svc6.s:517    .text:000000000000022c .L0 
+     /tmp/ccy8svc6.s:519    .text:0000000000000230 .L0 
+     /tmp/ccy8svc6.s:522    .text:0000000000000234 .L0 
+     /tmp/ccy8svc6.s:523    .text:0000000000000234 .L0 
+     /tmp/ccy8svc6.s:528    .text:0000000000000240 .L0 
+     /tmp/ccy8svc6.s:529    .text:0000000000000244 .L0 
+     /tmp/ccy8svc6.s:531    .text:0000000000000248 .L0 
+     /tmp/ccy8svc6.s:532    .text:0000000000000248 .L0 
+     /tmp/ccy8svc6.s:534    .text:000000000000024c .L0 
+GAS LISTING /tmp/ccy8svc6.s 			page 20
+
+
+     /tmp/ccy8svc6.s:536    .text:0000000000000250 .L0 
+     /tmp/ccy8svc6.s:542    .text:0000000000000250 _Z4getcv
+     /tmp/ccy8svc6.s:545    .text:0000000000000250 .L0 
+     /tmp/ccy8svc6.s:546    .text:0000000000000250 .L0 
+     /tmp/ccy8svc6.s:547    .text:0000000000000254 .L0 
+     /tmp/ccy8svc6.s:549    .text:0000000000000258 .L0 
+     /tmp/ccy8svc6.s:551    .text:000000000000025c .L0 
+     /tmp/ccy8svc6.s:553    .text:000000000000025c .L0 
+     /tmp/ccy8svc6.s:554    .text:000000000000025c .L0 
+     /tmp/ccy8svc6.s:556    .text:0000000000000264 .L0 
+     /tmp/ccy8svc6.s:557    .text:0000000000000264 .L0 
+     /tmp/ccy8svc6.s:559    .text:0000000000000268 .L0 
+     /tmp/ccy8svc6.s:561    .text:000000000000026c .L0 
+     /tmp/ccy8svc6.s:567    .text:000000000000026c _Z4putcc
+     /tmp/ccy8svc6.s:570    .text:000000000000026c .L0 
+     /tmp/ccy8svc6.s:572    .text:000000000000026c .L0 
+     /tmp/ccy8svc6.s:573    .text:0000000000000270 .L0 
+     /tmp/ccy8svc6.s:576    .text:0000000000000278 .L0 
+     /tmp/ccy8svc6.s:577    .text:0000000000000278 .L0 
+     /tmp/ccy8svc6.s:579    .text:000000000000027c .L0 
+     /tmp/ccy8svc6.s:585    .text:0000000000000280 .L0 
+     /tmp/ccy8svc6.s:586    .text:0000000000000280 .L0 
+     /tmp/ccy8svc6.s:631    .bss._ZGVZN8IConsole3getEvE8instance:0000000000000000 _ZGVZN8IConsole3getEvE8instance
+     /tmp/ccy8svc6.s:587    .text:0000000000000280 .L0 
+     /tmp/ccy8svc6.s:638    .bss._ZZN8IConsole3getEvE8instance:0000000000000000 _ZZN8IConsole3getEvE8instance
+     /tmp/ccy8svc6.s:594    .text:000000000000028c .L0 
+     /tmp/ccy8svc6.s:603    .text:00000000000002a0 .L0 
+     /tmp/ccy8svc6.s:609    .text:00000000000002ac .L0 
+     /tmp/ccy8svc6.s:610    .text:00000000000002ac .L0 
+     /tmp/ccy8svc6.s:615    .text:00000000000002bc .L0 
+     /tmp/ccy8svc6.s:616    .text:00000000000002c0 .L0 
+     /tmp/ccy8svc6.s:618    .text:00000000000002c4 .L0 
+     /tmp/ccy8svc6.s:619    .text:00000000000002c4 .L0 
+     /tmp/ccy8svc6.s:621    .text:00000000000002c8 .L0 
+     /tmp/ccy8svc6.s:623    .text:00000000000002cc .L0 
+     /tmp/ccy8svc6.s:644    .text:00000000000002cc .L0 
+     /tmp/ccy8svc6.s:587    .text:0000000000000280 .L0 
+     /tmp/ccy8svc6.s:594    .text:000000000000028c .L0 
+     /tmp/ccy8svc6.s:604    .text:00000000000002a4 .L0 
+     /tmp/ccy8svc6.s:610    .text:00000000000002ac .L0 
+     /tmp/ccy8svc6.s:605    .text:00000000000002ac .L30
+     /tmp/ccy8svc6.s:1473   .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+     /tmp/ccy8svc6.s:2522   .debug_str:0000000000000369 .LASF64
+     /tmp/ccy8svc6.s:2458   .debug_str:00000000000001ad .LASF65
+     /tmp/ccy8svc6.s:2500   .debug_str:00000000000002d2 .LASF66
+     /tmp/ccy8svc6.s:5      .text:0000000000000000 .Ltext0
+     /tmp/ccy8svc6.s:641    .text:00000000000002cc .Letext0
+     /tmp/ccy8svc6.s:2392   .debug_line:0000000000000000 .Ldebug_line0
+     /tmp/ccy8svc6.s:2474   .debug_str:000000000000021c .LASF0
+     /tmp/ccy8svc6.s:2486   .debug_str:0000000000000268 .LASF1
+     /tmp/ccy8svc6.s:2468   .debug_str:00000000000001f6 .LASF2
+     /tmp/ccy8svc6.s:2456   .debug_str:00000000000001a6 .LASF4
+     /tmp/ccy8svc6.s:2512   .debug_str:0000000000000333 .LASF3
+     /tmp/ccy8svc6.s:2414   .debug_str:000000000000008d .LASF5
+     /tmp/ccy8svc6.s:2490   .debug_str:000000000000028c .LASF6
+     /tmp/ccy8svc6.s:2472   .debug_str:0000000000000209 .LASF7
+     /tmp/ccy8svc6.s:2526   .debug_str:000000000000043c .LASF8
+GAS LISTING /tmp/ccy8svc6.s 			page 21
+
+
+     /tmp/ccy8svc6.s:2450   .debug_str:000000000000017d .LASF9
+     /tmp/ccy8svc6.s:2498   .debug_str:00000000000002c3 .LASF10
+     /tmp/ccy8svc6.s:2524   .debug_str:000000000000042d .LASF11
+     /tmp/ccy8svc6.s:2418   .debug_str:000000000000009f .LASF12
+     /tmp/ccy8svc6.s:2398   .debug_str:0000000000000021 .LASF13
+     /tmp/ccy8svc6.s:2422   .debug_str:00000000000000b8 .LASF14
+     /tmp/ccy8svc6.s:2510   .debug_str:000000000000031d .LASF15
+     /tmp/ccy8svc6.s:2436   .debug_str:0000000000000126 .LASF16
+     /tmp/ccy8svc6.s:2394   .debug_str:0000000000000000 .LASF17
+     /tmp/ccy8svc6.s:2444   .debug_str:0000000000000161 .LASF18
+     /tmp/ccy8svc6.s:2420   .debug_str:00000000000000af .LASF67
+     /tmp/ccy8svc6.s:2508   .debug_str:000000000000030a .LASF68
+     /tmp/ccy8svc6.s:2464   .debug_str:00000000000001e1 .LASF19
+     /tmp/ccy8svc6.s:2438   .debug_str:000000000000013c .LASF20
+     /tmp/ccy8svc6.s:2532   .debug_str:0000000000000468 .LASF21
+     /tmp/ccy8svc6.s:2452   .debug_str:000000000000018b .LASF22
+     /tmp/ccy8svc6.s:2480   .debug_str:0000000000000237 .LASF23
+     /tmp/ccy8svc6.s:2434   .debug_str:0000000000000117 .LASF24
+     /tmp/ccy8svc6.s:2402   .debug_str:0000000000000036 .LASF25
+     /tmp/ccy8svc6.s:2516   .debug_str:000000000000034f .LASF26
+     /tmp/ccy8svc6.s:2470   .debug_str:0000000000000204 .LASF27
+     /tmp/ccy8svc6.s:2536   .debug_str:0000000000000481 .LASF29
+     /tmp/ccy8svc6.s:2400   .debug_str:0000000000000031 .LASF32
+     /tmp/ccy8svc6.s:2404   .debug_str:0000000000000044 .LASF33
+     /tmp/ccy8svc6.s:2534   .debug_str:0000000000000472 .LASF28
+     /tmp/ccy8svc6.s:2426   .debug_str:00000000000000d4 .LASF30
+     /tmp/ccy8svc6.s:2462   .debug_str:00000000000001d0 .LASF69
+     /tmp/ccy8svc6.s:2492   .debug_str:000000000000029f .LASF31
+     /tmp/ccy8svc6.s:2446   .debug_str:0000000000000166 .LASF34
+     /tmp/ccy8svc6.s:568    .text:000000000000026c .LFB22
+     /tmp/ccy8svc6.s:624    .text:00000000000002cc .LFE22
+     /tmp/ccy8svc6.s:2174   .debug_loc:0000000000000000 .LLST11
+     /tmp/ccy8svc6.s:582    .text:0000000000000280 .LBB10
+     /tmp/ccy8svc6.s:608    .text:00000000000002ac .LBE10
+     /tmp/ccy8svc6.s:590    .text:000000000000028c .LBB12
+     /tmp/ccy8svc6.s:601    .text:00000000000002a0 .LBE12
+     /tmp/ccy8svc6.s:2188   .debug_loc:0000000000000039 .LLST12
+     /tmp/ccy8svc6.s:613    .text:00000000000002bc .LVL33
+     /tmp/ccy8svc6.s:2412   .debug_str:0000000000000084 .LASF70
+     /tmp/ccy8svc6.s:543    .text:0000000000000250 .LFB21
+     /tmp/ccy8svc6.s:562    .text:000000000000026c .LFE21
+     /tmp/ccy8svc6.s:2484   .debug_str:000000000000025e .LASF38
+     /tmp/ccy8svc6.s:2506   .debug_str:00000000000002fc .LASF40
+     /tmp/ccy8svc6.s:508    .text:0000000000000220 .LFB20
+     /tmp/ccy8svc6.s:537    .text:0000000000000250 .LFE20
+     /tmp/ccy8svc6.s:2197   .debug_loc:0000000000000065 .LLST10
+     /tmp/ccy8svc6.s:526    .text:0000000000000240 .LVL28
+     /tmp/ccy8svc6.s:2454   .debug_str:000000000000019a .LASF35
+     /tmp/ccy8svc6.s:2460   .debug_str:00000000000001bf .LASF36
+     /tmp/ccy8svc6.s:473    .text:00000000000001f0 .LFB19
+     /tmp/ccy8svc6.s:502    .text:0000000000000220 .LFE19
+     /tmp/ccy8svc6.s:2518   .debug_str:000000000000035d .LASF37
+     /tmp/ccy8svc6.s:2215   .debug_loc:00000000000000b1 .LLST9
+     /tmp/ccy8svc6.s:491    .text:0000000000000210 .LVL25
+     /tmp/ccy8svc6.s:2440   .debug_str:000000000000014a .LASF39
+     /tmp/ccy8svc6.s:2482   .debug_str:0000000000000241 .LASF41
+     /tmp/ccy8svc6.s:434    .text:00000000000001b8 .LFB18
+GAS LISTING /tmp/ccy8svc6.s 			page 22
+
+
+     /tmp/ccy8svc6.s:467    .text:00000000000001f0 .LFE18
+     /tmp/ccy8svc6.s:2233   .debug_loc:00000000000000fd .LLST6
+     /tmp/ccy8svc6.s:2448   .debug_str:000000000000016f .LASF42
+     /tmp/ccy8svc6.s:2251   .debug_loc:0000000000000149 .LLST7
+     /tmp/ccy8svc6.s:2269   .debug_loc:0000000000000195 .LLST8
+     /tmp/ccy8svc6.s:456    .text:00000000000001e0 .LVL22
+     /tmp/ccy8svc6.s:2408   .debug_str:0000000000000063 .LASF43
+     /tmp/ccy8svc6.s:2488   .debug_str:000000000000027b .LASF44
+     /tmp/ccy8svc6.s:402    .text:000000000000018c .LFB17
+     /tmp/ccy8svc6.s:428    .text:00000000000001b8 .LFE17
+     /tmp/ccy8svc6.s:417    .text:00000000000001a8 .LVL17
+     /tmp/ccy8svc6.s:2424   .debug_str:00000000000000c4 .LASF45
+     /tmp/ccy8svc6.s:2410   .debug_str:000000000000006f .LASF46
+     /tmp/ccy8svc6.s:370    .text:0000000000000160 .LFB16
+     /tmp/ccy8svc6.s:396    .text:000000000000018c .LFE16
+     /tmp/ccy8svc6.s:385    .text:000000000000017c .LVL16
+     /tmp/ccy8svc6.s:2442   .debug_str:0000000000000158 .LASF47
+     /tmp/ccy8svc6.s:2496   .debug_str:00000000000002b5 .LASF48
+     /tmp/ccy8svc6.s:334    .text:000000000000012c .LFB15
+     /tmp/ccy8svc6.s:364    .text:0000000000000160 .LFE15
+     /tmp/ccy8svc6.s:2287   .debug_loc:00000000000001e1 .LLST5
+     /tmp/ccy8svc6.s:352    .text:000000000000014c .LVL15
+     /tmp/ccy8svc6.s:2514   .debug_str:0000000000000345 .LASF49
+     /tmp/ccy8svc6.s:2432   .debug_str:0000000000000109 .LASF50
+     /tmp/ccy8svc6.s:299    .text:00000000000000fc .LFB14
+     /tmp/ccy8svc6.s:328    .text:000000000000012c .LFE14
+     /tmp/ccy8svc6.s:2520   .debug_str:0000000000000364 .LASF51
+     /tmp/ccy8svc6.s:2305   .debug_loc:000000000000022d .LLST4
+     /tmp/ccy8svc6.s:317    .text:000000000000011c .LVL12
+     /tmp/ccy8svc6.s:2466   .debug_str:00000000000001ef .LASF71
+     /tmp/ccy8svc6.s:107    .text:0000000000000054 .LFB13
+     /tmp/ccy8svc6.s:142    .text:0000000000000078 .LFE13
+     /tmp/ccy8svc6.s:2478   .debug_str:0000000000000232 .LASF52
+     /tmp/ccy8svc6.s:2528   .debug_str:000000000000044c .LASF53
+     /tmp/ccy8svc6.s:63     .text:000000000000002c .LFB12
+     /tmp/ccy8svc6.s:102    .text:0000000000000054 .LFE12
+     /tmp/ccy8svc6.s:2323   .debug_loc:0000000000000279 .LLST1
+     /tmp/ccy8svc6.s:2530   .debug_str:0000000000000458 .LASF54
+     /tmp/ccy8svc6.s:9      .text:0000000000000000 .LFB11
+     /tmp/ccy8svc6.s:58     .text:000000000000002c .LFE11
+     /tmp/ccy8svc6.s:2337   .debug_loc:00000000000002b2 .LLST0
+     /tmp/ccy8svc6.s:2416   .debug_str:0000000000000094 .LASF55
+     /tmp/ccy8svc6.s:2396   .debug_str:0000000000000009 .LASF56
+     /tmp/ccy8svc6.s:2544   .debug_str:00000000000004ce .LASF57
+     /tmp/ccy8svc6.s:234    .text:00000000000000c4 .LFB10
+     /tmp/ccy8svc6.s:293    .text:00000000000000fc .LFE10
+     /tmp/ccy8svc6.s:2351   .debug_loc:00000000000002eb .LLST3
+     /tmp/ccy8svc6.s:2428   .debug_str:00000000000000f3 .LASF58
+     /tmp/ccy8svc6.s:2430   .debug_str:00000000000000fe .LASF59
+     /tmp/ccy8svc6.s:2542   .debug_str:00000000000004c3 .LASF60
+     /tmp/ccy8svc6.s:2502   .debug_str:00000000000002e6 .LASF61
+     /tmp/ccy8svc6.s:193    .text:00000000000000a0 .LFB9
+     /tmp/ccy8svc6.s:228    .text:00000000000000c4 .LFE9
+     /tmp/ccy8svc6.s:2406   .debug_str:0000000000000058 .LASF62
+     /tmp/ccy8svc6.s:2538   .debug_str:0000000000000495 .LASF63
+     /tmp/ccy8svc6.s:148    .text:0000000000000078 .LFB8
+     /tmp/ccy8svc6.s:187    .text:00000000000000a0 .LFE8
+GAS LISTING /tmp/ccy8svc6.s 			page 23
+
+
+     /tmp/ccy8svc6.s:2365   .debug_loc:0000000000000324 .LLST2
+     /tmp/ccy8svc6.s:2504   .debug_str:00000000000002f7 .LASF72
+     /tmp/ccy8svc6.s:2494   .debug_str:00000000000002a4 .LASF73
+     /tmp/ccy8svc6.s:2476   .debug_str:0000000000000229 .LASF74
+     /tmp/ccy8svc6.s:2540   .debug_str:00000000000004a5 .LASF75
+     /tmp/ccy8svc6.s:571    .text:000000000000026c .LVL29
+     /tmp/ccy8svc6.s:611    .text:00000000000002b4 .LVL32
+     /tmp/ccy8svc6.s:589    .text:000000000000028c .LVL30
+     /tmp/ccy8svc6.s:598    .text:00000000000002a0 .LVL31
+     /tmp/ccy8svc6.s:511    .text:0000000000000220 .LVL26
+     /tmp/ccy8svc6.s:524    .text:0000000000000238 .LVL27
+     /tmp/ccy8svc6.s:476    .text:00000000000001f0 .LVL23
+     /tmp/ccy8svc6.s:489    .text:0000000000000208 .LVL24
+     /tmp/ccy8svc6.s:437    .text:00000000000001b8 .LVL18
+     /tmp/ccy8svc6.s:454    .text:00000000000001d8 .LVL21
+     /tmp/ccy8svc6.s:452    .text:00000000000001d4 .LVL20
+     /tmp/ccy8svc6.s:450    .text:00000000000001d0 .LVL19
+     /tmp/ccy8svc6.s:337    .text:000000000000012c .LVL13
+     /tmp/ccy8svc6.s:350    .text:0000000000000144 .LVL14
+     /tmp/ccy8svc6.s:302    .text:00000000000000fc .LVL10
+     /tmp/ccy8svc6.s:315    .text:0000000000000114 .LVL11
+     /tmp/ccy8svc6.s:66     .text:000000000000002c .LVL2
+     /tmp/ccy8svc6.s:90     .text:0000000000000044 .LVL3
+     /tmp/ccy8svc6.s:13     .text:0000000000000000 .LVL0
+     /tmp/ccy8svc6.s:47     .text:0000000000000020 .LVL1
+     /tmp/ccy8svc6.s:237    .text:00000000000000c4 .LVL8
+     /tmp/ccy8svc6.s:281    .text:00000000000000ec .LVL9
+     /tmp/ccy8svc6.s:151    .text:0000000000000078 .LVL5
+     /tmp/ccy8svc6.s:175    .text:0000000000000090 .LVL6
+     /tmp/ccy8svc6.s:645    .debug_info:0000000000000000 .Ldebug_info0
+
+UNDEFINED SYMBOLS
+_ZN8IConsole4putcEc
