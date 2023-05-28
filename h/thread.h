@@ -4,7 +4,8 @@
 #include "../h/syscall_c.hpp"
 
 #define NR_MAX_THREADS 10
-#define NR_REGISTERS 32
+#define BUSY_WAIT_THREAD_ID 1
+#define USER_THREAD_ID 2
 
 // needs to be (DEFAULT_STACK_SIZE+8*34) (probably)
 #define ACTUAL_STACK_SIZE (DEFAULT_STACK_SIZE+8*34)*10
@@ -43,6 +44,8 @@ public:
     IThread* pNext;
     IThread* pWaitingHead;
     bool done;
+    uint64 remainingSleep;
+
 //    uint64** pSp;
 
     uint64* sp;

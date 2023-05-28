@@ -1,13 +1,40 @@
 #include "../h/scheduler.h"
 
+int Scheduler::sleep(time_t time)
+{
+    assert(IThread::getPRunning()->state == IThread::RUNNING);
+    assert(IThread::getPRunning()->done == false);
+
+    IThread::getPRunning()->state = IThread::SUSPENDED;
+    IThread::getPRunning()->remainingSleep = time;
+
+    if(pSleepHead == nullptr)
+    {
+        pSleepHead = IThread::getPRunning();
+        IThread::getPRunning()->pNext = nullptr;
+    }
+    else
+    {
+        IThread::getPRunning()->pNext = pSleepHead;
+        pSleepHead = IThread::getPRunning();
+    }
+
+    dispatchToNext();
+
+    return 0;
+}
+
 void Scheduler::dispatchUserVersion()
 {
     extern IThread kernelThread;
     assert(IThread::getPRunning() !=
            &kernelThread); // you're only supposed to open user threads with system call with code 4
 
-    IThread::getPRunning()->state = IThread::READY;
-    Scheduler::put(IThread::getPRunning());
+    if(IThread::getPRunning()->id != BUSY_WAIT_THREAD_ID)
+    {
+        IThread::getPRunning()->state = IThread::READY;
+        Scheduler::put(IThread::getPRunning());
+    }
 
     Scheduler::dispatchToNext();
 }
@@ -37,25 +64,44 @@ void Scheduler::printState()
     putNewline();
 }
 
-void Scheduler::dispatchToNext() // WARNING: different than sys. call dispatch()
+void Scheduler::dispatchToNext() // WARNING: different than sys. call thread_dispatch()
 {
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 
     IThread *pOld = IThread::getPRunning();
     IThread *pNew = Scheduler::getNext();
 
+    extern IThread kernelThread;
+    assert(pNew != &kernelThread);
+
     assert(pNew->state == IThread::READY);
 
-    IThread::setPRunning(pNew);
+    bool existReadyThread = (pNew != nullptr);
+    bool existSleeper = (Scheduler::get()->pSleepHead != nullptr);
 
-    if(pOld != pNew) // split into two cases for safety
+    if(existReadyThread == false && existSleeper == false)
     {
-        pNew->state = IThread::RUNNING;
+        pNew = &kernelThread;
+
+        putString("=== NO MORE USER THREADS EXIST. RETURNING TO KERNEL THREAD");
+        putNewline();
+
+        assert(IThread::pAllThreads[0] == &kernelThread);
+        IThread::pAllThreads[0]->state = IThread::READY;
+
+        // TODO: set permission
     }
-    else
+    else if(existReadyThread == false && existSleeper == true)
     {
-        pNew->state = IThread::RUNNING;
+        assert(existReadyThread == false && existSleeper == true);
+
+        Scheduler::put(IThread::pAllThreads[BUSY_WAIT_THREAD_ID]);
     }
+
+    pOld->state = IThread::READY; // must be in this order (maby)
+    pNew->state = IThread::RUNNING;
+
+    Scheduler::put(pOld);
 }
 
 void Scheduler::put(IThread* p)
@@ -87,7 +133,8 @@ IThread* Scheduler::getNext()
 {
     IThread* ret = get()->pHead;
 
-    assert(ret != nullptr);
+    if(ret == nullptr)
+        return ret;
 
     get()->pHead = get()->pHead->pNext;
 

@@ -1,4 +1,4 @@
-GAS LISTING /tmp/ccvJE0Mf.s 			page 1
+GAS LISTING /tmp/cclquWR1.s 			page 1
 
 
    1              		.file	"risc.cpp"
@@ -58,7 +58,7 @@ GAS LISTING /tmp/ccvJE0Mf.s 			page 1
   49              		.cfi_def_cfa 8, 0
   10:src/risc.cpp  ****     __asm__ volatile ("csrc sstatus, 0x02"); // sets the "sie" bit to 0
   50              		.loc 1 10 5
-GAS LISTING /tmp/ccvJE0Mf.s 			page 2
+GAS LISTING /tmp/cclquWR1.s 			page 2
 
 
   51              		.loc 1 10 44 is_stmt 0
@@ -78,53 +78,53 @@ GAS LISTING /tmp/ccvJE0Mf.s 			page 1
   64              		.cfi_endproc
   65              	.LFE1:
   67              	.Letext0:
-GAS LISTING /tmp/ccvJE0Mf.s 			page 3
+GAS LISTING /tmp/cclquWR1.s 			page 3
 
 
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 risc.cpp
-     /tmp/ccvJE0Mf.s:9      .text:0000000000000000 _Z24enableExternalInterruptsv
-     /tmp/ccvJE0Mf.s:13     .text:0000000000000000 .L0 
-     /tmp/ccvJE0Mf.s:14     .text:0000000000000000 .L0 
-     /tmp/ccvJE0Mf.s:15     .text:0000000000000004 .L0 
-     /tmp/ccvJE0Mf.s:17     .text:0000000000000008 .L0 
-     /tmp/ccvJE0Mf.s:19     .text:000000000000000c .L0 
-     /tmp/ccvJE0Mf.s:21     .text:000000000000000c .L0 
+     /tmp/cclquWR1.s:9      .text:0000000000000000 _Z24enableExternalInterruptsv
+     /tmp/cclquWR1.s:13     .text:0000000000000000 .L0 
+     /tmp/cclquWR1.s:14     .text:0000000000000000 .L0 
+     /tmp/cclquWR1.s:15     .text:0000000000000004 .L0 
+     /tmp/cclquWR1.s:17     .text:0000000000000008 .L0 
+     /tmp/cclquWR1.s:19     .text:000000000000000c .L0 
+     /tmp/cclquWR1.s:21     .text:000000000000000c .L0 
         src/risc.cpp:5      .text:000000000000000c .L0 
-     /tmp/ccvJE0Mf.s:28     .text:0000000000000010 .L0 
-     /tmp/ccvJE0Mf.s:29     .text:0000000000000014 .L0 
-     /tmp/ccvJE0Mf.s:30     .text:0000000000000014 .L0 
-     /tmp/ccvJE0Mf.s:32     .text:0000000000000018 .L0 
-     /tmp/ccvJE0Mf.s:34     .text:000000000000001c .L0 
-     /tmp/ccvJE0Mf.s:40     .text:000000000000001c _Z25disableExternalInterruptsv
-     /tmp/ccvJE0Mf.s:43     .text:000000000000001c .L0 
-     /tmp/ccvJE0Mf.s:44     .text:000000000000001c .L0 
-     /tmp/ccvJE0Mf.s:45     .text:0000000000000020 .L0 
-     /tmp/ccvJE0Mf.s:47     .text:0000000000000024 .L0 
-     /tmp/ccvJE0Mf.s:49     .text:0000000000000028 .L0 
-     /tmp/ccvJE0Mf.s:51     .text:0000000000000028 .L0 
+     /tmp/cclquWR1.s:28     .text:0000000000000010 .L0 
+     /tmp/cclquWR1.s:29     .text:0000000000000014 .L0 
+     /tmp/cclquWR1.s:30     .text:0000000000000014 .L0 
+     /tmp/cclquWR1.s:32     .text:0000000000000018 .L0 
+     /tmp/cclquWR1.s:34     .text:000000000000001c .L0 
+     /tmp/cclquWR1.s:40     .text:000000000000001c _Z25disableExternalInterruptsv
+     /tmp/cclquWR1.s:43     .text:000000000000001c .L0 
+     /tmp/cclquWR1.s:44     .text:000000000000001c .L0 
+     /tmp/cclquWR1.s:45     .text:0000000000000020 .L0 
+     /tmp/cclquWR1.s:47     .text:0000000000000024 .L0 
+     /tmp/cclquWR1.s:49     .text:0000000000000028 .L0 
+     /tmp/cclquWR1.s:51     .text:0000000000000028 .L0 
         src/risc.cpp:10     .text:0000000000000028 .L0 
-     /tmp/ccvJE0Mf.s:58     .text:000000000000002c .L0 
-     /tmp/ccvJE0Mf.s:59     .text:0000000000000030 .L0 
-     /tmp/ccvJE0Mf.s:60     .text:0000000000000030 .L0 
-     /tmp/ccvJE0Mf.s:62     .text:0000000000000034 .L0 
-     /tmp/ccvJE0Mf.s:64     .text:0000000000000038 .L0 
-     /tmp/ccvJE0Mf.s:68     .text:0000000000000038 .L0 
-     /tmp/ccvJE0Mf.s:104    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
-     /tmp/ccvJE0Mf.s:169    .debug_str:000000000000002d .LASF4
-     /tmp/ccvJE0Mf.s:173    .debug_str:0000000000000110 .LASF5
-     /tmp/ccvJE0Mf.s:165    .debug_str:0000000000000000 .LASF6
-     /tmp/ccvJE0Mf.s:5      .text:0000000000000000 .Ltext0
-     /tmp/ccvJE0Mf.s:67     .text:0000000000000038 .Letext0
-     /tmp/ccvJE0Mf.s:163    .debug_line:0000000000000000 .Ldebug_line0
-     /tmp/ccvJE0Mf.s:177    .debug_str:000000000000013b .LASF0
-     /tmp/ccvJE0Mf.s:171    .debug_str:00000000000000f1 .LASF2
-     /tmp/ccvJE0Mf.s:41     .text:000000000000001c .LFB1
-     /tmp/ccvJE0Mf.s:65     .text:0000000000000038 .LFE1
-     /tmp/ccvJE0Mf.s:167    .debug_str:0000000000000014 .LASF1
-     /tmp/ccvJE0Mf.s:175    .debug_str:000000000000011d .LASF3
-     /tmp/ccvJE0Mf.s:10     .text:0000000000000000 .LFB0
-     /tmp/ccvJE0Mf.s:35     .text:000000000000001c .LFE0
-     /tmp/ccvJE0Mf.s:69     .debug_info:0000000000000000 .Ldebug_info0
+     /tmp/cclquWR1.s:58     .text:000000000000002c .L0 
+     /tmp/cclquWR1.s:59     .text:0000000000000030 .L0 
+     /tmp/cclquWR1.s:60     .text:0000000000000030 .L0 
+     /tmp/cclquWR1.s:62     .text:0000000000000034 .L0 
+     /tmp/cclquWR1.s:64     .text:0000000000000038 .L0 
+     /tmp/cclquWR1.s:68     .text:0000000000000038 .L0 
+     /tmp/cclquWR1.s:104    .debug_abbrev:0000000000000000 .Ldebug_abbrev0
+     /tmp/cclquWR1.s:169    .debug_str:000000000000002d .LASF4
+     /tmp/cclquWR1.s:173    .debug_str:0000000000000110 .LASF5
+     /tmp/cclquWR1.s:165    .debug_str:0000000000000000 .LASF6
+     /tmp/cclquWR1.s:5      .text:0000000000000000 .Ltext0
+     /tmp/cclquWR1.s:67     .text:0000000000000038 .Letext0
+     /tmp/cclquWR1.s:163    .debug_line:0000000000000000 .Ldebug_line0
+     /tmp/cclquWR1.s:177    .debug_str:000000000000013b .LASF0
+     /tmp/cclquWR1.s:171    .debug_str:00000000000000f1 .LASF2
+     /tmp/cclquWR1.s:41     .text:000000000000001c .LFB1
+     /tmp/cclquWR1.s:65     .text:0000000000000038 .LFE1
+     /tmp/cclquWR1.s:167    .debug_str:0000000000000014 .LASF1
+     /tmp/cclquWR1.s:175    .debug_str:000000000000011d .LASF3
+     /tmp/cclquWR1.s:10     .text:0000000000000000 .LFB0
+     /tmp/cclquWR1.s:35     .text:000000000000001c .LFE0
+     /tmp/cclquWR1.s:69     .debug_info:0000000000000000 .Ldebug_info0
 
 NO UNDEFINED SYMBOLS

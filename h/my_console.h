@@ -1,8 +1,9 @@
 #pragma once
 
 #include "../h/risc.h"
-
 #include "../lib/hw.h"
+
+#include "../h/0_console.h"
 
 #define __DEBUG_MODE
 
@@ -26,6 +27,9 @@ inline void _assert(bool valid, const char* file, int line) // MUST be inline
     putInt(line);
     putString("   ===========================");
     putNewline();
+
+    IConsole::get()->writeToConsole();
+
 
     stopKernel();
 }

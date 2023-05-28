@@ -6,6 +6,19 @@
 
 uint64 fib(uint64);
 
+int helperRet32P164(uint64 code, uint64 parameter1)
+{
+    __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be after the a1 instruction. Reason: if its before it can augment the argument
+
+    __asm__ volatile ("ecall");
+
+    uint64 ret;
+    __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+
+    return *((int*)&ret);
+}
+
 char helperRet8(uint64 code)
 {
 
@@ -109,9 +122,9 @@ void thread_join(thread_t handle)
     helperP164(0x14, handle);
 }
 
-uint64 test_call(uint64 n)
+int time_sleep(time_t time)
 {
-    return helperRet64P164(3, n);
+    return helperRet32P164(0x31, time);
 }
 
 char getc()
@@ -130,3 +143,9 @@ void putc(char c)
 //    __putc(c);
     IConsole::get()->putc(c);
 }
+
+uint64 test_call(uint64 n)
+{
+    return helperRet64P164(3, n);
+}
+

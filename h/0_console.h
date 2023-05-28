@@ -13,6 +13,7 @@ public:
         return &instance;
     }
 
+    void writeToConsole();
     uint64 putBufferHead, putBufferTail;
     char putBuffer[BUFFER_SIZE];
     uint64 putBufferItems;

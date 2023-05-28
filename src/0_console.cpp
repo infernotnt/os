@@ -1,6 +1,24 @@
 #include "../h/0_console.h"
 #include "../h/my_console.h"
 
+void IConsole::writeToConsole()
+{
+//    int a = plic_claim();
+//    assert(a == 10);
+
+    if( ((*((char *) CONSOLE_STATUS)) & CONSOLE_TX_STATUS_BIT) != 0 )
+    {
+        if(putBufferItems > 0)
+        {
+            *((char *) CONSOLE_TX_DATA) = putBuffer[putBufferTail];
+
+            putBufferItems--;
+            putBufferTail = (putBufferTail+1) % BUFFER_SIZE;
+        }
+    }
+//    plic_complete(10);
+}
+
 void IConsole::consoleHandler()
 {
     bool readyWrite = false;
@@ -10,23 +28,12 @@ void IConsole::consoleHandler()
 
     if(a == 0)
     {
-//        plic_complete(0);
+        assert(false); // greska
         return;
     }
 
     assert(a == 10);
 
-    if( ((*((char *) CONSOLE_STATUS)) & CONSOLE_TX_STATUS_BIT) != 0 )
-    {
-        readyWrite = true;
-        if(putBufferItems > 0)
-        {
-            *((char *) CONSOLE_TX_DATA) = putBuffer[putBufferTail];
-
-            putBufferItems--;
-            putBufferTail = (putBufferTail+1) % BUFFER_SIZE;
-        }
-    }
 
     if( ((*((char *) CONSOLE_STATUS)) & CONSOLE_RX_STATUS_BIT) != 0 )
     {

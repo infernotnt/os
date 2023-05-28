@@ -9,6 +9,7 @@ extern "C" void trapRoutine();
 void myUserMain();
 void doInitialAsserts();
 void initInterruptVector();
+void doBusyWaitThread(void*);
 
 uint64 fib(uint64 n);
 
@@ -20,6 +21,10 @@ void userWrapper(void* p)
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 
     enableExternalInterrupts();
+
+    putString("Cigane");
+    putNewline();
+    IConsole::get()->writeToConsole();
 
     myUserMain();
 }
@@ -39,13 +44,24 @@ int main()
     kernelThread.id = 0;
     IThread::pAllThreads[0] = &kernelThread;
 
-    thread_t t;
-    thread_create(&t, &userWrapper, nullptr);
+    thread_t busyWaitThread;
+    thread_create(&busyWaitThread, &doBusyWaitThread, nullptr);
+    assert(IThread::pAllThreads[busyWaitThread]->id == BUSY_WAIT_THREAD_ID);
+    Scheduler::get()->getNext();                                                 // get this function out of the Scheduler algorithm
+
+    thread_t userThread;
+    thread_create(&userThread, &userWrapper, nullptr);
+    assert(IThread::pAllThreads[userThread]->id == USER_THREAD_ID);
 
     IThread::initialUserMemoryUsage = MemAlloc::get()->getUserlandUsage();
 
-    plic_claim();
-    plic_complete(10);
+//    plic_claim();
+//    plic_complete(10);
+
+    IThread* a = Scheduler::get()->pHead;
+//    IThread* b = Scheduler::get()->getNext();
+//    assert(a == b);
+    assert(a->id == USER_THREAD_ID);
 
     __asm__ volatile ("li a0, 4"); // this is a system call that calls IThread::switchToUser()
     __asm__ volatile ("ecall");
@@ -55,40 +71,22 @@ int main()
     return 0;
 }
 
-void doC(void* p)
+void doBusyWaitThread(void* p)
 {
-    volatile uint64 i=0;
-    extern uint64 gTimer;
-    uint64 oldTimer = gTimer;
-    while(i>=0)
+    assert(p == nullptr);
+    __asm__ volatile("mv x10, x10");
+
+    volatile uint64 a;
+    while(a++)
     {
-        if(gTimer != oldTimer)
+        assert(IThread::getPRunning()->id == BUSY_WAIT_THREAD_ID);
+
+        if(IThread::getPRunning()->pNext != nullptr)
         {
-            __asm__ volatile ("mv x1, x1");
+            __asm__ volatile("mv x10, x10");
+            thread_dispatch();
         }
-        i++;
-        oldTimer = gTimer;
     }
-    __asm__ volatile ("mv x1, x1");
-}
-
-void testAsyncCall()
-{
-
-    assert(MemAlloc::get()->getUserlandUsage() == 0);
-
-//    void doB(void*);
-
-    int argA = 69;
-//    int argB = 420;
-    thread_t a;
-//    thread_t b;
-    thread_create(&a, doC, &argA);
-//    thread_create(&b, doB, &argB);
-    thread_dispatch();
-
-//    assert(IThread::pAllThreads[a]->id == IThread::pAllThreads[b]->id-1);
-    assert(MemAlloc::get()->getUserlandUsage() == 0);
 }
 
 void doInitialAsserts()
@@ -101,6 +99,7 @@ void doInitialAsserts()
     assert(sizeof(IThread) < 1000);
     assert(sizeof(int) == 4);
     assert(sizeof(uint64) == 8);
+    assert(sizeof(unsigned long) == sizeof(uint64));
 }
 
 void initInterruptVector()

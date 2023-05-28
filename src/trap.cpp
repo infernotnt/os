@@ -33,6 +33,52 @@ void doTimerStuff()
     }
 }
 
+void doSleepStuff()
+{
+    IThread* pCur = Scheduler::get()->pSleepHead;
+
+    while(pCur)
+    {
+        pCur->remainingSleep--;
+
+        assert(pCur->remainingSleep >= 0);
+
+        pCur = pCur->pNext;
+    }
+
+    while(true)
+    {
+        pCur = Scheduler::get()->pSleepHead;
+        IThread* pPrev = nullptr;
+        bool changedList = false;
+
+        while (pCur)
+        {
+            if(pCur->remainingSleep == 0)
+            {
+                if(pCur == Scheduler::get()->pSleepHead) // first in list
+                {
+                    Scheduler::get()->pSleepHead = pCur->pNext;
+                }
+                else // not first in list
+                {
+                    pPrev->pNext = pCur->pNext;
+                }
+
+                changedList = true;
+                Scheduler::put(pCur); // WARNING: must be last command to preserve the pCur->pNext
+                break;
+            }
+
+            pPrev = pCur;
+            pCur = pCur->pNext;
+        }
+
+        if(changedList == false) // this means there was one pass trough the loop and no changes were made
+            break;
+    }
+}
+
 void cTimerInterruptRoutine()
 {
     __asm__ volatile ("mv x10, x10");
@@ -49,7 +95,7 @@ void cTimerInterruptRoutine()
     if(cause == 1)
     {
         doTimerStuff();
-//        doUnsleepThreads();
+        doSleepStuff();
     }
     else if (cause == 9)
     {
@@ -156,11 +202,14 @@ void cInternalInterruptRoutine()
     else if (code == 19) // 19, thread_dispatch
     {
         Scheduler::dispatchUserVersion();
-
     }
     else if (code == 20)
     {
         IThread::join((uint64)parameter1);
+    }
+    else if (code == 49)
+    {
+        *((int*)&ret) = Scheduler::get()->sleep(parameter1);
     }
     else if (code == 65) // getc
     {

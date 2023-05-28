@@ -7,6 +7,8 @@ void testSystemCalls();
 void testMemoryAllocator();
 void testSyncCall();
 void testTimeSlice();
+void testTimeSleep();
+
 uint64 fib(uint64);
 extern uint64 gTimer;
 
@@ -19,13 +21,61 @@ void myUserMain()
     putString("=== App started");
     putNewline();
 
-    testSystemCalls();
-    testMemoryAllocator();
-    testSyncCall();
-    testTimeSlice();
+//    testSystemCalls();
+//    testMemoryAllocator();
+//    testSyncCall();
+//    testTimeSlice();
+//    testTimeSleep();
+
+    __asm__ volatile ("mv x10, x10");
+    time_sleep(500);
+    __asm__ volatile ("mv x10, x10");
 
     putString("=== App ended");
     putNewline();
+}
+
+
+void testTimeSleep()
+{
+    putString("=== Testing \"testTimeSleep\"");
+    putNewline();
+
+    thread_t a, b;
+
+    uint64 argA = 4;
+    uint64 argB = 1;
+
+    void doSleepA(void*);
+
+    thread_create(&a, doSleepA, &argA);
+    thread_create(&b, doSleepA, &argB);
+
+    thread_join(a);
+    thread_join(b);
+
+    putString("=== PASS in \"testTimeSleep\"");
+    putNewline();
+}
+
+void doSleepA(void* p)
+{
+    uint64 *n = (uint64*)p;
+
+    uint64 i = *n;
+    while(i <= 8)
+    {
+        int a = fib(i);
+
+        uint64 oldTimer = gTimer;
+        int b = time_sleep(a);
+
+        assert(b == 0);
+        assert((oldTimer - gTimer) <= (((uint64)a) + 2));
+        assert((oldTimer - gTimer) >= ((uint64)a));
+
+        i++;
+    }
 }
 
 int sliceFirstCounter = 0;

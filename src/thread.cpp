@@ -2,7 +2,6 @@
 #include "../h/alloc.h"
 #include "../h/scheduler.h"
 
-IThread* IThread::pSleepHead = nullptr;
 uint64 IThread::timeSliceCounter = 0;
 
 IThread* IThread::pRunning = nullptr;
@@ -81,7 +80,7 @@ void IThread::switchToUser()
 
     Scheduler::dispatchToNext();
 
-    assert(IThread::getPRunning()->id == 1);
+    assert(IThread::getPRunning()->id == USER_THREAD_ID);
 
 //    __asm__ volatile ("csrs sstatus, 0x6"); // TODO: probably should be removed when i add permissions
 //    __asm__ volatile ("mv x10, x10");
@@ -191,23 +190,7 @@ int IThread::exit()
 
     t->signalDone(); // WARNING: must be in this order
 
-    bool existReadyThread = !(Scheduler::get()->pHead == nullptr); // WARNING: must be after signalDone()
-    if(!existReadyThread) // TODO: add (... && !existSleepedThread && !waitingForConsoleThread), vrv ne moram da proveravam dal neko ceka na semaforu
-    {
-        putString("=== NO MORE THREADS EXIST. RETURNING TO KERNEL THREAD");
-        putNewline();
-
-        extern IThread kernelThread;
-        assert(pAllThreads[0] == &kernelThread);
-        pAllThreads[0]->state = READY;
-        Scheduler::put(IThread::pAllThreads[0]);
-
-        // ovo je nesto pogresno
-//        __asm__ volatile ("csrc sstatus, 0x6"); // set spie bit to 1. spie signifies that we dont want to mask external interrupts after sret
-//        __asm__ volatile ("csrc sstatus, 0x9"); // clear spp bit, so we change to user mode after sret-ing to user thread
-    }
-
-    Scheduler::dispatchToNext();
+    Scheduler::dispatchToNext(); // WARNING: must be before signalDone()
 
     return 0;
 }
