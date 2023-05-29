@@ -2,9 +2,9 @@
 
 #include "../lib/hw.h"
 
-#define BUFFER_SIZE 100
-
+#define BUFFER_SIZE 1000
 #define USE_MY_CONSOLE 1
+#define __DEBUG_PRINT 1
 
 class ISemaphore;
 
@@ -14,12 +14,16 @@ public:
     static IConsole* get()
     {
         __asm__ volatile("mv x10, x10");
+        __asm__ volatile("mv x10, x10");
+        __asm__ volatile("mv x10, x10");
+        __asm__ volatile("mv x10, x10");
+        __asm__ volatile("mv x10, x10");
         static IConsole instance;
         return &instance;
     }
 
-    void writeToConsole();
-    void actuallyWriteToConsole();
+//    void writeToConsole();
+    void toRunAfterLargeOutput();
 
     long int putBufferHead, putBufferTail;
     char putBuffer[BUFFER_SIZE];

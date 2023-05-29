@@ -14,6 +14,7 @@ void externalInterruptTest()
         assert(gTimer - oldTimer <= 11);
     }
 
+    __asm__ volatile("mv x10, x10");
     putString("=== PASS in externalInterruptTest");
     putNewline();
 }
@@ -96,21 +97,6 @@ void doSemaphoresA(void*p)
         stat = sem_signal(sem1);
         assert(stat == 0);
     }
-
-//    putString("PRVI ispis iz novog thread-a");
-//    putNewline();
-//
-//    putString("DRUGI ispis iz novog thread-a");
-//    putNewline();
-
-    for(uint64 i=0; i<400000000; i++)
-    {
-        if(i % 1000000 == 0)
-        {
-            assert(true);
-        }
-    }
-
 
     while(ISemaphore::pAllSemaphores[semFinal]->value == 0) // this is to ensure the other thread is waiting on this one before we close this one
     {

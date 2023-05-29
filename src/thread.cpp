@@ -90,8 +90,11 @@ void IThread::switchToUser()
     assert(t); // temp
     assert(IThread::getPRunning()->id == USER_THREAD_ID);
 
-//    __asm__ volatile("li t1, 256");
-//    __asm__ volatile("csrc sstatus, t1"); // changes to user mode by changing the "spp" bit
+    __asm__ volatile("li t1, 256");
+    __asm__ volatile("csrc sstatus, t1"); // changes to user mode by changing the "spp" bit
+
+    __asm__ volatile("li t1, 512");         // temp: disables console interrupt
+    __asm__ volatile("csrc sie, t1");
 }
 
 void IThread::setPRunning(IThread* p)

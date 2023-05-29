@@ -27,12 +27,9 @@ void userWrapper(void* p)
     assert(p == nullptr);
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 
-    __asm__ volatile("li t1, 512");         // temp: disables console interrupt
-    __asm__ volatile("csrc sie, t1");
-    enableExternalInterrupts();
+//    __asm__ volatile("csrw sscratch, 1");
 
     myUserMain();
-
 //    userMain();
 }
 
@@ -66,12 +63,16 @@ int main()
 
 //    doMainTest();
 
+    enableExternalInterrupts();
+
     uint64* sp;                                                 /// WARNING: this must be immediately before calling the user thread
     __asm__ volatile ("mv %[name], sp" : [name] "=r"(sp));
     kernelThread.sp = sp;
 
     __asm__ volatile ("li a0, 4"); // this is a system call that calls IThread::switchToUser()
     __asm__ volatile ("ecall");
+
+    __asm__ volatile("csrw sscratch, 1");
 
     return 0;
 }
@@ -169,7 +170,6 @@ void doInitialAsserts()
 
 void initInterruptVector()
 {
-
 // should be before changing sstatus 0x2 bit
     __asm__ volatile ("csrw stvec, %[vector]" : : [vector] "r"(&trapRoutine));
 

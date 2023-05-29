@@ -29,15 +29,14 @@ inline void _assert(bool valid, const char* file, int line) // MUST be inline
     if(valid)
         return;
 
-    putString("===================== ASSERT file: ");
-    putString(file);
-    putString("    line: ");
-    putInt(line);
-    putString("   ===========================");
-    putNewline();
+    kPutString("===================== ASSERT file: ");
+    kPutString(file);
+    kPutString("    line: ");
+    kPutInt(line);
+    kPutString("   ===========================");
+    kPutNewline();
 
-    IConsole::get()->writeToConsole();
-
+    IConsole::get()->toRunAfterLargeOutput();
 
     stopKernel();
 }

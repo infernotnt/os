@@ -124,6 +124,12 @@ void Scheduler::dispatchToNext() // WARNING: different than sys. call thread_dis
 
             pNew = IThread::pAllThreads[0];
 
+            __asm__ volatile("li t1, 256");
+            __asm__ volatile("csrs sstatus, t1"); // changes to kernel mode by changing the "spp" bit
+
+            __asm__ volatile("li t1, 32");
+            __asm__ volatile("csrc sstatus, t1"); // change "spie" bit in sstatus register so external interupts are disabled when switching to kernel thread
+
             // TODO: set spp bit, set spie bit but maby not necessary
         }
     }

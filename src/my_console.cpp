@@ -10,10 +10,10 @@
 [[noreturn]] void stopKernel()
 {
     __asm__ volatile("mv x10, x10");
-    putNewline();
-    putString("====== Stopping the kernel ======");
+    kPutNewline();
+    kPutString("====== Stopping the kernel ======");
 
-    IConsole::get()->writeToConsole();
+    IConsole::get()->toRunAfterLargeOutput();
 
     disableExternalInterrupts();
 
@@ -26,27 +26,69 @@
 
 void kPutNewline()
 {
-    assert(false);
+    IConsole::get()->putc('\n');
+
+    IConsole::get()->toRunAfterLargeOutput();
 }
 
-void kPutString(const char*)
+void kPutString(const char* s)
 {
-    assert(false);
+    int i=0;
+    while(true)
+    {
+        if(s[i] == '\0')
+            break;
+        else IConsole::get()->putc(s[i++]);
+    }
+
+    IConsole::get()->toRunAfterLargeOutput();
 }
-void kPutU64(uint64)
+
+void kPutU64(uint64 n)
 {
-    assert(false);
+    if(n >= 0 and n <= 9)
+        IConsole::get()->putc('0' + n);
+    else if (n < 0)
+    {
+        kPutString("===== FATAL PRINTING ERROR IN FUNCTION putU64. NEGATIVE VALUE. Stoping the kernel ====");
+        kPutNewline();
+        stopKernel();
+    }
+    else {
+        uint64 initial = 1000000000000000000;
+
+        if (n > initial || n <= 9)
+        {
+            kPutString("===== FATAL PRINTING ERROR IN FUNCTION putU64() Stoping the kernel ====");
+            kPutNewline();
+            stopKernel();
+        }
+
+        bool alreadyWritten = false;
+        while(initial > 0)
+        {
+            int digit = n / initial;
+            if (digit > 0 || alreadyWritten)
+            {
+                alreadyWritten = true;
+                IConsole::get()->putc(digit + '0');
+                n = n % initial;
+            }
+            initial /= 10;
+        }
+    }
 }
 
 void kPutInt(int)
 {
     assert(false);
+    IConsole::get()->toRunAfterLargeOutput();
 }
 
 void putNewline()
 {
     putc('\n');
-    IConsole::get()->writeToConsole();
+    IConsole::get()->toRunAfterLargeOutput();
 }
 
 void putString(const char* s)
@@ -59,7 +101,7 @@ void putString(const char* s)
         else putc(s[i++]);
     }
 
-    IConsole::get()->writeToConsole();
+    IConsole::get()->toRunAfterLargeOutput();
 }
 
 void putU64(uint64 n)
@@ -95,7 +137,7 @@ void putU64(uint64 n)
             initial /= 10;
         }
     }
-    IConsole::get()->writeToConsole();
+    IConsole::get()->toRunAfterLargeOutput();
 }
 
 void putInt(int n)
@@ -130,5 +172,5 @@ void putInt(int n)
             initial /= 10;
         }
     }
-    IConsole::get()->writeToConsole();
+    IConsole::get()->toRunAfterLargeOutput();
 }

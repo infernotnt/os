@@ -2,11 +2,7 @@
 #include "../h/my_console.h"
 #include "../h/semaphore.h"
 
-void IConsole::writeToConsole()
-{
-}
-
-void IConsole::actuallyWriteToConsole()
+void IConsole::toRunAfterLargeOutput()
 {
     assert(inputSemaphore != nullptr);
 
@@ -25,6 +21,11 @@ void IConsole::actuallyWriteToConsole()
     }
 #endif
 }
+
+//void IConsole::writeToConsole()
+//{
+//}
+
 
 void IConsole::consoleHandler()
 {
@@ -68,7 +69,14 @@ void IConsole::consoleHandler()
 void IConsole::putc(char c)
 {
     assert(inputSemaphore != nullptr);
+
+    if(!(putBufferItems < BUFFER_SIZE)) // temp, equivalent to assert below
+    {
+        __asm__ volatile("mv x10, x10");
+        assert(false);
+    }
     assert(putBufferItems < BUFFER_SIZE);
+
     assert(putBufferHead < BUFFER_SIZE && putBufferTail < BUFFER_SIZE);
 
     putBuffer[putBufferHead] = c;

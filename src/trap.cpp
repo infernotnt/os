@@ -39,9 +39,9 @@ void cExternalInterruptRoutine()
     if(cause == 1)
     {
         __asm__ volatile ("csrc sip, 0x2"); // clears the 2nd bit which signifies software interrupt (timer for project)
-        gTimer++;
-//        doTimerStuff(); WARNING: this changes gTimer
-//        doSleepStuff();
+//        gTimer++;
+        doTimerStuff(); // WARNING: this changes gTimer
+        doSleepStuff();
     }
     else if (cause == 9)
     {
@@ -176,7 +176,6 @@ void cInternalInterruptRoutine()
     else if (code == 66) // putc
     {
         IConsole::get()->putc(*((char*)&parameter1));
-        IConsole::get()->actuallyWriteToConsole();
     }
     else
     {
@@ -230,7 +229,7 @@ void doTimerStuff()
     if (gTimer % 10 == 0)
     {
         kPutString("Time: ");
-        kPutInt(gTimer / 10);
+        kPutU64(gTimer / 10);
         kPutString("s");
         kPutNewline();
     }
