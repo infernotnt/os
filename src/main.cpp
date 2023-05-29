@@ -63,8 +63,6 @@ int main()
 
 //    doMainTest();
 
-    enableExternalInterrupts();
-
     uint64* sp;                                                 /// WARNING: this must be immediately before calling the user thread
     __asm__ volatile ("mv %[name], sp" : [name] "=r"(sp));
     kernelThread.sp = sp;
@@ -91,17 +89,19 @@ void doBusyWaitThread(void* p)
     __asm__ volatile("mv x10, x10");
 
     volatile uint64 a;
-    while(a++)
+    while(true)
     {
         assert(IThread::getPRunning()->id == BUSY_WAIT_THREAD_ID);
 
         __asm__ volatile("mv x10, x10");
-        if(IThread::getPRunning()->pNext != nullptr)
-        {
-            __asm__ volatile("mv x10, x10");
-            thread_dispatch();
-        }
+
+        __asm__ volatile("li a0, 5"); // calls Scheduler::specialBusyWaitDispatch();
+        __asm__ volatile("ecall");
+
+        a++;
     }
+
+    assert(false); // should never get here
 }
 
 void initializeUserThread()

@@ -19,6 +19,8 @@ public:
     static void put(IThread*);
     static void printState();
 
+    static void specialBusyWaitDispatch();
+
     IThread* pHead; // points to the one that is the next to be run
     IThread* pSleepHead;
 

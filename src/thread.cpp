@@ -74,8 +74,10 @@ void IThread::switchToUser()
 
     if(!cameFromKernelMode) // if user thread calls this it does nothing
     {
+#ifdef __DEBUG_MODE
         assert(false); // temp
         assert(IThread::pRunning->id != 0);
+#endif
         return;
     }
 

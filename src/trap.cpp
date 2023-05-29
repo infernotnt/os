@@ -131,6 +131,10 @@ void cInternalInterruptRoutine()
     {
         IThread::switchToUser();
     }
+    else if (code == 5)
+    {
+        Scheduler::specialBusyWaitDispatch();
+    }
     else if (code == 17) // 17
     {
         *((int*)&ret) = IThread::createThread( *((uint64**)&parameter1), *((IThread::Body*)&parameter2), *((void**)&parameter3), (void*) parameter4);

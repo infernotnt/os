@@ -55,6 +55,24 @@ void Scheduler::dispatchUserVersion()
     Scheduler::dispatchToNext();
 }
 
+void Scheduler::specialBusyWaitDispatch()
+{
+    IThread* t = IThread::getPRunning();
+    if(t->id != BUSY_WAIT_THREAD_ID)
+    {
+#ifdef __DEBUG_MODE
+        assert(false);
+#endif
+        return;
+    }
+
+    if(t->pNext == nullptr)
+        return;
+
+    Scheduler::put(t->pNext);
+    dispatchToNext();
+}
+
 void Scheduler::printState()
 {
     kPutU64(IThread::getPRunning()->id);
@@ -99,13 +117,10 @@ void Scheduler::dispatchToNext() // WARNING: different than sys. call thread_dis
         bool isWaitingForSemaphore = checkIfWaitingForSemaphore();
         if (existReadyThread == false && (existSleeper == true || isWaitingForSemaphore == true))
         {
-//            kPutString("===== SLEEPING WAIT OR INPUT WAIT");
-//            kPutNewline();
-            const char* s = "===== SLEEPING WAIT OR INPUT WAIT \n";
-            int i = 0;
-            while(s[i] != '\0')
-                IConsole::get()->putc(s[i]);
-            assert(false);
+#ifdef __DEBUG_PRINT
+            kPutString("===== SLEEPING WAIT OR INPUT WAIT");
+            kPutNewline();
+#endif
 
             pNew = IThread::pAllThreads[BUSY_WAIT_THREAD_ID];
             Scheduler::put(pNew);
@@ -129,14 +144,12 @@ void Scheduler::dispatchToNext() // WARNING: different than sys. call thread_dis
 
             __asm__ volatile("li t1, 32");
             __asm__ volatile("csrc sstatus, t1"); // change "spie" bit in sstatus register so external interupts are disabled when switching to kernel thread
-
-            // TODO: set spp bit, set spie bit but maby not necessary
         }
     }
 
     assert(pNew->state == IThread::READY);
 
-    pOld->state = IThread::READY; // must be in this order (maby)
+    pOld->state = IThread::READY; // must be in this order
     pNew->state = IThread::RUNNING;
 
     IThread::setPRunning(pNew);
