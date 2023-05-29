@@ -4,7 +4,7 @@
 #include "../h/semaphore.h"
 #include "../h/my_tests.h"
 
-#include "../h/syscall_c.hpp"
+#include "../h/syscall_c.h"
 #include "../h/syscall_cpp.hpp"
 
 void myUserMain()

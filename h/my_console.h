@@ -5,7 +5,10 @@
 
 #include "../h/0_console.h"
 
+// for debug system calls
 #define __DEBUG_MODE
+
+//#define __DEBUG_PRINT
 
 
 void putString(const char* s);

@@ -3,7 +3,7 @@
 //
 
 #include "../h/my_console.h"
-#include "../h/syscall_c.hpp"
+#include "../h/syscall_c.h"
 
 //inline void _assert(bool valid, const char* file, int line)
 

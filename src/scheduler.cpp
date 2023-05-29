@@ -84,8 +84,10 @@ void Scheduler::dispatchToNext() // WARNING: different than sys. call thread_dis
     {
         pNew = &kernelThread;
 
+#ifdef __DEBUG_PRINT
         kPutString("=== NO MORE USER THREADS EXIST. RETURNING TO KERNEL THREAD");
         kPutNewline();
+#endif
 
         assert(IThread::pAllThreads[0] == &kernelThread);
         IThread::pAllThreads[0]->state = IThread::READY;

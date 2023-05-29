@@ -5,6 +5,7 @@ int Thread::sleep (time_t time)
     return time_sleep(time);
 }
 
+/*
 void periodicWrapper(void* p)
 {
     PeriodicThread* t = (PeriodicThread*)p;
@@ -22,8 +23,8 @@ void periodicWrapper(void* p)
 PeriodicThread::PeriodicThread (time_t period)
     : period(period), Thread(&periodicWrapper, (void*)this), hasTerminated(false)
 {
-
 }
+ */
 
 Semaphore::Semaphore(unsigned init)
 {

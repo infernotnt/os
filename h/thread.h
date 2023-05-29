@@ -1,7 +1,7 @@
 #pragma once
 #include "../lib/hw.h"
 #include "../h/my_console.h"
-#include "../h/syscall_c.hpp"
+#include "../h/syscall_c.h"
 
 #define NR_MAX_THREADS 10
 #define BUSY_WAIT_THREAD_ID 9999999

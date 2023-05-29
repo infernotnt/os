@@ -1,5 +1,5 @@
 #pragma once
-#include "../h/syscall_c.hpp"
+#include "../h/syscall_c.h"
 
 void* operator new(size_t size);
 void operator delete(void* p);

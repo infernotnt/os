@@ -1,4 +1,4 @@
-#include "../h/syscall_c.hpp"
+#include "../h/syscall_c.h"
 #include "../h/my_console.h"
 #include "../h/thread.h"
 #include "../h/0_console.h"

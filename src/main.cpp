@@ -1,5 +1,5 @@
 #include "../h/alloc.h"
-#include "../h/syscall_c.hpp"
+#include "../h/syscall_c.h"
 #include "../h/thread.h"
 #include "../h/scheduler.h"
 #include "../h/0_console.h"
@@ -8,6 +8,7 @@
 extern "C" void trapRoutine();
 
 void myUserMain();
+void userMain();
 void doInitialAsserts();
 void initInterruptVector();
 void doBusyWaitThread(void*);
@@ -19,27 +20,7 @@ void userWrapper(void* p)
     assert(p == nullptr);
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 
-//    enableExternalInterrupts();
-
-    __asm__ volatile ("mv x10, x10");
-    __asm__ volatile ("csrs sip, 0x2");
-
-    uint64 oldTimer = gTimer;
-    while(true)
-    {
-        if(gTimer - oldTimer == 10)
-            break;
-    }
-
-    putc('a');
-//    IConsole::get()->writeToConsole();
-
-    putc('a');
-//    IConsole::get()->writeToConsole();
-
-    externalInterruptTest();
-
-//    myUserMain();
+    userMain();
 }
 
 void doMainTest();
@@ -57,8 +38,8 @@ int main()
 
     initializeKernelThread();
 
-    enableExternalInterrupts();
-    externalInterruptTest();
+//    enableExternalInterrupts();
+//    externalInterruptTest();
 
 //    doMainTest();
 //    initializeBusyWaitThread();
