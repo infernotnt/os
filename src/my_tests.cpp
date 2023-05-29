@@ -1,9 +1,29 @@
 #include"../h/my_tests.h"
 
+void externalInterruptTest()
+{
+    putString("=== Testing externalInterruptTest");
+    putNewline();
+
+    uint64 oldTimer = gTimer;
+    while(true)
+    {
+        if(gTimer - oldTimer == 10)
+            break;
+
+        assert(gTimer - oldTimer <= 11);
+    }
+
+    putString("=== PASS in externalInterruptTest");
+    putNewline();
+}
+
 uint64 semVal = 0;
 
 void testSemaphores()
 {
+    assert(semVal == 0);
+
     putString("=== Testing semaphores");
     putNewline();
 
@@ -152,6 +172,9 @@ int sliceSecondCounter = 0;
 
 void testTimeSlice()
 {
+    assert(sliceFirstCounter == 0);
+    assert(sliceSecondCounter == 0);
+
     putString("=== Testing \"testTimeSlice\"");
     putNewline();
 
@@ -376,4 +399,5 @@ void testMemoryAllocator()
     putString("=== PASS in testing memory allocator");
     putNewline();
 }
+
 

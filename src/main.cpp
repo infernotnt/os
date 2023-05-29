@@ -3,6 +3,7 @@
 #include "../h/thread.h"
 #include "../h/scheduler.h"
 #include "../h/0_console.h"
+#include "../h/my_tests.h"
 
 extern "C" void trapRoutine();
 
@@ -10,8 +11,6 @@ void myUserMain();
 void doInitialAsserts();
 void initInterruptVector();
 void doBusyWaitThread(void*);
-
-uint64 fib(uint64 n);
 
 IThread kernelThread;
 
@@ -22,13 +21,18 @@ void userWrapper(void* p)
 
 //    enableExternalInterrupts();
 
-    myUserMain();
+    __asm__ volatile ("mv x10, x10");
+    externalInterruptTest();
+
+//    myUserMain();
 }
 
 void doMainTest();
 void initializeKernelThread();
 void initializeBusyWaitThread();
 void initializeUserThread();
+
+void externalInterruptTest();
 
 int main()
 {
@@ -37,10 +41,14 @@ int main()
     doInitialAsserts();
 
     initializeKernelThread();
+    enableExternalInterrupts();
+
+//    thread_dispatch();
+    externalInterruptTest();
 
 //    doMainTest();
-
 //    initializeBusyWaitThread();
+
     initializeUserThread();
 
     IThread* a = Scheduler::get()->pHead;

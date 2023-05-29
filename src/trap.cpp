@@ -5,7 +5,7 @@
 #include "../h/semaphore.h"
 #include "../lib/console.h"
 
-uint64 gTimer = 0;
+volatile uint64 gTimer = 0;
 uint64 fib(uint64 n);
 uint64 testCall(uint64 n)
 {
@@ -25,8 +25,9 @@ void cTimerInterruptRoutine()
     if(cause == 1)
     {
         __asm__ volatile ("csrc sip, 0x2"); // clears the 2nd bit which signifies software interrupt (timer for project)
-        doTimerStuff();
-        doSleepStuff();
+        gTimer++;
+//        doTimerStuff(); WARNING: this changes gTimer
+//        doSleepStuff();
     }
     else if (cause == 9)
     {

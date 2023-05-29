@@ -13,10 +13,14 @@ void testTimeSlice();
 void testTimeSleep();
 void testSemaphores();
 
+
+void externalInterruptTest();
+
 extern uint64 semVal;
 
 extern int sliceFirstCounter;
 extern int sliceSecondCounter;
 
 uint64 fib(uint64);
-extern uint64 gTimer;
+volatile extern uint64 gTimer;
+
