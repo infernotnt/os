@@ -26,9 +26,11 @@ int Scheduler::sleep(time_t time)
 
 void Scheduler::dispatchUserVersion()
 {
-    extern IThread kernelThread;
-    assert(IThread::getPRunning() !=
-           &kernelThread); // you're only supposed to open user threads with system call with code 4
+//    extern IThread kernelThread;
+
+    // reenable, temp comment
+//    assert(IThread::getPRunning() !=
+//           &kernelThread); // you're only supposed to open user threads with system call with code 4
 
     if(IThread::getPRunning()->id != BUSY_WAIT_THREAD_ID)
     {
@@ -72,7 +74,8 @@ void Scheduler::dispatchToNext() // WARNING: different than sys. call thread_dis
     IThread *pNew = Scheduler::getNext();
 
     extern IThread kernelThread;
-    assert(pNew != &kernelThread);
+    // temp comment
+//    assert(pNew != &kernelThread);
 
     bool existReadyThread = (pNew != nullptr);
     bool existSleeper = (Scheduler::get()->pSleepHead != nullptr);
@@ -94,6 +97,8 @@ void Scheduler::dispatchToNext() // WARNING: different than sys. call thread_dis
     else if(existReadyThread == false && existSleeper == true)
     {
         assert(existReadyThread == false && existSleeper == true);
+        putString("===== SLEEPING WAIT");
+        putNewline();
 
         pNew = IThread::pAllThreads[BUSY_WAIT_THREAD_ID];
         Scheduler::put(pNew);

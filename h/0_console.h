@@ -4,6 +4,8 @@
 
 #define BUFFER_SIZE 1000
 
+#define USE_MY_CONSOLE 1
+
 class IConsole // singleton class
 {
 public:
@@ -25,7 +27,6 @@ public:
     void putc(char c);
     char getc();
     void consoleHandler();
-    void actualWriteToConsole();
 
 private:
     IConsole()

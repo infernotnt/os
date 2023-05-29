@@ -6,6 +6,34 @@
 
 uint64 fib(uint64);
 
+int helperRet32P164P232(uint64 code, uint64 parameter1, int parameter2)
+{
+    __asm__ volatile ("mv a2, %[name]" : : [name] "r" (parameter2));
+    __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be after the a1 instruction. Reason: if its before it can augment the argument
+
+    __asm__ volatile ("ecall");
+
+    uint64 ret;
+    __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+
+    return *((int*)&ret);
+}
+
+int helperRet32P164P264(uint64 code, uint64 parameter1, uint64 parameter2)
+{
+    __asm__ volatile ("mv a2, %[name]" : : [name] "r" (parameter2));
+    __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
+    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be after the a1 instruction. Reason: if its before it can augment the argument
+
+    __asm__ volatile ("ecall");
+
+    uint64 ret;
+    __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
+
+    return *((int*)&ret);
+}
+
 int helperRet32P164(uint64 code, uint64 parameter1)
 {
     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
@@ -129,19 +157,20 @@ int time_sleep(time_t time)
 
 char getc()
 {
-//    return __getc();
-    return 'a';
+#ifdef USE_MY_CONSOLE
+    return IConsole::get()->getc();
+#else
+    return __getc();
+#endif
 }
 
 void putc(char c)
 {
-//    uint64 a;
-//    *((char*)(&a)) = c;
-//
-//    helperP164(0x42, a);
-
-//    IConsole::get()->putc(c);
+#ifdef USE_MY_CONSOLE
+    IConsole::get()->putc(c);
+#else
     __putc(c);
+#endif
 }
 
 uint64 test_call(uint64 n)
@@ -149,3 +178,22 @@ uint64 test_call(uint64 n)
     return helperRet64P164(3, n);
 }
 
+int sem_open(sem_t* handle, unsigned init)
+{
+    return helperRet32P164P232(0x21, (uint64)handle, *((int*)&init));
+}
+
+int sem_close(sem_t handle)
+{
+    return helperRet32P164(0x22, (uint64)handle);
+}
+
+int sem_wait(sem_t id)
+{
+    return helperRet32P164(0x23, (uint64)id);
+}
+
+int sem_signal(sem_t id)
+{
+    return helperRet32P164(0x24, (uint64)id);
+}

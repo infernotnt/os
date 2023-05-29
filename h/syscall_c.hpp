@@ -21,3 +21,9 @@ char getc();
 void putc(char c);
 
 uint64 test_call(uint64 n);
+
+typedef uint64 sem_t;
+int sem_open(sem_t* handle, unsigned init);
+int sem_close(sem_t handle);
+int sem_wait(sem_t id);
+int sem_signal(sem_t id);

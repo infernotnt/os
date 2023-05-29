@@ -2,7 +2,7 @@
 #include "../h/scheduler.h"
 #include "../h/alloc.h"
 #include "../h/0_console.h"
-
+#include "../h/semaphore.h"
 #include "../lib/console.h"
 
 uint64 gTimer = 0;
@@ -31,10 +31,12 @@ void cTimerInterruptRoutine()
     else if (cause == 9)
     {
         __asm__ volatile("mv x10, x10");
-//        int a = plic_claim();
-//        plic_complete(a);
-//        console_handler();
+
+#ifdef USE_MY_CONSOLE
         IConsole::get()->consoleHandler();
+#else
+        console_handler();
+#endif
         __asm__ volatile("mv x10, x10");
     }
     else
@@ -138,6 +140,22 @@ void cInternalInterruptRoutine()
     {
         IThread::join((uint64)parameter1);
     }
+    else if (code == 33) // sem_open
+    {
+        *((int*)&ret) = ISemaphore::create((uint64*)parameter1, parameter2);
+    }
+    else if (code == 34) // sem_close
+    {
+        *((int*)&ret) = ISemaphore::close(parameter1); // TODO: ovde gde su int-ovi parameter1 param2, .... mozda nista ne valja
+    }
+    else if (code == 35) // sem_wait
+    {
+        *((int*)&ret) = ISemaphore::wait(parameter1);
+    }
+    else if (code == 36) // sem_signal
+    {
+        *((int*)&ret) = ISemaphore::signal(parameter1);
+    }
     else if (code == 49)
     {
         *((int*)&ret) = Scheduler::get()->sleep(parameter1);
@@ -158,18 +176,22 @@ void cInternalInterruptRoutine()
         assert(false); // unknown code
     }
 
-//    __asm__ volatile ("mv a0, %[name]" : : [name] "r" (ret)); // upaliti ovo dole umesto ovoga (ovo obrisati)
-
     bool normalCallWithReturn = (code == 0x1) || (code == 0x2) || (code == 0x11) || (code == 0x12) || (code == 0x21) || (code == 0x22) || (code == 0x23) || (code == 0x24) || (code == 0x31) || (code == 0x41);
     bool customCallWithReturn = (code == 0x3);
     bool customCallWithoutReturn = (code == 0x4);
     bool normalCallWithoutReturn = (code == 0x13) || (code == 0x14) || (code == 0x42);
-    if(normalCallWithReturn || customCallWithReturn)
+
+    bool isSemWaitCall = (code == 0x23);
+    if(isSemWaitCall == true) // dont touch the return in this case, as the semaphore changes it directly on the stack of the waiting thread
+    {
+
+    }
+    else if(normalCallWithReturn || customCallWithReturn)
     { // system call with a return (not necessariliy 64bit)
 
         assert(ret != (uint64)-1); // not 100% check
 
-        *(((uint64*)(pOld->sp))+10) = ret; // set r0, or x10, to the return value
+        *( ((uint64*)(pOld->sp))+10 ) = ret; // set r0, or x10, to the return value
 
 //        __asm__ volatile ("mv a0, %[name]" : : [name] "r" (ret));
     }

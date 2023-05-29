@@ -31,8 +31,9 @@ void IThread::join(uint64 id)
 
     IThread* t = pAllThreads[id];
 
-    extern IThread kernelThread;
-    assert(oldRunning != &kernelThread); // you're only supposed to open user threads with system call with code 4
+    // temp comment
+//    extern IThread kernelThread;
+//    assert(oldRunning != &kernelThread); // you're only supposed to open user threads with system call with code 4
 
 //    putU64(id);
 
@@ -80,8 +81,8 @@ void IThread::switchToUser()
 
     Scheduler::dispatchToNext();
 
-    IThread* t = IThread::getPRunning();
-    assert(t);
+    IThread* t = IThread::getPRunning(); // temp
+    assert(t); // temp
     assert(IThread::getPRunning()->id == USER_THREAD_ID);
 
 //    __asm__ volatile ("csrs sstatus, 0x6"); // TODO: probably should be removed when i add permissions

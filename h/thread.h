@@ -4,8 +4,8 @@
 #include "../h/syscall_c.hpp"
 
 #define NR_MAX_THREADS 10
-#define BUSY_WAIT_THREAD_ID 1
-#define USER_THREAD_ID 2
+#define BUSY_WAIT_THREAD_ID 9999999
+#define USER_THREAD_ID 1
 
 // needs to be (DEFAULT_STACK_SIZE+8*34) (probably)
 #define ACTUAL_STACK_SIZE (DEFAULT_STACK_SIZE+8*34)*10

@@ -3,15 +3,14 @@
 
 void IConsole::writeToConsole()
 {
-
-}
-
-void IConsole::actualWriteToConsole()
-{
+#ifdef USE_MY_CONSOLE
     while( ((*((char *) CONSOLE_STATUS)) & CONSOLE_TX_STATUS_BIT) != 0 )
     {
+        assert(((*((char *) CONSOLE_STATUS)) & CONSOLE_TX_STATUS_BIT) == CONSOLE_TX_STATUS_BIT);
+
         if(putBufferItems > 0)
         {
+            assert(((*((char *) CONSOLE_STATUS)) & CONSOLE_TX_STATUS_BIT) == CONSOLE_TX_STATUS_BIT);
             *((char *) CONSOLE_TX_DATA) = putBuffer[putBufferTail];
 
             putBufferItems--;
@@ -19,40 +18,33 @@ void IConsole::actualWriteToConsole()
         }
         else break;
     }
+#endif
 }
 
 void IConsole::consoleHandler()
 {
-    bool readyWrite = false;
-    bool readyRead = false;
-
     int a = plic_claim();
 
-    if(a == 0)
+//    assert(a == 10);
+//    assert(a == 0 || a != 0);
+
+    if(a == 10)
     {
-        assert(false);
-        return;
+        if (((*((char *) CONSOLE_STATUS)) & CONSOLE_RX_STATUS_BIT) != 0)
+        {
+            assert(getBufferItems < BUFFER_SIZE - 1);
+
+            char c = *((char *) CONSOLE_TX_DATA); // ovde nista ne radim zapravo, samo retriev-ujem karakter
+
+            getBuffer[getBufferHead] = c;
+
+            getBufferHead = (getBufferHead + 1) % BUFFER_SIZE;
+            getBufferItems++;
+        }
     }
 
-    assert(a == 10);
+    plic_complete(a);
 
-
-    if( ((*((char *) CONSOLE_STATUS)) & CONSOLE_RX_STATUS_BIT) != 0 )
-    {
-        assert(getBufferItems < BUFFER_SIZE-1);
-
-        readyRead = true;
-        char c = *((char *) CONSOLE_TX_DATA); // ovde nista ne radim zapravo, samo retriev-ujem karakter
-
-        getBuffer[getBufferHead] = c;
-
-        getBufferHead = (getBufferHead + 1) % BUFFER_SIZE;
-        getBufferItems++;
-    }
-
-    plic_complete(10);
-
-    assert(readyRead || readyWrite);
 }
 
 void IConsole::putc(char c)

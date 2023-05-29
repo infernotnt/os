@@ -22,60 +22,88 @@ void userWrapper(void* p)
 
 //    enableExternalInterrupts();
 
-    putString("!!!!");
-    putNewline();
-    IConsole::get()->actualWriteToConsole();
-
-//    IConsole::get()->writeToConsole();
-
     myUserMain();
 }
+
+void doMainTest();
+void initializeKernelThread();
+void initializeBusyWaitThread();
+void initializeUserThread();
 
 int main()
 {
     disableExternalInterrupts();
-
     initInterruptVector();
     doInitialAsserts();
 
-    uint64* sp;
-    __asm__ volatile ("mv %[name], sp" : [name] "=r"(sp));
-    kernelThread.sp = sp;
-    IThread::setPRunning(&kernelThread);
-    assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
-    kernelThread.id = 0;
-    IThread::pAllThreads[0] = &kernelThread;
+    initializeKernelThread();
 
-    thread_t busyWaitThread;
-    thread_create(&busyWaitThread, &doBusyWaitThread, nullptr);
-    assert(IThread::pAllThreads[busyWaitThread]->id == BUSY_WAIT_THREAD_ID);
-    Scheduler::get()->getNext();                                                 // get this function out of the Scheduler algorithm
+//    doMainTest();
 
-    thread_t userThread;
-    thread_create(&userThread, &userWrapper, nullptr);
-    assert(IThread::pAllThreads[userThread]->id == USER_THREAD_ID);
-
-    IThread::initialUserMemoryUsage = MemAlloc::get()->getUserlandUsage();
-
-//    plic_claim();
-//    plic_complete(10);
-
-//    putString("BABAA");
-//    putNewline();
-//    putU64(69420);
-//    putNewline();
+//    initializeBusyWaitThread();
+    initializeUserThread();
 
     IThread* a = Scheduler::get()->pHead;
-//    IThread* b = Scheduler::get()->getNext();
-//    assert(a == b);
     assert(a->id == USER_THREAD_ID);
+
+    uint64* sp;                                                 /// WARNING: this must be immediately before calling the user thread
+    __asm__ volatile ("mv %[name], sp" : [name] "=r"(sp));
+    kernelThread.sp = sp;
 
     __asm__ volatile ("li a0, 4"); // this is a system call that calls IThread::switchToUser()
     __asm__ volatile ("ecall");
 
-    __asm__ volatile ("csrw sscratch, x0"); //TEST permissions
-
     return 0;
+}
+
+void initializeUserThread()
+{
+    thread_t userThread;
+    thread_create(&userThread, &userWrapper, nullptr);
+    assert(IThread::pAllThreads[userThread]->id == USER_THREAD_ID);
+}
+
+void initializeBusyWaitThread()
+{
+    thread_t busyWaitThread;
+    thread_create(&busyWaitThread, &doBusyWaitThread, nullptr);
+    assert(IThread::pAllThreads[busyWaitThread]->id == BUSY_WAIT_THREAD_ID);
+    Scheduler::get()->getNext();                                                 // get this function out of the Scheduler algorithm
+}
+
+void initializeKernelThread()
+{
+    IThread::setPRunning(&kernelThread);
+
+    IThread::setPRunning(&kernelThread);
+    kernelThread.id = 0;
+    IThread::pAllThreads[0] = &kernelThread;
+    assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
+}
+
+void doMainTest()
+{
+    enableExternalInterrupts();
+
+    volatile uint64 k = 10;
+
+    void testSystemCalls();
+    void testMemoryAllocator();
+    void testSyncCall();
+    void testSemaphores();
+
+    testSystemCalls();
+    testMemoryAllocator();
+    testSyncCall();
+    testSemaphores();
+
+    while(k++)
+    {
+        __asm__ volatile ("mv x10, x10");
+    }
+
+    /// ----
+
 }
 
 void doBusyWaitThread(void* p)
@@ -107,6 +135,7 @@ void doInitialAsserts()
     assert(sizeof(int) == 4);
     assert(sizeof(uint64) == 8);
     assert(sizeof(unsigned long) == sizeof(uint64));
+    assert(sizeof(unsigned) == sizeof(int));
 }
 
 void initInterruptVector()
@@ -116,70 +145,6 @@ void initInterruptVector()
     __asm__ volatile ("csrw stvec, %[vector]" : : [vector] "r"(&trapRoutine));
 
 // set MODE to 1 - vector mode
-    __asm__ volatile ("csrs stvec, 0x1");
     __asm__ volatile ("csrc stvec, 0x2");
+    __asm__ volatile ("csrs stvec, 0x1");
 }
-
-
-/*
-void consoleStuff(void* p)
-{
-    assert(false);
-
-    assert(p == nullptr);
-
-    IConsole* cons = IConsole::get();
-
-    while(true)
-    {
-        thread_dispatch();
-
-        bool readyWrite = false;
-        bool readyRead = false;
-
-//        int a = plic_claim();
-//
-//        if (a == 0)
-//            continue;
-//
-//        assert(a == 10);
-
-        if (((*((char *) CONSOLE_STATUS)) & CONSOLE_TX_STATUS_BIT) != 0) {
-            readyWrite = true;
-            if (cons->putBufferItems > 0)
-            {
-                int a = plic_claim();
-
-                char output = cons->putBuffer[cons->putBufferTail];
-                *((char *) CONSOLE_TX_DATA) = output;
-
-                __asm__ volatile ("mv x10, x10");
-                assert(a == 10);
-
-                cons->putBufferItems--;
-                cons->putBufferTail = (cons->putBufferTail + 1) % BUFFER_SIZE;
-            }
-        }
-
-        if (((*((char *) CONSOLE_STATUS)) & CONSOLE_RX_STATUS_BIT) != 0)
-        {
-            assert(false);
-            assert(cons->getBufferItems < BUFFER_SIZE - 1);
-
-            readyRead = true;
-            char c = *((char *) CONSOLE_TX_DATA); // ovde nista ne radim zapravo, samo retriev-ujem karakter
-
-            cons->getBuffer[cons->getBufferHead] = c;
-
-            cons->getBufferHead = (cons->getBufferHead + 1) % BUFFER_SIZE;
-            cons->getBufferItems++;
-        }
-
-        __asm__ volatile ("mv x10, x10");
-
-        plic_complete(10);
-
-        assert(readyRead || readyWrite);
-    }
-}
- */
