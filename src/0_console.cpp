@@ -4,14 +4,13 @@
 void IConsole::writeToConsole()
 {
 #ifdef USE_MY_CONSOLE
-    while( ((*((char *) CONSOLE_STATUS)) & CONSOLE_TX_STATUS_BIT) != 0 )
+    while(( (*(char*)CONSOLE_STATUS) & CONSOLE_TX_STATUS_BIT ) != 0)
     {
-        assert(((*((char *) CONSOLE_STATUS)) & CONSOLE_TX_STATUS_BIT) == CONSOLE_TX_STATUS_BIT);
-
         if(putBufferItems > 0)
         {
-            assert(((*((char *) CONSOLE_STATUS)) & CONSOLE_TX_STATUS_BIT) == CONSOLE_TX_STATUS_BIT);
-            *((char *) CONSOLE_TX_DATA) = putBuffer[putBufferTail];
+            assert(( (*(char*)CONSOLE_STATUS) & CONSOLE_TX_STATUS_BIT ) == CONSOLE_TX_STATUS_BIT);
+            *((char *) CONSOLE_TX_DATA) = '1';
+//            *((char *) CONSOLE_TX_DATA) = putBuffer[putBufferTail];
 
             putBufferItems--;
             putBufferTail = (putBufferTail+1) % BUFFER_SIZE;
@@ -30,11 +29,11 @@ void IConsole::consoleHandler()
 
     if(a == 10)
     {
-        if (((*((char *) CONSOLE_STATUS)) & CONSOLE_RX_STATUS_BIT) != 0)
+        if(( (*(char*)CONSOLE_STATUS) & CONSOLE_RX_STATUS_BIT ) != 0)
         {
             assert(getBufferItems < BUFFER_SIZE - 1);
 
-            char c = *((char *) CONSOLE_TX_DATA); // ovde nista ne radim zapravo, samo retriev-ujem karakter
+            char c = *(char*)CONSOLE_TX_DATA; // ovde nista ne radim zapravo, samo retriev-ujem karakter
 
             getBuffer[getBufferHead] = c;
 
@@ -50,6 +49,7 @@ void IConsole::consoleHandler()
 void IConsole::putc(char c)
 {
     assert(putBufferItems < BUFFER_SIZE);
+    assert(putBufferHead < BUFFER_SIZE && putBufferTail < BUFFER_SIZE);
 
     putBuffer[putBufferHead] = c;
 

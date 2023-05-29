@@ -22,6 +22,18 @@ void userWrapper(void* p)
 //    enableExternalInterrupts();
 
     __asm__ volatile ("mv x10, x10");
+    __asm__ volatile ("csrs sip, 0x2");
+
+    uint64 oldTimer = gTimer;
+    while(true)
+    {
+        if(gTimer - oldTimer == 10)
+            break;
+    }
+
+    putc('a');
+    IConsole::get()->writeToConsole();
+
     externalInterruptTest();
 
 //    myUserMain();
@@ -41,9 +53,8 @@ int main()
     doInitialAsserts();
 
     initializeKernelThread();
-    enableExternalInterrupts();
 
-//    thread_dispatch();
+    enableExternalInterrupts();
     externalInterruptTest();
 
 //    doMainTest();
@@ -81,8 +92,6 @@ void initializeBusyWaitThread()
 
 void initializeKernelThread()
 {
-    IThread::setPRunning(&kernelThread);
-
     IThread::setPRunning(&kernelThread);
     kernelThread.id = 0;
     IThread::pAllThreads[0] = &kernelThread;

@@ -2,7 +2,7 @@
 
 #include "../lib/hw.h"
 
-#define BUFFER_SIZE 1000
+#define BUFFER_SIZE 100
 
 #define USE_MY_CONSOLE 1
 

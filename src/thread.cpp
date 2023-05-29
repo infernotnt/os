@@ -9,8 +9,14 @@ uint64** IThread::pRunningSp = nullptr;
 uint64 IThread::nrTotalThreads = 1;
 IThread* IThread::pAllThreads[MAX_NR_TOTAL_THREADS];
 uint64 IThread::initialUserMemoryUsage;
-//uint64* IThread::runningSp = nullptr;
 bool IThread::switchedToUserThread = 0;
+
+
+void wrapper(uint64 __DO_NOT_USE, IThread::Body body, void* arg) // this entire function can be run from USER thread
+{
+    (*body)(arg);
+    thread_exit();
+}
 
 void IThread::signalDone()
 {
@@ -104,21 +110,48 @@ void IThread::setPRunning(IThread* p)
 
 int IThread::createThread(uint64* id, Body body, void* arg)
 {
-    assert(nrTotalThreads < MAX_NR_TOTAL_THREADS);
-
     IThread* t = (IThread*)MemAlloc::get()->allocMem(sizeof(IThread));
-    pAllThreads[nrTotalThreads] = t;
 
-    t->pStackStart = nullptr;
-    void* pLogicalStack = t->allocStack();
-
-    t->init(body, arg, pLogicalStack);
+    t->initClass(body);
+    t->allocStack();
+    t->initContext(arg);
 
     *id = t->id;
-
     Scheduler::put(t);
 
     return 0;
+}
+
+void IThread::initClass(Body threadBody)
+{
+    assert(nrTotalThreads < MAX_NR_TOTAL_THREADS);
+
+    IThread::pAllThreads[nrTotalThreads] = this;
+    id = IThread::nrTotalThreads;
+    IThread::nrTotalThreads++;
+
+    body = threadBody;
+
+    pStackStart = nullptr;
+    timeSlice = DEFAULT_TIME_SLICE;
+    pNext = nullptr;
+    pWaitingHead = nullptr;
+    done = false;
+    state = READY;
+}
+
+void IThread::initContext(void* arg)
+{
+    // skipping a0 to pass arguments as it is will be not be restored in the context switch because it is assumed to hold return values of a sys. call
+
+    for(uint64 i=0; i<32; i++) // temp
+    {
+        *(sp+i) = i;
+    }
+
+    *(sp+11) = (uint64)body;
+    *(sp+12) = *((uint64*)&arg);
+    *(sp+32) = (uint64)&wrapper;
 }
 
 IThread* IThread::getPRunning()
@@ -127,59 +160,21 @@ IThread* IThread::getPRunning()
     return pRunning;
 }
 
-void* IThread::allocStack()
+void IThread::allocStack()
 {
     assert(pStackStart == nullptr); // error: this threads stack may have already been allocated
 
     pStackStart = MemAlloc::get()->allocMem(ACTUAL_STACK_SIZE);
-    uint64 stack =  (uint64)pStackStart + ACTUAL_STACK_SIZE;
+    sp =  (uint64*)((uint64)pStackStart + ACTUAL_STACK_SIZE);
 
-    if(stack % 16 != 0)
+    if((uint64)sp % 16 != 0)
     {
-        stack -= stack % 16;
+        sp = (uint64*)(((char*)sp) - (((uint64)sp) % 16));
     }
 
-    stack -= 34*8; // for the initial context (necessary to avoid exceptions from reading from unallowed adress), valjda
-
-    return (void*)stack;
-
-}
-
-void wrapper(uint64 __DO_NOT_USE, IThread::Body body, void* arg) // this entire function can be run from USER thread
-{
-    (*body)(arg);
-    thread_exit();
-}
-
-void IThread::init(Body body, void* arg, void* pLogicalStack) // this is used as a "constructor", except for kernel thread
-{
-    assert(nrTotalThreads < MAX_NR_TOTAL_THREADS);
-    id = nrTotalThreads;
-    nrTotalThreads++;
-
-    assert((uint64)pLogicalStack % 16 == 0);
-
-    state = INITIALIZING;
-    timeSlice = DEFAULT_TIME_SLICE;
-    pNext = nullptr;
-    pWaitingHead = nullptr;
-    done = false;
-
-    // sets context
-    sp = (uint64*)pLogicalStack; // sp field
-
-    // skipping a0 to pass arguments as it is will be not be restored in the context switch because it is assumed to hold return values of a sys. call
-
-    for(int i=0; i<32; i++) // temp
-    {
-        *((uint64*)pLogicalStack + i) = i;
-    }
-
-    *((uint64*)pLogicalStack + 11) = (uint64)body;
-    *((uint64*)pLogicalStack + 12) = *((uint64*)&arg);
-    *((uint64*)pLogicalStack + 32) = (uint64)&wrapper;
-
-    state = READY;
+    assert(((uint64)sp) % 16 == 0);
+    sp = sp - 34; // for the initial context (necessary to avoid exceptions from reading from unallowed adress), valjda
+    assert(((uint64)sp) % 16 == 0);
 }
 
 int IThread::exit()

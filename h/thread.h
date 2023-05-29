@@ -53,9 +53,13 @@ public:
     IThread(Body body, void* arg);
     IThread() : pStackStart(nullptr), pNext(nullptr) {} // move to private?. Mind the kernel thread
 
-    void init(Body body, void* arg, void* pLogicalStack);
-    void* allocStack();
+    void allocStack();
+    void initContext(void* arg);
+    void initClass(Body threadBody); // like a normal constructor
+
     void signalDone();
+
+//    void init(Body body, void* arg, void* pLogicalStack);
 
 private:
     IThread(Body body, void* arg, void* pStartOfStack); // threads can only be made with createThread. Maybe IThread() = delete;?

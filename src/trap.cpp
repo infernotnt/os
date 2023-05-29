@@ -125,7 +125,7 @@ void cInternalInterruptRoutine()
     }
     else if (code == 17) // 17
     {
-        *((int*)&ret) = IThread::createThread((uint64*)parameter1, (IThread::Body)parameter2, (void*)parameter3);
+        *((int*)&ret) = IThread::createThread( *((uint64**)&parameter1), *((IThread::Body*)&parameter2), *((void**)&parameter3));
     }
     else if (code == 18)
     {
