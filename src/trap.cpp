@@ -3,7 +3,6 @@
 #include "../h/alloc.h"
 #include "../h/0_console.h"
 #include "../h/semaphore.h"
-#include "../lib/console.h"
 
 volatile uint64 gTimer = 0;
 uint64 fib(uint64 n);
@@ -22,6 +21,15 @@ void cTimerInterruptRoutine()
     int cause = scause & (~(1UL << 63));
 
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
+
+    long int getItems = IConsole::get()->getBufferItems;
+    long int putItems = IConsole::get()->putBufferItems;
+    if(getItems < 0 || putItems < 0)
+    {
+        __asm__ volatile("mv x10, x10");
+        assert(false);
+    }
+
     if(cause == 1)
     {
         __asm__ volatile ("csrc sip, 0x2"); // clears the 2nd bit which signifies software interrupt (timer for project)
@@ -32,6 +40,10 @@ void cTimerInterruptRoutine()
     else if (cause == 9)
     {
         __asm__ volatile("mv x10, x10");
+        if(IThread::getPRunning()->id == BUSY_WAIT_THREAD_ID)
+        {
+            __asm__ volatile("mv x10, x10");
+        }
 
 #ifdef USE_MY_CONSOLE
         IConsole::get()->consoleHandler();
@@ -153,7 +165,7 @@ void cInternalInterruptRoutine()
     }
     else if (code == 65) // getc
     {
-        assert(false);
+        *((char*)&ret) = IConsole::get()->getc();
     }
     else if (code == 66) // putc
     {
@@ -197,27 +209,6 @@ void cInternalInterruptRoutine()
     }
 
     __asm__ volatile ("mv x10, x10");
-}
-
-void  cConsoleInterruptRoutine()
-{
-    assert(false);
-    uint64 scause;
-    __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
-
-//    int isExternal = (scause & (0x1UL << 63)) != 0;
-    int cause = scause & (~(1UL << 63));
-
-
-    assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
-
-    assert(cause == 9);
-
-//    console_handler();
-    __asm__ volatile ("mv x10, x10");
-
-//    IConsole::get()->consoleHandler();
-
 }
 
 void doTimerStuff()

@@ -150,7 +150,8 @@ int thread_exit()
 
 int thread_create(thread_t* handle, void(*start_routine)(void*), void*arg)
 {
-    char* stackSpace = (char*) MemAlloc::get()->allocMem(ACTUAL_STACK_SIZE);
+//    char* stackSpace = (char*) MemAlloc::get()->allocMem(ACTUAL_STACK_SIZE);
+    char* stackSpace = (char*)mem_alloc(ACTUAL_STACK_SIZE);
     return helperRet32P164P264P364P464(0x11, (uint64)handle, (uint64)start_routine, (uint64)arg, (uint64)stackSpace);
 }
 
@@ -167,7 +168,7 @@ int time_sleep(time_t time)
 char getc()
 {
 #ifdef USE_MY_CONSOLE
-    return IConsole::get()->getc();
+    return helperRet8(0x41);
 #else
     return __getc();
 #endif
@@ -177,7 +178,6 @@ void putc(char c)
 {
 #ifdef USE_MY_CONSOLE
     helperP164(0x42, *((uint64*)&c));
-//    IConsole::get()->putc(c);
 #else
     __putc(c);
 #endif

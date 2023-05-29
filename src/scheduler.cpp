@@ -1,4 +1,18 @@
 #include "../h/scheduler.h"
+#include "../h/semaphore.h"
+
+bool checkIfWaitingForSemaphore()
+{
+    if(IConsole::get()->inputSemaphore->pBlockedHead != nullptr)
+        return true;
+
+    for (uint64 i = 0; i < ISemaphore::nrSemaphores; i++)
+        if (ISemaphore::pAllSemaphores[i]->isOpen == true)
+            if (ISemaphore::pAllSemaphores[i]->pBlockedHead != nullptr)
+                return true;
+
+    return false;
+}
 
 int Scheduler::sleep(time_t time)
 {
@@ -78,32 +92,35 @@ void Scheduler::dispatchToNext() // WARNING: different than sys. call thread_dis
 //    assert(pNew != &kernelThread);
 
     bool existReadyThread = (pNew != nullptr);
-    bool existSleeper = (Scheduler::get()->pSleepHead != nullptr);
 
-    if(existReadyThread == false && existSleeper == false)
+    if(existReadyThread == false)
     {
-        pNew = &kernelThread;
+        bool existSleeper = (Scheduler::get()->pSleepHead != nullptr);
+        bool isWaitingForSemaphore = checkIfWaitingForSemaphore();
+        if (existReadyThread == false && (existSleeper == true || isWaitingForSemaphore == true))
+        {
+//            kPutString("===== SLEEPING WAIT OR INPUT WAIT");
+//            kPutNewline();
+
+            pNew = IThread::pAllThreads[BUSY_WAIT_THREAD_ID];
+            Scheduler::put(pNew);
+        }
+        else if (existReadyThread == false && existSleeper == false && isWaitingForSemaphore == false)
+        {
+            pNew = &kernelThread;
 
 #ifdef __DEBUG_PRINT
-        kPutString("=== NO MORE USER THREADS EXIST. RETURNING TO KERNEL THREAD");
-        kPutNewline();
+            kPutString("=== NO MORE USER THREADS EXIST. RETURNING TO KERNEL THREAD");
+            kPutNewline();
 #endif
 
-        assert(IThread::pAllThreads[0] == &kernelThread);
-        IThread::pAllThreads[0]->state = IThread::READY;
+            assert(IThread::pAllThreads[0] == &kernelThread);
+            IThread::pAllThreads[0]->state = IThread::READY;
 
-        pNew = IThread::pAllThreads[0];
+            pNew = IThread::pAllThreads[0];
 
-        // TODO: set permission
-    }
-    else if(existReadyThread == false && existSleeper == true)
-    {
-        assert(existReadyThread == false && existSleeper == true);
-        kPutString("===== SLEEPING WAIT");
-        kPutNewline();
-
-        pNew = IThread::pAllThreads[BUSY_WAIT_THREAD_ID];
-        Scheduler::put(pNew);
+            // TODO: set permission
+        }
     }
 
     assert(pNew->state == IThread::READY);

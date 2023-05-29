@@ -10,6 +10,8 @@ int ISemaphore::close(uint64 id)
     ISemaphore* target = pAllSemaphores[id];
     assert(target->id == id);
 
+    target->isOpen = false;
+
     IThread *pCur = target->pBlockedHead;
     IThread *pPrev = nullptr;
 
@@ -46,6 +48,8 @@ int ISemaphore::create(uint64* pId, uint64 initialValue)
     *pId = s->id;
     s->value = initialValue;
     s->pBlockedHead = nullptr;
+
+    s->isOpen = true;
 
     return 0;
 }

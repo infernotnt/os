@@ -12,6 +12,13 @@ void userMain();
 void doInitialAsserts();
 void initInterruptVector();
 void doBusyWaitThread(void*);
+void initInputSemaphore();
+void doMainTest();
+void initializeKernelThread();
+void initializeBusyWaitThread();
+void initializeUserThread();
+
+void externalInterruptTest();
 
 IThread kernelThread;
 
@@ -20,17 +27,12 @@ void userWrapper(void* p)
     assert(p == nullptr);
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 
-//    myUserMain();
+    myUserMain();
+//    enableExternalInterrupts();
+//    externalInterruptTest();
 
     userMain();
 }
-
-void doMainTest();
-void initializeKernelThread();
-void initializeBusyWaitThread();
-void initializeUserThread();
-
-void externalInterruptTest();
 
 int main()
 {
@@ -40,17 +42,27 @@ int main()
 
     initializeKernelThread();
 
+    initializeBusyWaitThread();
+    initializeUserThread();
+
+    initInputSemaphore();
+
+    IThread* a = Scheduler::get()->pHead;
+    assert(a->id == USER_THREAD_ID);
+
+
 //    enableExternalInterrupts();
+//    volatile uint64 sss;
+//    while(sss>=0)
+//    {
+//        char c = getc();
+//        putc(c+1);
+//        assert(c != 1);
+//    }
 //    externalInterruptTest();
 //    disableExternalInterrupts();
 
 //    doMainTest();
-//    initializeBusyWaitThread();
-
-    initializeUserThread();
-
-    IThread* a = Scheduler::get()->pHead;
-    assert(a->id == USER_THREAD_ID);
 
     uint64* sp;                                                 /// WARNING: this must be immediately before calling the user thread
     __asm__ volatile ("mv %[name], sp" : [name] "=r"(sp));
@@ -60,6 +72,33 @@ int main()
     __asm__ volatile ("ecall");
 
     return 0;
+}
+
+void initInputSemaphore()
+{
+    uint64 inputSemaphore=69;
+    ISemaphore::create(&inputSemaphore, 0);
+    assert(inputSemaphore == 0);
+    IConsole::get()->inputSemaphore = ISemaphore::pAllSemaphores[inputSemaphore];
+}
+
+void doBusyWaitThread(void* p)
+{
+    assert(p == nullptr);
+    __asm__ volatile("mv x10, x10");
+
+    volatile uint64 a;
+    while(a++)
+    {
+        assert(IThread::getPRunning()->id == BUSY_WAIT_THREAD_ID);
+
+        __asm__ volatile("mv x10, x10");
+        if(IThread::getPRunning()->pNext != nullptr)
+        {
+            __asm__ volatile("mv x10, x10");
+            thread_dispatch();
+        }
+    }
 }
 
 void initializeUserThread()
@@ -110,23 +149,6 @@ void doMainTest()
 
 }
 
-void doBusyWaitThread(void* p)
-{
-    assert(p == nullptr);
-    __asm__ volatile("mv x10, x10");
-
-    volatile uint64 a;
-    while(a++)
-    {
-        assert(IThread::getPRunning()->id == BUSY_WAIT_THREAD_ID);
-
-        if(IThread::getPRunning()->pNext != nullptr)
-        {
-            __asm__ volatile("mv x10, x10");
-            thread_dispatch();
-        }
-    }
-}
 
 void doInitialAsserts()
 {
@@ -140,6 +162,8 @@ void doInitialAsserts()
     assert(sizeof(uint64) == 8);
     assert(sizeof(unsigned long) == sizeof(uint64));
     assert(sizeof(unsigned) == sizeof(int));
+    assert(USER_THREAD_ID > BUSY_WAIT_THREAD_ID); // user thread should have the largest thread id from all the threads that the user himself did not create explicitly
+    assert(sizeof(long int) == sizeof(uint64));
 }
 
 void initInterruptVector()

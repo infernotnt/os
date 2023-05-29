@@ -5,6 +5,9 @@
 
 #define NR_MAX_SEMAPHORES 100
 
+// this is the id/index of the first user available semaphore (the kernel uses the 0th one)
+#define INIT_SEM 1
+
 class ISemaphore
 {
 public:
@@ -19,6 +22,7 @@ public:
     uint64 id;
     int value;
     IThread* pBlockedHead;
+    bool isOpen;
 
     IThread* removeFromQueue();
     void addToQueue();

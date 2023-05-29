@@ -37,7 +37,7 @@ void testSemaphores()
     stat = sem_open(&semFinal, 0);
     assert(stat == 0);
 
-    assert(sem1 == 0 && sem2 == 1);
+    assert(sem1 == INIT_SEM && sem2 == INIT_SEM+1);
     assert((uint64)&sem1 - (uint64)&sem2 == 8);
 
     void doSemaphoresA(void*);
@@ -83,7 +83,7 @@ void doSemaphoresA(void*p)
     sem_t sem3 = *((sem_t*)p-2);
     sem_t semFinal = *((sem_t*)p-3);
 
-    assert(sem1 == 0 && sem2 == 1 && sem3 == 2 && semFinal == 3);
+    assert(sem1 == INIT_SEM && sem2 == INIT_SEM+1 && sem3 == INIT_SEM+2 && semFinal == INIT_SEM+3);
 
     for(int i=0; i<1000; i++)
     {
