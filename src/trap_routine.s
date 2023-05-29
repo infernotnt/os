@@ -8,32 +8,29 @@
 .global trapRoutine
 
 .extern _Z25cInternalInterruptRoutinev
-.extern _Z22cTimerInterruptRoutinev
-.extern _Z24cConsoleInterruptRoutinev
-
+.extern _Z25cExternalInterruptRoutinev
+.extern _Z15__exeptionErrorv
 .extern _ZN7IThread10pRunningSpE
+
+#.extern _Z24cConsoleInterruptRoutinev
+
 
 .align 4
 trapRoutine:
     j internalInterruptRoutine # 0
-    j timerInterruptRoutine # 1
-    nop # 2
-    nop # 3
-    nop # 4
-    nop # 5
-    nop # 6
-    nop # 7
-    UNIMP # 8
-    j timerInterruptRoutine # 9
-    UNIMP
+    j externalInterruptRoutine # 1
+    j _Z15__exeptionErrorv # 2
+    j _Z15__exeptionErrorv # 3
+    j _Z15__exeptionErrorv # 4
+    j _Z15__exeptionErrorv # 5
+    j _Z15__exeptionErrorv # 6
+    j _Z15__exeptionErrorv # 7
+    j _Z15__exeptionErrorv # 8
+    j externalInterruptRoutine # 9
+    j _Z15__exeptionErrorv # 10
+    j _Z15__exeptionErrorv # 11
+    j _Z15__exeptionErrorv # 12
 
-    #j consoleInterruptRoutine # 9
-    #j timerInterruptRoutine # 1
-
-externalGay:
-    csrc sip, 0xA
-    csrc sstatus, 0x02
-    sret
 
 internalInterruptRoutine:
 
@@ -73,7 +70,7 @@ internalInterruptRoutine:
     sret
 
 
-timerInterruptRoutine: # WARNING: should be the same as consoleInterruptRoutine, except the "call"
+externalInterruptRoutine:
 
     addi sp, sp, -34*8 # 34 because we need 33 but 33 is not divisible by 16
 
@@ -90,7 +87,7 @@ timerInterruptRoutine: # WARNING: should be the same as consoleInterruptRoutine,
     csrr x1, sepc
     sd x1, 32*8(sp)
 
-    call _Z22cTimerInterruptRoutinev
+    call _Z25cExternalInterruptRoutinev
 
     # restore sp from PCB
     ld x1, _ZN7IThread10pRunningSpE

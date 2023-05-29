@@ -4,6 +4,12 @@
 #include "../h/0_console.h"
 #include "../h/semaphore.h"
 
+void __exeptionError()
+{
+    __asm__ volatile("mv x10, x10");
+    assert(false);
+}
+
 volatile uint64 gTimer = 0;
 uint64 fib(uint64 n);
 uint64 testCall(uint64 n)
@@ -13,7 +19,7 @@ uint64 testCall(uint64 n)
 
 void doTimerStuff();
 void doSleepStuff();
-void cTimerInterruptRoutine()
+void cExternalInterruptRoutine()
 {
     uint64 scause;
     __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));

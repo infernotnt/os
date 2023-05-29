@@ -17,9 +17,12 @@ void myUserMain()
     testSystemCalls();
     testMemoryAllocator();
     testSyncCall();
+    testSemaphores();
+
 //    testTimeSlice();
 //    testTimeSleep();
-    testSemaphores();
+
+    externalInterruptTest();
 
     putString("=== App ended");
     putNewline();

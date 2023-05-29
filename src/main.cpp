@@ -27,11 +27,13 @@ void userWrapper(void* p)
     assert(p == nullptr);
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 
-    myUserMain();
-//    enableExternalInterrupts();
-//    externalInterruptTest();
+    __asm__ volatile("li t1, 512");         // temp: disables console interrupt
+    __asm__ volatile("csrc sie, t1");
+    enableExternalInterrupts();
 
-    userMain();
+    myUserMain();
+
+//    userMain();
 }
 
 int main()
@@ -126,7 +128,6 @@ void initializeKernelThread()
 
 void doMainTest()
 {
-    enableExternalInterrupts();
 
     volatile uint64 k = 10;
 

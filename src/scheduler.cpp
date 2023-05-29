@@ -101,6 +101,11 @@ void Scheduler::dispatchToNext() // WARNING: different than sys. call thread_dis
         {
 //            kPutString("===== SLEEPING WAIT OR INPUT WAIT");
 //            kPutNewline();
+            const char* s = "===== SLEEPING WAIT OR INPUT WAIT \n";
+            int i = 0;
+            while(s[i] != '\0')
+                IConsole::get()->putc(s[i]);
+            assert(false);
 
             pNew = IThread::pAllThreads[BUSY_WAIT_THREAD_ID];
             Scheduler::put(pNew);
@@ -119,7 +124,7 @@ void Scheduler::dispatchToNext() // WARNING: different than sys. call thread_dis
 
             pNew = IThread::pAllThreads[0];
 
-            // TODO: set permission
+            // TODO: set spp bit, set spie bit but maby not necessary
         }
     }
 

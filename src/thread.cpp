@@ -11,7 +11,6 @@ IThread* IThread::pAllThreads[MAX_NR_TOTAL_THREADS];
 uint64 IThread::initialUserMemoryUsage;
 bool IThread::switchedToUserThread = 0;
 
-
 void wrapper(uint64 __DO_NOT_USE, IThread::Body body, void* arg) // this entire function can be run from USER thread
 {
     (*body)(arg);
@@ -91,15 +90,8 @@ void IThread::switchToUser()
     assert(t); // temp
     assert(IThread::getPRunning()->id == USER_THREAD_ID);
 
-//    __asm__ volatile ("csrs sstatus, 0x6"); // TODO: probably should be removed when i add permissions
-//    __asm__ volatile ("mv x10, x10");
-//    __asm__ volatile ("mv x10, x10");
-//    __asm__ volatile ("mv x10, x10");
-//    putString("KITA PENIS");
-
-//    __asm__ volatile ("csrc sstatus, 0x9");
-//    __asm__ volatile ("csrc sstatus, 0x8");
-//    __asm__ volatile ("csrw sstatus, 0"); // TODO: radi preko csrc jer ovako menjam sve
+//    __asm__ volatile("li t1, 256");
+//    __asm__ volatile("csrc sstatus, t1"); // changes to user mode by changing the "spp" bit
 }
 
 void IThread::setPRunning(IThread* p)
