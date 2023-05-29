@@ -4,11 +4,16 @@
 
 const int EOF = -1;
 
-void* mem_alloc(size_t size);
-int mem_free(void*);
+//typedef unsigned long time_t;
+//typedef uint64 size_t;
+typedef uint64 thread_t;
+typedef uint64 sem_t;
 
 class _thread;
-typedef uint64 thread_t;
+
+
+void* mem_alloc(size_t size);
+int mem_free(void*);
 
 void thread_dispatch(); // WARNING: different than Scheduler::dispatchToNext
 int thread_exit();
@@ -20,9 +25,10 @@ int time_sleep (time_t);
 char getc();
 void putc(char c);
 
+#ifdef __DEBUG_MODE
 uint64 test_call(uint64 n);
+#endif
 
-typedef uint64 sem_t;
 int sem_open(sem_t* handle, unsigned init);
 int sem_close(sem_t handle);
 int sem_wait(sem_t id);

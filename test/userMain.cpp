@@ -33,7 +33,7 @@
 void userMain() {
     printString("Unesite broj testa? [1-7]\n");
 
-    int test = 1;
+    int test = 2;
 //    int test = getc() - '0';
 //    getc(); // Enter posle broja
 

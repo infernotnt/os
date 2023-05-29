@@ -19,6 +19,8 @@ protected:
 
     friend void _Thread_wrapper(void*);
 
+    void forceExit();
+
 private:
     thread_t myHandle;
     void (*body)(void*); void* arg;
@@ -52,4 +54,8 @@ protected:
     virtual void periodicActivation () {}
 private:
     time_t period;
+
+    time_t getPeriod();
+
+    friend void periodicWrapper(void* p);
 };
