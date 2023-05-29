@@ -2,6 +2,80 @@
 #include "../h/semaphore.h"
 
 extern IThread kernelThread;
+
+extern uint64 gTimer;
+
+void Scheduler::reduceSleepTimerForAll()
+{
+    IThread* pCur = Scheduler::get()->pSleepHead;
+
+    while (pCur)
+    {
+        pCur->remainingSleep--;
+
+        assert(pCur->remainingSleep >= 0);
+
+        pCur = pCur->pNext;
+    }
+}
+
+void Scheduler::doSleepStuffOnTick()
+{
+    reduceSleepTimerForAll();
+
+    while(true)
+    {
+        IThread* pCur = Scheduler::get()->pSleepHead;
+        IThread* pPrev = nullptr;
+        bool changedList = false;
+
+        while (pCur)
+        {
+            if(pCur->remainingSleep == 0)
+            {
+                if(pCur == Scheduler::get()->pSleepHead) // first in list
+                    Scheduler::get()->pSleepHead = pCur->pNext;
+                else pPrev->pNext = pCur->pNext; // not first in list
+
+                changedList = true;
+
+                pCur->state = IThread::READY;
+                pCur->pNext = nullptr;
+                Scheduler::put(pCur); // WARNING: must be last command to preserve the pCur->pNext
+
+                break;
+            }
+            pPrev = pCur;
+            pCur = pCur->pNext;
+        }
+
+        if(changedList == false) // this means there was one pass trough the loop and no changes were made
+            break;
+    }
+}
+
+void Scheduler::doTimeSliceAndGTimeOnTick()
+{
+    IThread::timeSliceCounter++;
+    if(IThread::timeSliceCounter == 2)
+    {
+        IThread::timeSliceCounter = 0;
+        Scheduler::dispatchUserVersion();
+    }
+
+    gTimer++;
+
+#ifdef __DEBUG_PRINT
+    if (gTimer % 10 == 0)
+    {
+        kPutString("Time: ");
+        kPutU64(gTimer / 10);
+        kPutString("s");
+        kPutNewline();
+    }
+#endif
+}
+
 bool checkIfWaitingForSemaphore()
 {
     if(IConsole::get()->inputSemaphore->pBlockedHead != nullptr)

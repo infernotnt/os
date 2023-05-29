@@ -23,8 +23,8 @@ void cExternalInterruptRoutine()
     {
         __asm__ volatile ("csrc sip, 0x2"); // clears the 2nd bit which signifies software interrupt (timer for project)
 //        gTimer++;
-        doTimerStuff(); // WARNING: this changes gTimer
-        doSleepStuff();
+        Scheduler::doTimeSliceAndGTimeOnTick();
+        Scheduler::doSleepStuffOnTick();
     }
     else if (cause == 9)
     {
@@ -225,69 +225,4 @@ uint64 testCall(uint64 n)
     return fib(n);
 }
 
-
-void doTimerStuff()
-{
-    IThread::timeSliceCounter++;
-    if(IThread::timeSliceCounter == 2)
-    {
-        IThread::timeSliceCounter = 0;
-        Scheduler::dispatchUserVersion();
-    }
-
-    gTimer++;
-    if (gTimer % 10 == 0)
-    {
-        kPutString("Time: ");
-        kPutU64(gTimer / 10);
-        kPutString("s");
-        kPutNewline();
-    }
-}
-
-void doSleepStuff()
-{
-    IThread* pCur = Scheduler::get()->pSleepHead;
-
-    while(pCur)
-    {
-        pCur->remainingSleep--;
-
-        assert(pCur->remainingSleep >= 0);
-
-        pCur = pCur->pNext;
-    }
-
-    while(true)
-    {
-        pCur = Scheduler::get()->pSleepHead;
-        IThread* pPrev = nullptr;
-        bool changedList = false;
-
-        while (pCur)
-        {
-            if(pCur->remainingSleep == 0)
-            {
-                if(pCur == Scheduler::get()->pSleepHead) // first in list
-                {
-                    Scheduler::get()->pSleepHead = pCur->pNext;
-                }
-                else // not first in list
-                {
-                    pPrev->pNext = pCur->pNext;
-                }
-
-                changedList = true;
-                Scheduler::put(pCur); // WARNING: must be last command to preserve the pCur->pNext
-                break;
-            }
-
-            pPrev = pCur;
-            pCur = pCur->pNext;
-        }
-
-        if(changedList == false) // this means there was one pass trough the loop and no changes were made
-            break;
-    }
-}
 

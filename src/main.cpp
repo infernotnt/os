@@ -29,7 +29,7 @@ void userWrapper(void* p)
 
 //    __asm__ volatile("csrw sscratch, 1");
 
-//    time_sleep(30);
+//    time_sleep(1000);
 
     myUserMain();
 //    userMain();

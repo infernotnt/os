@@ -19,6 +19,10 @@ public:
     static void put(IThread*);
     static void printState();
 
+    static void doTimeSliceAndGTimeOnTick();
+    static void doSleepStuffOnTick();
+    static void reduceSleepTimerForAll();
+
     static void specialBusyWaitDispatch();
 
     IThread* pHead; // points to the one that is the next to be run
