@@ -55,26 +55,15 @@ void cInternalInterruptRoutine()
 //    int isExternal = (scause & (0x1UL << 63)) != 0;
     int cause = scause & (~(1UL << 63));
 
-    uint64 code, parameter1, parameter2, parameter3;
+    uint64 code, parameter1, parameter2, parameter3, parameter4;
+
     __asm__ volatile ("mv %[name], a0" : [name] "=r"(code));
     __asm__ volatile ("mv %[name], a1" : [name] "=r"(parameter1));
     __asm__ volatile ("mv %[name], a2" : [name] "=r"(parameter2));
     __asm__ volatile ("mv %[name], a3" : [name] "=r"(parameter3));
+    __asm__ volatile ("mv %[name], a4" : [name] "=r"(parameter4));
 
-
-    __asm__ volatile ("mv x1, x1");
-
-//    IThread::getPRunning()->sp = IThread::runningSp;
-//    uint64* sp = IThread::getPRunning()->sp;
-//    uint64* runningSp = IThread::runningSp;
-//    if(sp != runningSp) // temp, maybe changes registers?
-//    {
-//        __asm__ volatile ("mv x10, x10");
-//        assert(false);
-//    }
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
-
-    __asm__ volatile ("mv x1, x1");
 
     if(cause != 8 && cause != 9)
     {
@@ -107,7 +96,8 @@ void cInternalInterruptRoutine()
     uint64 ret = -1;
     if(code == 1)
     {
-        ret = (uint64)MemAlloc::get()->allocMem(parameter1);
+        // convert to bytes, because of ABI dumbness
+        ret = (uint64)MemAlloc::get()->allocMem(parameter1 * MEM_BLOCK_SIZE);
     }
     else if (code == 2)
     {
@@ -125,7 +115,7 @@ void cInternalInterruptRoutine()
     }
     else if (code == 17) // 17
     {
-        *((int*)&ret) = IThread::createThread( *((uint64**)&parameter1), *((IThread::Body*)&parameter2), *((void**)&parameter3));
+        *((int*)&ret) = IThread::createThread( *((uint64**)&parameter1), *((IThread::Body*)&parameter2), *((void**)&parameter3), (void*) parameter4);
     }
     else if (code == 18)
     {

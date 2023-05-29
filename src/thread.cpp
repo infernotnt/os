@@ -108,12 +108,12 @@ void IThread::setPRunning(IThread* p)
     pRunningSp = &(p->sp);
 }
 
-int IThread::createThread(uint64* id, Body body, void* arg)
+int IThread::createThread(uint64* id, Body body, void* arg, void* stackSpace)
 {
     IThread* t = (IThread*)MemAlloc::get()->allocMem(sizeof(IThread));
 
     t->initClass(body);
-    t->allocStack();
+    t->configureStack(stackSpace);
     t->initContext(arg);
 
     *id = t->id;
@@ -150,7 +150,7 @@ void IThread::initContext(void* arg)
     }
 
     *(sp+11) = (uint64)body;
-    *(sp+12) = *((uint64*)&arg);
+    *(sp+12) = (uint64)arg;
     *(sp+32) = (uint64)&wrapper;
 }
 
@@ -160,17 +160,12 @@ IThread* IThread::getPRunning()
     return pRunning;
 }
 
-void IThread::allocStack()
+void IThread::configureStack(void* stack)
 {
     assert(pStackStart == nullptr); // error: this threads stack may have already been allocated
 
-    pStackStart = MemAlloc::get()->allocMem(ACTUAL_STACK_SIZE);
-    sp =  (uint64*)((uint64)pStackStart + ACTUAL_STACK_SIZE);
-
-    if((uint64)sp % 16 != 0)
-    {
-        sp = (uint64*)(((char*)sp) - (((uint64)sp) % 16));
-    }
+    pStackStart = stack;
+    sp = (uint64*)((char*)stack + ACTUAL_STACK_SIZE);
 
     assert(((uint64)sp) % 16 == 0);
     sp = sp - 34; // for the initial context (necessary to avoid exceptions from reading from unallowed adress), valjda

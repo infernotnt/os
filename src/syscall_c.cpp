@@ -3,6 +3,7 @@
 #include "../h/thread.h"
 #include "../h/0_console.h"
 #include "../lib/console.h"
+#include "../h/alloc.h"
 
 uint64 fib(uint64);
 
@@ -68,16 +69,15 @@ void helperP164(uint64 code, uint64 parameter1)
     __asm__ volatile ("ecall");
 }
 
-int helperRet32P164P264P364(uint64 code, uint64 parameter1, uint64 parameter2, uint64 parameter3)
+int helperRet32P164P264P364P464(uint64 code, uint64 parameter1, uint64 parameter2, uint64 parameter3, uint64 parameter4)
 {
+    __asm__ volatile ("mv a4, %[name]" : : [name] "r" (parameter4));
     __asm__ volatile ("mv a3, %[name]" : : [name] "r" (parameter3));
     __asm__ volatile ("mv a2, %[name]" : : [name] "r" (parameter2));
     __asm__ volatile ("mv a1, %[name]" : : [name] "r" (parameter1));
     __asm__ volatile ("mv a0, %[name]" : : [name] "r" (code)); // WARNING: this instruction must be after the a1 instruction. Reason: if its before it can augment the argument
 
     __asm__ volatile ("ecall");
-
-    __asm__ volatile("mv x10, x10"); // temp
 
     uint64 ret;
     __asm__ volatile ("mv %[name], a0" : [name] "=r"(ret));
@@ -122,6 +122,14 @@ static void helper(uint64 code) // returns nothing and takes no parameters (eg t
 
 void* mem_alloc(size_t size)
 {
+    if(size % MEM_BLOCK_SIZE != 0)
+    {
+        size += MEM_BLOCK_SIZE - (size % MEM_BLOCK_SIZE);
+    }
+
+    assert(size % MEM_BLOCK_SIZE == 0);
+    size /= MEM_BLOCK_SIZE;
+
     return (void*) helperRet64P164(1, size);
 }
 
@@ -142,7 +150,8 @@ int thread_exit()
 
 int thread_create(thread_t* handle, void(*start_routine)(void*), void*arg)
 {
-    return helperRet32P164P264P364(0x11, (uint64)handle, (uint64)start_routine, *((uint64*)&arg));
+    char* stackSpace = (char*) MemAlloc::get()->allocMem(ACTUAL_STACK_SIZE);
+    return helperRet32P164P264P364P464(0x11, (uint64)handle, (uint64)start_routine, (uint64)arg, (uint64)stackSpace);
 }
 
 void thread_join(thread_t handle)

@@ -30,7 +30,7 @@ public:
 
     static  IThread*  getPRunning();
     static void setPRunning(IThread* p);
-    static int createThread(uint64* id, Body body, void* arg);
+    static int createThread(uint64* id, Body body, void* arg, void* stack);
     static int exit(); // exit the currently running thread
     static void switchToUser();
     static void join(uint64 id);
@@ -53,7 +53,7 @@ public:
     IThread(Body body, void* arg);
     IThread() : pStackStart(nullptr), pNext(nullptr) {} // move to private?. Mind the kernel thread
 
-    void allocStack();
+    void configureStack(void* stack);
     void initContext(void* arg);
     void initClass(Body threadBody); // like a normal constructor
 

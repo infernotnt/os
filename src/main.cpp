@@ -20,7 +20,9 @@ void userWrapper(void* p)
     assert(p == nullptr);
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 
-    userMain();
+    myUserMain();
+
+//    userMain();
 }
 
 void doMainTest();
@@ -38,8 +40,9 @@ int main()
 
     initializeKernelThread();
 
-//    enableExternalInterrupts();
-//    externalInterruptTest();
+    enableExternalInterrupts();
+    externalInterruptTest();
+    disableExternalInterrupts();
 
 //    doMainTest();
 //    initializeBusyWaitThread();
