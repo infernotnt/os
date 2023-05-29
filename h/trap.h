@@ -16,4 +16,3 @@ void doSleepStuff();
 
 void handleExeptions(uint64 cause);
 uint64 handleSystemCall(uint64 code, uint64 parameter1, uint64 parameter2, uint64 parameter3, uint64 parameter4);
-void doReturnStuff(uint64 code, uint64 ret, IThread* pOld);

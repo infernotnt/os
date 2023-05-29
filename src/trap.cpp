@@ -2,6 +2,51 @@
 
 volatile uint64 gTimer = 0;
 
+void cExternalInterruptRoutine()
+{
+    uint64 scause;
+    __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
+
+    int cause = scause & (~(1UL << 63));
+
+    assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
+
+    long int getItems = IConsole::get()->getBufferItems;
+    long int putItems = IConsole::get()->putBufferItems;
+    if(getItems < 0 || putItems < 0)
+    {
+        __asm__ volatile("mv x10, x10");
+        assert(false);
+    }
+
+    if(cause == 1)
+    {
+        __asm__ volatile ("csrc sip, 0x2"); // clears the 2nd bit which signifies software interrupt (timer for project)
+//        gTimer++;
+        doTimerStuff(); // WARNING: this changes gTimer
+        doSleepStuff();
+    }
+    else if (cause == 9)
+    {
+        __asm__ volatile("mv x10, x10");
+        if(IThread::getPRunning()->id == BUSY_WAIT_THREAD_ID)
+        {
+            __asm__ volatile("mv x10, x10");
+        }
+
+#ifdef USE_MY_CONSOLE
+        IConsole::get()->consoleHandler();
+#else
+        console_handler();
+#endif
+        __asm__ volatile("mv x10, x10");
+    }
+    else
+    {
+        assert(false); // unknown interupt
+    }
+}
+
 void cInternalInterruptRoutine()
 {
     uint64 scause;
@@ -25,13 +70,6 @@ void cInternalInterruptRoutine()
 
     uint64 ret = handleSystemCall(code, parameter1, parameter2, parameter3, parameter4);
 
-    doReturnStuff(code, ret, pOld);
-
-    __asm__ volatile ("mv x10, x10");
-}
-
-void doReturnStuff(uint64 code, uint64 ret, IThread* pOld)
-{
     bool normalCallWithReturn = (code == 0x1) || (code == 0x2) || (code == 0x11) || (code == 0x12) || (code == 0x21) || (code == 0x22) || (code == 0x23) || (code == 0x24) || (code == 0x31) || (code == 0x41);
     bool customCallWithReturn = (code == 0x3);
     bool customCallWithoutReturn = (code == 0x4) || (code == 5);
@@ -59,6 +97,8 @@ void doReturnStuff(uint64 code, uint64 ret, IThread* pOld)
     {
         assert(false);
     }
+
+    __asm__ volatile ("mv x10, x10");
 }
 
 void handleExeptions(uint64 cause)
@@ -184,52 +224,6 @@ uint64 testCall(uint64 n)
 {
     return fib(n);
 }
-
-void cExternalInterruptRoutine()
-{
-    uint64 scause;
-    __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
-
-    int cause = scause & (~(1UL << 63));
-
-    assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
-
-    long int getItems = IConsole::get()->getBufferItems;
-    long int putItems = IConsole::get()->putBufferItems;
-    if(getItems < 0 || putItems < 0)
-    {
-        __asm__ volatile("mv x10, x10");
-        assert(false);
-    }
-
-    if(cause == 1)
-    {
-        __asm__ volatile ("csrc sip, 0x2"); // clears the 2nd bit which signifies software interrupt (timer for project)
-//        gTimer++;
-        doTimerStuff(); // WARNING: this changes gTimer
-        doSleepStuff();
-    }
-    else if (cause == 9)
-    {
-        __asm__ volatile("mv x10, x10");
-        if(IThread::getPRunning()->id == BUSY_WAIT_THREAD_ID)
-        {
-            __asm__ volatile("mv x10, x10");
-        }
-
-#ifdef USE_MY_CONSOLE
-        IConsole::get()->consoleHandler();
-#else
-        console_handler();
-#endif
-        __asm__ volatile("mv x10, x10");
-    }
-    else
-    {
-        assert(false); // unknown interupt
-    }
-}
-
 
 
 void doTimerStuff()
