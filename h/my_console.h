@@ -14,6 +14,11 @@ void putNewline();
 void putU64(uint64 n);
 void putBinary(uint64 n);
 
+void kPutNewline();
+void kPutString(const char*);
+void kPutU64(uint64);
+void kPutInt(int);
+
 [[noreturn]] void stopKernel();
 
 inline void _assert(bool valid, const char* file, int line) // MUST be inline

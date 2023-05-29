@@ -43,17 +43,17 @@ void Scheduler::dispatchUserVersion()
 
 void Scheduler::printState()
 {
-    putU64(IThread::getPRunning()->id);
-    putString(":  ");
+    kPutU64(IThread::getPRunning()->id);
+    kPutString(":  ");
 
     IThread* pCur = get()->pHead;
     while(pCur)
     {
-        putU64(pCur->id);
+        kPutU64(pCur->id);
 
         if(pCur->pNext)
         {
-            putString("->");
+            kPutString("->");
         }
         else
         {
@@ -63,7 +63,7 @@ void Scheduler::printState()
         pCur = pCur->pNext;
     }
 
-    putNewline();
+    kPutNewline();
 }
 
 void Scheduler::dispatchToNext() // WARNING: different than sys. call thread_dispatch()
@@ -84,8 +84,8 @@ void Scheduler::dispatchToNext() // WARNING: different than sys. call thread_dis
     {
         pNew = &kernelThread;
 
-        putString("=== NO MORE USER THREADS EXIST. RETURNING TO KERNEL THREAD");
-        putNewline();
+        kPutString("=== NO MORE USER THREADS EXIST. RETURNING TO KERNEL THREAD");
+        kPutNewline();
 
         assert(IThread::pAllThreads[0] == &kernelThread);
         IThread::pAllThreads[0]->state = IThread::READY;
@@ -97,8 +97,8 @@ void Scheduler::dispatchToNext() // WARNING: different than sys. call thread_dis
     else if(existReadyThread == false && existSleeper == true)
     {
         assert(existReadyThread == false && existSleeper == true);
-        putString("===== SLEEPING WAIT");
-        putNewline();
+        kPutString("===== SLEEPING WAIT");
+        kPutNewline();
 
         pNew = IThread::pAllThreads[BUSY_WAIT_THREAD_ID];
         Scheduler::put(pNew);

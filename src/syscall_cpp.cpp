@@ -1,5 +1,50 @@
 #include "../h/syscall_cpp.hpp"
 
+int Thread::sleep (time_t time)
+{
+    return time_sleep(time);
+}
+
+void periodicWrapper(void* p)
+{
+    PeriodicThread* t = (PeriodicThread*)p;
+
+    volatile uint64 i;
+    while(i++)
+    {
+        time_sleep(t->getPeriod());
+        if(t->hasTerminated == true)
+            break;
+        t->periodicActivation();
+    }
+}
+
+PeriodicThread::PeriodicThread (time_t period)
+    : period(period), Thread(&periodicWrapper, (void*)this), hasTerminated(false)
+{
+
+}
+
+Semaphore::Semaphore(unsigned init)
+{
+    sem_open(&myHandle, init);
+}
+
+Semaphore::~Semaphore()
+{
+    sem_close(myHandle);
+}
+
+int Semaphore::wait()
+{
+    return sem_wait(myHandle);
+}
+
+int Semaphore::signal()
+{
+    return sem_signal(myHandle);
+}
+
 void* operator new(size_t size)
 {
     return mem_alloc(size);
@@ -26,8 +71,7 @@ Thread::Thread (void (*body)(void*), void* arg)
 
 int Thread::start()
 {
-    thread_create(&myHandle, body, arg);
-    return 0;
+    return thread_create(&myHandle, body, arg);
 }
 
 void Thread::join()
@@ -53,16 +97,3 @@ void _Thread_wrapper(void* t)
 Thread::Thread()
     :body(_Thread_wrapper), arg(this)
 { }
-
-//    virtual ~Thread ();
-//    int start ();
-//    void join();
-//    static void dispatch ();
-//    static int sleep (time_t);
-//protected:
-//    Thread ();
-//    virtual void run () {}
-//private:
-//    thread_t myHandle;
-//    void (*body)(void*); void* arg;
-//};

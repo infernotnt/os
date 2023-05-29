@@ -16,6 +16,8 @@ public:
     }
 
     void writeToConsole();
+    void actuallyWriteToConsole();
+
     uint64 putBufferHead, putBufferTail;
     char putBuffer[BUFFER_SIZE];
     uint64 putBufferItems;

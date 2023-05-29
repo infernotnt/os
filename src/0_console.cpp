@@ -3,17 +3,20 @@
 
 void IConsole::writeToConsole()
 {
+}
+
+void IConsole::actuallyWriteToConsole()
+{
 #ifdef USE_MY_CONSOLE
-    while(( (*(char*)CONSOLE_STATUS) & CONSOLE_TX_STATUS_BIT ) != 0)
+    while (((*(char *) CONSOLE_STATUS) & CONSOLE_TX_STATUS_BIT) != 0)
     {
-        if(putBufferItems > 0)
+        if (putBufferItems > 0)
         {
-            assert(( (*(char*)CONSOLE_STATUS) & CONSOLE_TX_STATUS_BIT ) == CONSOLE_TX_STATUS_BIT);
-            *((char *) CONSOLE_TX_DATA) = '1';
-//            *((char *) CONSOLE_TX_DATA) = putBuffer[putBufferTail];
+            assert(((*(char *) CONSOLE_STATUS) & CONSOLE_TX_STATUS_BIT) == CONSOLE_TX_STATUS_BIT);
+            *((char *) CONSOLE_TX_DATA) = putBuffer[putBufferTail];
 
             putBufferItems--;
-            putBufferTail = (putBufferTail+1) % BUFFER_SIZE;
+            putBufferTail = (putBufferTail + 1) % BUFFER_SIZE;
         }
         else break;
     }

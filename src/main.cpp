@@ -32,7 +32,10 @@ void userWrapper(void* p)
     }
 
     putc('a');
-    IConsole::get()->writeToConsole();
+//    IConsole::get()->writeToConsole();
+
+    putc('a');
+//    IConsole::get()->writeToConsole();
 
     externalInterruptTest();
 

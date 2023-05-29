@@ -24,6 +24,25 @@
     }
 }
 
+void kPutNewline()
+{
+    assert(false);
+}
+
+void kPutString(const char*)
+{
+    assert(false);
+}
+void kPutU64(uint64)
+{
+    assert(false);
+}
+
+void kPutInt(int)
+{
+    assert(false);
+}
+
 void putNewline()
 {
     putc('\n');

@@ -78,27 +78,27 @@ void cInternalInterruptRoutine()
 
     if(cause != 8 && cause != 9)
     {
-        putString("=== EXCEPETION occured: ");
+        kPutString("=== EXCEPETION occured: ");
         if(cause == 2)
         {
-            putString(" Illegal instruction");
+            kPutString(" Illegal instruction");
         }
         else if (cause == 5)
         {
-            putString("Unallowed read adress");
+            kPutString("Unallowed read adress");
         }
         else if (cause == 7)
         {
-            putString("Unallowed write adress");
+            kPutString("Unallowed write adress");
         }
         else
         {
-            putString("UKNOWN EXCEPTION. ??????????????");
+            kPutString("UKNOWN EXCEPTION. ??????????????");
             assert(false);
         }
-        putNewline();
-        putString("Terminating kernel");
-        putNewline();
+        kPutNewline();
+        kPutString("Terminating kernel");
+        kPutNewline();
         assert(false);
     }
 
@@ -163,11 +163,12 @@ void cInternalInterruptRoutine()
     }
     else if (code == 65) // getc
     {
-
+        assert(false);
     }
     else if (code == 66) // putc
     {
-
+        IConsole::get()->putc(*((char*)&parameter1));
+        IConsole::get()->actuallyWriteToConsole();
     }
     else
     {
@@ -241,10 +242,10 @@ void doTimerStuff()
     gTimer++;
     if (gTimer % 10 == 0)
     {
-        putString("Time: ");
-        putInt(gTimer / 10);
-        putString("s");
-        putNewline();
+        kPutString("Time: ");
+        kPutInt(gTimer / 10);
+        kPutString("s");
+        kPutNewline();
     }
 }
 

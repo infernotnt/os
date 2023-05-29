@@ -21,10 +21,10 @@ uint64 alignBackward(uint64 n, uint64 alignConst)
 void MemAlloc::printUserlandUsage()
 {
     uint64 a = getUserlandUsage();
-    putString("Allocated ");
-    putU64(a);
-    putString(" bytes are allocated for userland");
-    putNewline();
+    kPutString("Allocated ");
+    kPutU64(a);
+    kPutString(" bytes are allocated for userland");
+    kPutNewline();
 }
 
 MemAlloc::MemAlloc()
@@ -144,8 +144,8 @@ int MemAlloc::freeMem(void* p)
         pCur = pCur->pNext;
     }
 
-    putString("=== Error: mem_free was maby given an incorrect adress?");
-    putNewline();
+    kPutString("=== Error: mem_free was maby given an incorrect adress?");
+    kPutNewline();
     assert(false); // temp
     return -1; // negative values signify failure
 }

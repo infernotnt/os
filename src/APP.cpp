@@ -1,9 +1,11 @@
 #include "../h/my_console.h"
-#include "../h/syscall_c.hpp"
 #include "../h/alloc.h"
 #include "../h/thread.h"
 #include "../h/semaphore.h"
 #include "../h/my_tests.h"
+
+#include "../h/syscall_c.hpp"
+#include "../h/syscall_cpp.hpp"
 
 void myUserMain()
 {

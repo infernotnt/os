@@ -167,7 +167,8 @@ char getc()
 void putc(char c)
 {
 #ifdef USE_MY_CONSOLE
-    IConsole::get()->putc(c);
+    helperP164(0x42, *((uint64*)&c));
+//    IConsole::get()->putc(c);
 #else
     __putc(c);
 #endif
