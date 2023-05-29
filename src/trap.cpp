@@ -1,76 +1,12 @@
-#include "../h/thread.h"
-#include "../h/scheduler.h"
-#include "../h/alloc.h"
-#include "../h/0_console.h"
-#include "../h/semaphore.h"
-
-void __exeptionError()
-{
-    __asm__ volatile("mv x10, x10");
-    assert(false);
-}
+#include "../h/trap.h"
 
 volatile uint64 gTimer = 0;
-uint64 fib(uint64 n);
-uint64 testCall(uint64 n)
-{
-    return fib(n);
-}
-
-void doTimerStuff();
-void doSleepStuff();
-void cExternalInterruptRoutine()
-{
-    uint64 scause;
-    __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
-
-    int cause = scause & (~(1UL << 63));
-
-    assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
-
-    long int getItems = IConsole::get()->getBufferItems;
-    long int putItems = IConsole::get()->putBufferItems;
-    if(getItems < 0 || putItems < 0)
-    {
-        __asm__ volatile("mv x10, x10");
-        assert(false);
-    }
-
-    if(cause == 1)
-    {
-        __asm__ volatile ("csrc sip, 0x2"); // clears the 2nd bit which signifies software interrupt (timer for project)
-//        gTimer++;
-        doTimerStuff(); // WARNING: this changes gTimer
-        doSleepStuff();
-    }
-    else if (cause == 9)
-    {
-        __asm__ volatile("mv x10, x10");
-        if(IThread::getPRunning()->id == BUSY_WAIT_THREAD_ID)
-        {
-            __asm__ volatile("mv x10, x10");
-        }
-
-#ifdef USE_MY_CONSOLE
-        IConsole::get()->consoleHandler();
-#else
-        console_handler();
-#endif
-        __asm__ volatile("mv x10, x10");
-    }
-    else
-    {
-        assert(false); // unknown interupt
-    }
-}
-
 
 void cInternalInterruptRoutine()
 {
     uint64 scause;
     __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
 
-//    int isExternal = (scause & (0x1UL << 63)) != 0;
     int cause = scause & (~(1UL << 63));
 
     uint64 code, parameter1, parameter2, parameter3, parameter4;
@@ -83,10 +19,54 @@ void cInternalInterruptRoutine()
 
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 
-    if(cause != 8 && cause != 9)
+    handleExeptions(cause);
+
+    IThread* pOld = IThread::getPRunning();
+
+    uint64 ret = handleSystemCall(code, parameter1, parameter2, parameter3, parameter4);
+
+    doReturnStuff(code, ret, pOld);
+
+    __asm__ volatile ("mv x10, x10");
+}
+
+void doReturnStuff(uint64 code, uint64 ret, IThread* pOld)
+{
+    bool normalCallWithReturn = (code == 0x1) || (code == 0x2) || (code == 0x11) || (code == 0x12) || (code == 0x21) || (code == 0x22) || (code == 0x23) || (code == 0x24) || (code == 0x31) || (code == 0x41);
+    bool customCallWithReturn = (code == 0x3);
+    bool customCallWithoutReturn = (code == 0x4) || (code == 5);
+    bool normalCallWithoutReturn = (code == 0x13) || (code == 0x14) || (code == 0x42);
+
+    bool isSemWaitCall = (code == 0x23);
+    if(isSemWaitCall == true) // dont touch the return in this case, as the semaphore changes it directly on the stack of the waiting thread
+    {
+
+    }
+    else if(normalCallWithReturn || customCallWithReturn)
+    { // system call with a return (not necessariliy 64bit)
+
+        assert(ret != (uint64)-1); // not 100% check
+
+        *( ((uint64*)(pOld->sp))+10 ) = ret; // set r0, or x10, to the return value
+
+//        __asm__ volatile ("mv a0, %[name]" : : [name] "r" (ret));
+    }
+    else if(normalCallWithoutReturn || customCallWithoutReturn) // this exists for safety reasons
+    {
+        ;
+    }
+    else
+    {
+        assert(false);
+    }
+}
+
+void handleExeptions(uint64 cause)
+{
+    if (cause != 8 && cause != 9)
     {
         kPutString("=== EXCEPETION occured: ");
-        if(cause == 2)
+        if (cause == 2)
         {
             kPutString(" Illegal instruction");
         }
@@ -103,14 +83,16 @@ void cInternalInterruptRoutine()
             kPutString("UKNOWN EXCEPTION. ??????????????");
             assert(false);
         }
+
         kPutNewline();
         kPutString("Terminating kernel");
         kPutNewline();
         assert(false);
     }
+}
 
-    IThread* pOld = IThread::getPRunning();
-
+uint64 handleSystemCall(uint64 code, uint64 parameter1, uint64 parameter2, uint64 parameter3, uint64 parameter4)
+{
     uint64 ret = -1;
     if(code == 1)
     {
@@ -189,36 +171,66 @@ void cInternalInterruptRoutine()
         assert(false); // unknown code
     }
 
-    bool normalCallWithReturn = (code == 0x1) || (code == 0x2) || (code == 0x11) || (code == 0x12) || (code == 0x21) || (code == 0x22) || (code == 0x23) || (code == 0x24) || (code == 0x31) || (code == 0x41);
-    bool customCallWithReturn = (code == 0x3);
-    bool customCallWithoutReturn = (code == 0x4);
-    bool normalCallWithoutReturn = (code == 0x13) || (code == 0x14) || (code == 0x42);
+    return ret;
+}
 
-    bool isSemWaitCall = (code == 0x23);
-    if(isSemWaitCall == true) // dont touch the return in this case, as the semaphore changes it directly on the stack of the waiting thread
+void __exeptionError()
+{
+    __asm__ volatile("mv x10, x10");
+    assert(false);
+}
+
+uint64 testCall(uint64 n)
+{
+    return fib(n);
+}
+
+void cExternalInterruptRoutine()
+{
+    uint64 scause;
+    __asm__ volatile ("csrr %[name], scause" : [name] "=r"(scause));
+
+    int cause = scause & (~(1UL << 63));
+
+    assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
+
+    long int getItems = IConsole::get()->getBufferItems;
+    long int putItems = IConsole::get()->putBufferItems;
+    if(getItems < 0 || putItems < 0)
     {
-
-    }
-    else if(normalCallWithReturn || customCallWithReturn)
-    { // system call with a return (not necessariliy 64bit)
-
-        assert(ret != (uint64)-1); // not 100% check
-
-        *( ((uint64*)(pOld->sp))+10 ) = ret; // set r0, or x10, to the return value
-
-//        __asm__ volatile ("mv a0, %[name]" : : [name] "r" (ret));
-    }
-    else if(normalCallWithoutReturn || customCallWithoutReturn) // this exists for safety reasons
-    {
-        ;
-    }
-    else
-    {
+        __asm__ volatile("mv x10, x10");
         assert(false);
     }
 
-    __asm__ volatile ("mv x10, x10");
+    if(cause == 1)
+    {
+        __asm__ volatile ("csrc sip, 0x2"); // clears the 2nd bit which signifies software interrupt (timer for project)
+//        gTimer++;
+        doTimerStuff(); // WARNING: this changes gTimer
+        doSleepStuff();
+    }
+    else if (cause == 9)
+    {
+        __asm__ volatile("mv x10, x10");
+        if(IThread::getPRunning()->id == BUSY_WAIT_THREAD_ID)
+        {
+            __asm__ volatile("mv x10, x10");
+        }
+
+#ifdef USE_MY_CONSOLE
+        IConsole::get()->consoleHandler();
+#else
+        console_handler();
+#endif
+        __asm__ volatile("mv x10, x10");
+    }
+    else
+    {
+        assert(false); // unknown interupt
+    }
 }
+
+
 
 void doTimerStuff()
 {

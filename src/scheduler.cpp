@@ -1,6 +1,7 @@
 #include "../h/scheduler.h"
 #include "../h/semaphore.h"
 
+extern IThread kernelThread;
 bool checkIfWaitingForSemaphore()
 {
     if(IConsole::get()->inputSemaphore->pBlockedHead != nullptr)
@@ -40,8 +41,6 @@ int Scheduler::sleep(time_t time)
 
 void Scheduler::dispatchUserVersion()
 {
-//    extern IThread kernelThread;
-
     // reenable, temp comment
 //    assert(IThread::getPRunning() !=
 //           &kernelThread); // you're only supposed to open user threads with system call with code 4
@@ -98,16 +97,50 @@ void Scheduler::printState()
     kPutNewline();
 }
 
+IThread* doWaitingStuff()
+{
+    IThread* pNew;
+
+#ifdef __DEBUG_PRINT
+    kPutString("===== SLEEPING WAIT OR INPUT WAIT");
+    kPutNewline();
+#endif
+
+    pNew = IThread::pAllThreads[BUSY_WAIT_THREAD_ID];
+    Scheduler::put(pNew);
+
+    return pNew;
+}
+
+IThread* doKernelSwitchStuff()
+{
+    IThread* pNew;
+
+    pNew = &kernelThread;
+
+#ifdef __DEBUG_PRINT
+    kPutString("=== NO MORE USER THREADS EXIST. RETURNING TO KERNEL THREAD");
+    kPutNewline();
+#endif
+
+    assert(IThread::pAllThreads[0] == &kernelThread);
+    IThread::pAllThreads[0]->state = IThread::READY;
+
+    __asm__ volatile("li t1, 256");
+    __asm__ volatile("csrs sstatus, t1"); // changes to kernel mode by changing the "spp" bit
+
+    __asm__ volatile("li t1, 32");
+    __asm__ volatile("csrc sstatus, t1"); // change "spie" bit in sstatus register so external interupts are disabled when switching to kernel thread
+
+    return pNew;
+}
+
 void Scheduler::dispatchToNext() // WARNING: different than sys. call thread_dispatch()
 {
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 
     IThread *pOld = IThread::getPRunning();
     IThread *pNew = Scheduler::getNext();
-
-    extern IThread kernelThread;
-    // temp comment
-//    assert(pNew != &kernelThread);
 
     bool existReadyThread = (pNew != nullptr);
 
@@ -116,35 +149,9 @@ void Scheduler::dispatchToNext() // WARNING: different than sys. call thread_dis
         bool existSleeper = (Scheduler::get()->pSleepHead != nullptr);
         bool isWaitingForSemaphore = checkIfWaitingForSemaphore();
         if (existReadyThread == false && (existSleeper == true || isWaitingForSemaphore == true))
-        {
-#ifdef __DEBUG_PRINT
-            kPutString("===== SLEEPING WAIT OR INPUT WAIT");
-            kPutNewline();
-#endif
-
-            pNew = IThread::pAllThreads[BUSY_WAIT_THREAD_ID];
-            Scheduler::put(pNew);
-        }
+            pNew = doWaitingStuff();
         else if (existReadyThread == false && existSleeper == false && isWaitingForSemaphore == false)
-        {
-            pNew = &kernelThread;
-
-#ifdef __DEBUG_PRINT
-            kPutString("=== NO MORE USER THREADS EXIST. RETURNING TO KERNEL THREAD");
-            kPutNewline();
-#endif
-
-            assert(IThread::pAllThreads[0] == &kernelThread);
-            IThread::pAllThreads[0]->state = IThread::READY;
-
-            pNew = IThread::pAllThreads[0];
-
-            __asm__ volatile("li t1, 256");
-            __asm__ volatile("csrs sstatus, t1"); // changes to kernel mode by changing the "spp" bit
-
-            __asm__ volatile("li t1, 32");
-            __asm__ volatile("csrc sstatus, t1"); // change "spie" bit in sstatus register so external interupts are disabled when switching to kernel thread
-        }
+            pNew = doKernelSwitchStuff();
     }
 
     assert(pNew->state == IThread::READY);

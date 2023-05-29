@@ -14,14 +14,14 @@ void myUserMain()
     putString("=== App started");
     putNewline();
 
-//    testSystemCalls();
-//    testMemoryAllocator();
-//    testSyncCall();
-//    testSemaphores();
-//    externalInterruptTest();
-//    testTimeSlice();
+    testSystemCalls();
+    testMemoryAllocator();
+    testSyncCall();
+    testSemaphores();
+    externalInterruptTest();
+    testTimeSlice();
 
-    time_sleep(30);
+//    time_sleep(30);
 //    testTimeSleep();
 
     putString("=== App ended");

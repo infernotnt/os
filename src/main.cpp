@@ -29,6 +29,8 @@ void userWrapper(void* p)
 
 //    __asm__ volatile("csrw sscratch, 1");
 
+//    time_sleep(30);
+
     myUserMain();
 //    userMain();
 }
@@ -48,20 +50,6 @@ int main()
 
     IThread* a = Scheduler::get()->pHead;
     assert(a->id == USER_THREAD_ID);
-
-
-//    enableExternalInterrupts();
-//    volatile uint64 sss;
-//    while(sss>=0)
-//    {
-//        char c = getc();
-//        putc(c+1);
-//        assert(c != 1);
-//    }
-//    externalInterruptTest();
-//    disableExternalInterrupts();
-
-//    doMainTest();
 
     uint64* sp;                                                 /// WARNING: this must be immediately before calling the user thread
     __asm__ volatile ("mv %[name], sp" : [name] "=r"(sp));
