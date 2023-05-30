@@ -31,6 +31,8 @@ void Scheduler::doSleepStuffOnTick()
 
         while (pCur)
         {
+            IThread *pNext = pCur->pNext;
+
             if(pCur->remainingSleep == 0)
             {
                 if(pCur == Scheduler::get()->pSleepHead) // first in list
@@ -46,7 +48,7 @@ void Scheduler::doSleepStuffOnTick()
                 break;
             }
             pPrev = pCur;
-            pCur = pCur->pNext;
+            pCur = pNext;
         }
 
         if(changedList == false) // this means there was one pass trough the loop and no changes were made
@@ -60,7 +62,9 @@ void Scheduler::doTimeSliceAndGTimeOnTick()
     if(IThread::timeSliceCounter == 2)
     {
         IThread::timeSliceCounter = 0;
-        Scheduler::dispatchUserVersion();
+        if(IThread::getPRunning()->id != BUSY_WAIT_THREAD_ID)
+            Scheduler::dispatchUserVersion();
+        else Scheduler::specialBusyWaitDispatch();
     }
 
     gTimer++;
@@ -119,12 +123,10 @@ void Scheduler::dispatchUserVersion()
 //    assert(IThread::getPRunning() !=
 //           &kernelThread); // you're only supposed to open user threads with system call with code 4
 
-    if(IThread::getPRunning()->id != BUSY_WAIT_THREAD_ID)
-    {
-        IThread::getPRunning()->state = IThread::READY;
-        Scheduler::put(IThread::getPRunning());
-    }
+    assert(IThread::getPRunning()->id != BUSY_WAIT_THREAD_ID);
 
+    IThread::getPRunning()->state = IThread::READY;
+    Scheduler::put(IThread::getPRunning());
     Scheduler::dispatchToNext();
 }
 

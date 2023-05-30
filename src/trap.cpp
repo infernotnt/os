@@ -23,8 +23,8 @@ void cExternalInterruptRoutine()
     {
         __asm__ volatile ("csrc sip, 0x2"); // clears the 2nd bit which signifies software interrupt (timer for project)
 //        gTimer++;
-        Scheduler::doTimeSliceAndGTimeOnTick();
         Scheduler::doSleepStuffOnTick();
+        Scheduler::doTimeSliceAndGTimeOnTick();
     }
     else if (cause == 9)
     {

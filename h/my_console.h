@@ -72,6 +72,8 @@ inline void _assert(bool valid, const char* file, int line) // MUST be inline
     if(valid)
         return;
 
+    __asm__ volatile ("mv x10, x10");
+
     kPutString("===================== ASSERT file: ");
     kPutString(file);
     kPutString("    line: ");

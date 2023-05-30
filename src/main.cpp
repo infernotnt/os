@@ -25,10 +25,9 @@ void userWrapper(void* p)
 {
     assert(p == nullptr);
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
+//    __asm__ volatile("csrw sscratch, 1"); // to check for permissions
 
-//    __asm__ volatile("csrw sscratch, 1");
-
-//    time_sleep(1000);
+    time_sleep(5);
 
     myUserMain();
 //    userMain();
@@ -57,7 +56,7 @@ int main()
     __asm__ volatile ("li a0, 4"); // this is a system call that calls IThread::switchToUser()
     __asm__ volatile ("ecall");
 
-    __asm__ volatile("csrw sscratch, 1");
+    __asm__ volatile("csrw sscratch, 1"); // to check for permissions
 
     return 0;
 }
@@ -79,6 +78,10 @@ void doBusyWaitThread(void* p)
     while(true)
     {
         assert(IThread::getPRunning()->id == BUSY_WAIT_THREAD_ID);
+        if(Scheduler::get()->pHead == IThread::getPRunning())
+        {
+            __asm__ volatile("mv x10, x10");
+        }
 
         __asm__ volatile("mv x10, x10");
 
