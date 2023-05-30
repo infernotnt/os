@@ -27,7 +27,8 @@ void userWrapper(void* p)
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 //    __asm__ volatile("csrw sscratch, 1"); // to check for permissions
 
-    myUserMain();
+    externalInterruptTest();
+//    myUserMain();
 //    userMain();
 }
 

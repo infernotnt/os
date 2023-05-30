@@ -13,8 +13,6 @@ void testSyncCall();
 void testTimeSlice();
 void testTimeSleep();
 void testSemaphores();
-
-
 void externalInterruptTest();
 
 extern uint64 semVal;

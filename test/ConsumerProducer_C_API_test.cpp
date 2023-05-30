@@ -83,10 +83,13 @@ void producerConsumer_C_API() {
     printString("Unesite broj proizvodjaca?\n");
     getString(input, 30);
     threadNum = stringToInt(input);
+    threadNum = 20;
+
 
     printString("Unesite velicinu bafera?\n");
     getString(input, 30);
     n = stringToInt(input);
+    n = 10000;
 
     printString("Broj proizvodjaca "); printInt(threadNum);
     printString(" i velicina bafera "); printInt(n);

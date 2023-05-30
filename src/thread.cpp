@@ -95,8 +95,9 @@ void IThread::switchToUser()
     __asm__ volatile("li t1, 256");
     __asm__ volatile("csrc sstatus, t1"); // changes to user mode by changing the "spp" bit
 
-    __asm__ volatile("li t1, 512");         // temp: disables console interrupt
-    __asm__ volatile("csrc sie, t1");
+    // TEMP: disables console interrupt
+//    __asm__ volatile("li t1, 512");
+//    __asm__ volatile("csrc sie, t1");
 }
 
 void IThread::setPRunning(IThread* p)

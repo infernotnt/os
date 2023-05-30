@@ -30,6 +30,7 @@ time_t PeriodicThread::getPeriod()
 
 void PeriodicThread::terminate()
 {
+    period = 9999999999969420;
 }
 
 int Thread::sleep (time_t time)
@@ -45,6 +46,10 @@ void periodicWrapper(void* p)
     while(i>=0)
     {
         time_sleep(t->getPeriod());
+
+        if(t->period == 9999999999969420)
+            break;
+
         t->periodicActivation();
     }
 }
