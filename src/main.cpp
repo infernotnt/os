@@ -2,7 +2,7 @@
 #include "../h/syscall_c.h"
 #include "../h/thread.h"
 #include "../h/scheduler.h"
-#include "../h/0_console.h"
+#include "../h/my_console.h"
 #include "../h/my_tests.h"
 
 extern "C" void trapRoutine();
@@ -13,7 +13,6 @@ void doInitialAsserts();
 void initInterruptVector();
 void doBusyWaitThread(void*);
 void initInputSemaphore();
-void doMainTest();
 void initializeKernelThread();
 void initializeBusyWaitThread();
 void initializeUserThread();
@@ -114,31 +113,6 @@ void initializeKernelThread()
     IThread::pAllThreads[0] = &kernelThread;
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 }
-
-void doMainTest()
-{
-
-    volatile uint64 k = 10;
-
-    void testSystemCalls();
-    void testMemoryAllocator();
-    void testSyncCall();
-    void testSemaphores();
-
-    testSystemCalls();
-    testMemoryAllocator();
-    testSyncCall();
-    testSemaphores();
-
-    while(k++)
-    {
-        __asm__ volatile ("mv x10, x10");
-    }
-
-    /// ----
-
-}
-
 
 void doInitialAsserts()
 {

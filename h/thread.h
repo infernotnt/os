@@ -2,6 +2,7 @@
 #include "../lib/hw.h"
 #include "../h/my_console.h"
 #include "../h/syscall_c.h"
+#include "../h/my_console.h"
 
 #define NR_MAX_THREADS 10
 #define BUSY_WAIT_THREAD_ID 1

@@ -1,7 +1,7 @@
 #include "../h/syscall_c.h"
 #include "../h/my_console.h"
 #include "../h/thread.h"
-#include "../h/0_console.h"
+#include "../h/my_console.h"
 #include "../lib/console.h"
 #include "../h/alloc.h"
 

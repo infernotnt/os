@@ -2,6 +2,7 @@
 
 #include "../lib/hw.h"
 #include "../h/my_console.h"
+#include "../h/my_console.h"
 
 void max(uint64 a, uint64 b);
 

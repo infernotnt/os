@@ -5,7 +5,7 @@
 #include "../h/thread.h"
 #include "../h/scheduler.h"
 #include "../h/alloc.h"
-#include "../h/0_console.h"
+#include "../h/my_console.h"
 #include "../h/semaphore.h"
 
 uint64 fib(uint64 n);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../h/my_console.h"
+#include "../h/my_console.h"
 #include "../h/syscall_c.h"
 #include "../h/alloc.h"
 #include "../h/thread.h"
