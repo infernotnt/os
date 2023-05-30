@@ -23,7 +23,7 @@ public:
     static void doSleepStuffOnTick();
     static void reduceSleepTimerForAll();
 
-    static void specialBusyWaitDispatch();
+//    static void specialBusyWaitDispatch();
 
     IThread* pHead; // points to the one that is the next to be run
     IThread* pSleepHead;

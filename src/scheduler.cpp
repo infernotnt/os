@@ -58,16 +58,14 @@ void Scheduler::doSleepStuffOnTick()
 
 void Scheduler::doTimeSliceAndGTimeOnTick()
 {
-    IThread::timeSliceCounter++;
-    if(IThread::timeSliceCounter == 2)
-    {
-        IThread::timeSliceCounter = 0;
-        if(IThread::getPRunning()->id != BUSY_WAIT_THREAD_ID)
-            Scheduler::dispatchUserVersion();
-        else Scheduler::specialBusyWaitDispatch();
-    }
 
-    gTimer++;
+    assert(IThread::timeSliceCounter <= DEFAULT_TIME_SLICE);
+
+    if(IThread::timeSliceCounter == DEFAULT_TIME_SLICE && IThread::getPRunning()->id != BUSY_WAIT_THREAD_ID)
+        Scheduler::dispatchUserVersion();
+
+    if(IThread::getPRunning()->id == BUSY_WAIT_THREAD_ID && Scheduler::get()->pHead != nullptr)
+        Scheduler::dispatchToNext();
 
 #ifdef __DEBUG_PRINT
     if (gTimer % 10 == 0)
@@ -78,6 +76,16 @@ void Scheduler::doTimeSliceAndGTimeOnTick()
         kPutNewline();
     }
 #endif
+
+    if(IThread::timeSliceCounter == DEFAULT_TIME_SLICE)
+        IThread::timeSliceCounter = 0;
+    else
+    {
+        IThread::timeSliceCounter++;
+    }
+
+    gTimer++;
+
 }
 
 bool checkIfWaitingForSemaphore()
@@ -98,9 +106,6 @@ int Scheduler::sleep(time_t time)
     assert(IThread::getPRunning()->state == IThread::RUNNING);
     assert(IThread::getPRunning()->done == false);
 
-    IThread::getPRunning()->state = IThread::SUSPENDED;
-    IThread::getPRunning()->remainingSleep = time;
-
     if(pSleepHead == nullptr)
     {
         pSleepHead = IThread::getPRunning();
@@ -112,6 +117,8 @@ int Scheduler::sleep(time_t time)
         pSleepHead = IThread::getPRunning();
     }
 
+    IThread::getPRunning()->state = IThread::SUSPENDED;
+    IThread::getPRunning()->remainingSleep = time;
     dispatchToNext();
 
     return 0;
@@ -130,6 +137,7 @@ void Scheduler::dispatchUserVersion()
     Scheduler::dispatchToNext();
 }
 
+/*
 void Scheduler::specialBusyWaitDispatch()
 {
     IThread* t = IThread::getPRunning();
@@ -147,6 +155,7 @@ void Scheduler::specialBusyWaitDispatch()
     Scheduler::put(t->pNext);
     dispatchToNext();
 }
+ */
 
 void Scheduler::printState()
 {
@@ -183,7 +192,6 @@ IThread* doWaitingStuff()
 #endif
 
     pNew = IThread::pAllThreads[BUSY_WAIT_THREAD_ID];
-    Scheduler::put(pNew);
 
     return pNew;
 }

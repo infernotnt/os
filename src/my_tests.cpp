@@ -146,8 +146,8 @@ void doSleepA(void* p)
         int b = time_sleep(a);
 
         assert(b == 0);
-        assert((oldTimer - gTimer) <= (((uint64)a) + 2));
-        assert((oldTimer - gTimer) >= ((uint64)a));
+        assert((gTimer - oldTimer) <= (((uint64)a) + 2));
+        assert((gTimer - oldTimer) >= ((uint64)a));
 
         i++;
     }

@@ -24,7 +24,7 @@ void cExternalInterruptRoutine()
         __asm__ volatile ("csrc sip, 0x2"); // clears the 2nd bit which signifies software interrupt (timer for project)
 //        gTimer++;
         Scheduler::doSleepStuffOnTick();
-        Scheduler::doTimeSliceAndGTimeOnTick();
+        Scheduler::doTimeSliceAndGTimeOnTick(); // must be after doSleepStuffOnTick
     }
     else if (cause == 9)
     {
@@ -153,10 +153,10 @@ uint64 handleSystemCall(uint64 code, uint64 parameter1, uint64 parameter2, uint6
     {
         IThread::switchToUser();
     }
-    else if (code == 5)
-    {
-        Scheduler::specialBusyWaitDispatch();
-    }
+//    else if (code == 5)
+//    {
+//        Scheduler::specialBusyWaitDispatch();
+//    }
     else if (code == 17) // 17
     {
         *((int*)&ret) = IThread::createThread( *((uint64**)&parameter1), *((IThread::Body*)&parameter2), *((void**)&parameter3), (void*) parameter4);

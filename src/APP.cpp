@@ -20,9 +20,7 @@ void myUserMain()
     testSemaphores();
     externalInterruptTest();
     testTimeSlice();
-
-//    time_sleep(30);
-//    testTimeSleep();
+    testTimeSleep();
 
     putString("=== App ended");
     putNewline();
