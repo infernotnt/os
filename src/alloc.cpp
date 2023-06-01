@@ -70,7 +70,7 @@ void* MemAlloc::allocMem(size_t size)
 
 //    assert(pFreeHead->size > 1000000);
 
-    uint64 tempOriginalSize = pFreeHead->size;
+//    uint64 tempOriginalSize = pFreeHead->size;
 
     while(pCur != nullptr)
     {
@@ -91,14 +91,14 @@ void* MemAlloc::allocMem(size_t size)
                    ((uint64) newFree) % MEM_BLOCK_SIZE == 0);
 
 //            assert();
-            if(!(tempOriginalSize - newFree->size <= actualSize + alignForward(MAX_NODE_SIZE, MEM_BLOCK_SIZE)))
-            {
-                __asm__ volatile("mv x10, x10");
-                uint64 sizeDiff = tempOriginalSize - newFree->size;
-                assert(sizeDiff);
-//                kPutU64(tempOriginalSize);
-//                IConsole::get()->flush();
-            }
+//            if(!(tempOriginalSize - newFree->size <= actualSize + alignForward(MAX_NODE_SIZE, MEM_BLOCK_SIZE)))
+//            {
+//                __asm__ volatile("mv x10, x10");
+//                uint64 sizeDiff = tempOriginalSize - newFree->size;
+//                assert(sizeDiff);
+////                kPutU64(tempOriginalSize);
+////                IConsole::get()->flush();
+//            }
 
             newFree->pNext = pCur->pNext; // replace pCur with the new one
 

@@ -23,7 +23,7 @@ public:
         int key;
         int i = 0;
         while ((key = getc()) != 0x1b) {
-            td->buffer->put(key);
+           td->buffer->put(key);
             i++;
         }
 
@@ -33,6 +33,8 @@ public:
         td->sem->signal();
     }
 };
+
+#include "../h/my_console.h"
 
 class Producer : public Thread {
     thread_data *td;
@@ -44,7 +46,12 @@ public:
         while (!threadEnd) {
             td->buffer->put(td->id + '0');
             i++;
-            Thread::sleep((i + td->id) % 5);
+            int sleepAmount = (i + td->id) % 5;
+//            putString("Sleep: ");
+//            putInt(sleepAmount);
+//            putNewline();
+
+            Thread::sleep(sleepAmount);
         }
 
         td->sem->signal();

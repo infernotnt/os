@@ -102,6 +102,9 @@ bool checkIfWaitingForSemaphore()
 
 int Scheduler::sleep(time_t time)
 {
+    if(time <= 0)
+        return 0;
+
     assert(IThread::getPRunning()->state == IThread::RUNNING);
     assert(IThread::getPRunning()->done == false);
 

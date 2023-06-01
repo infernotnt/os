@@ -11,14 +11,6 @@ void cExternalInterruptRoutine()
 
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 
-    long int getItems = IConsole::get()->getBufferItems;
-    long int putItems = IConsole::get()->putBufferItems;
-    if(getItems < 0 || putItems < 0)
-    {
-        __asm__ volatile("mv x10, x10");
-        assert(false);
-    }
-
     if(cause == 1)
     {
         __asm__ volatile ("csrc sip, 0x2"); // clears the 2nd bit which signifies software interrupt (timer for project)

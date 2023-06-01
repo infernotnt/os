@@ -78,6 +78,8 @@ void doBusyWaitThread(void* p)
     {
         assert(IThread::getPRunning()->id == BUSY_WAIT_THREAD_ID);
         assert(Scheduler::get()->pHead != IThread::getPRunning());
+//        kPutString("Busy wait Thread");
+//        kPutNewline();
         __asm__ volatile("mv x10, x10");
         a++;
     }

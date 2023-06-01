@@ -39,7 +39,7 @@ public:
     State state;
     Body body;
     uint64 sepc;
-    void* pStackStart; // start in terms of the data structure. This adress is the highest one in the stack
+//    void* pStackStart; // start in terms of the data structure. This adress is the highest one in the stack
     uint64 timeSlice; // private
     uint64 id;
     IThread* pNext;
@@ -52,7 +52,7 @@ public:
     uint64* sp;
 
     IThread(Body body, void* arg);
-    IThread() : pStackStart(nullptr), pNext(nullptr) {} // move to private?. Mind the kernel thread
+    IThread() : pNext(nullptr) {} // move to private?. Mind the kernel thread
 
     void configureStack(void* stack);
     void initContext(void* arg);

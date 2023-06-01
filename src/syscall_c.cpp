@@ -153,7 +153,7 @@ int thread_exit()
 int thread_create(thread_t* handle, void(*start_routine)(void*), void*arg)
 {
 //    char* stackSpace = (char*) MemAlloc::get()->allocMem(ACTUAL_STACK_SIZE);
-    char* stackSpace = (char*)mem_alloc(ACTUAL_STACK_SIZE);
+    char* stackSpace = (char*)mem_alloc(DEFAULT_STACK_SIZE) + DEFAULT_STACK_SIZE;
     return helperRet32P164P264P364P464(0x11, (uint64)handle, (uint64)start_routine, (uint64)arg, (uint64)stackSpace);
 }
 

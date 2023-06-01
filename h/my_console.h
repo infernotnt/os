@@ -4,12 +4,12 @@
 #include "../h/risc.h"
 
 // for some debug printing (not assert)
-#define __DEBUG_PRINT 1
+//#define __DEBUG_PRINT 1
 
 // for debug system calls
 #define __DEBUG_MODE
 
-#define __USE_ASSERT
+//#define __USE_ASSERT
 
 #define BUFFER_SIZE 1000
 

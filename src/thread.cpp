@@ -123,7 +123,7 @@ void IThread::initClass(Body threadBody)
 
     body = threadBody;
 
-    pStackStart = nullptr;
+    sp = nullptr;
     timeSlice = DEFAULT_TIME_SLICE;
     pNext = nullptr;
     pWaitingHead = nullptr;
@@ -153,12 +153,9 @@ IThread* IThread::getPRunning()
 
 void IThread::configureStack(void* stack)
 {
-    assert(pStackStart == nullptr); // error: this threads stack may have already been allocated
+    assert(sp == nullptr);
 
-    pStackStart = stack;
-    sp = (uint64*)((char*)stack + ACTUAL_STACK_SIZE);
-
-    sp = sp - 2*10;
+    sp = (uint64*)((char*)stack);
 
     assert(((uint64)sp) % 16 == 0);
     sp = sp - 34; // for the initial context (necessary to avoid exceptions from reading from unallowed adress), valjda
@@ -172,7 +169,7 @@ int IThread::exit()
     assert(t->done == false);
     t->done = true;
 
-    MemAlloc::get()->freeMem(t->pStackStart);
+//    MemAlloc::get()->freeMem(t->initialSp - DEFAULT_STACK_SIZE);
 
     t->signalDone(); // WARNING: must be in this order
 
