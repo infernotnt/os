@@ -21,13 +21,10 @@ public:
 
     typedef void(*Body)(void*);
 
-    static IThread* pSleepHead;
-    static uint64 timeSliceCounter;
-    static bool switchedToUserThread;
-    static uint64** pRunningSp;
     static IThread* pAllThreads[MAX_NR_TOTAL_THREADS];
+    static uint64 timeSliceCounter;
+    static uint64** pRunningSp;
     static uint64 nrTotalThreads;
-    static uint64 initialUserMemoryUsage;
 
     static  IThread*  getPRunning();
     static void setPRunning(IThread* p);
@@ -38,17 +35,12 @@ public:
 
     State state;
     Body body;
-    uint64 sepc;
-//    void* pStackStart; // start in terms of the data structure. This adress is the highest one in the stack
-    uint64 timeSlice; // private
+    void* initialSp;
     uint64 id;
     IThread* pNext;
     IThread* pWaitingHead;
     bool done;
     uint64 remainingSleep;
-
-//    uint64** pSp;
-
     uint64* sp;
 
     IThread(Body body, void* arg);
@@ -56,11 +48,9 @@ public:
 
     void configureStack(void* stack);
     void initContext(void* arg);
-    void initClass(Body threadBody); // like a normal constructor
+    void initClass(Body threadBody, void* stackSpace); // like a normal constructor
 
     void signalDone();
-
-//    void init(Body body, void* arg, void* pLogicalStack);
 
 private:
     IThread(Body body, void* arg, void* pStartOfStack); // threads can only be made with createThread. Maybe IThread() = delete;?

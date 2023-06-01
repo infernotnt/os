@@ -22,6 +22,8 @@ public:
     uint64 getUserlandUsage();
     void printUserlandUsage();
 
+    void doMerge();
+
     const size_t MAX_NODE_SIZE;
 private:
     MemAlloc();

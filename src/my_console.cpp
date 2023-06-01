@@ -59,12 +59,9 @@ void IConsole::consoleHandler()
 
 void IConsole::putc(char c)
 {
-    if(!(putBufferItems < BUFFER_SIZE)) // temp, equivalent to assert below
-    {
-        return;
-        __asm__ volatile("mv x10, x10");
-        assert(false);
-    }
+    if(putBufferItems >= BUFFER_SIZE)
+        return; // dismiss new characters
+
     assert(putBufferItems < BUFFER_SIZE);
 
     assert(putBufferHead < BUFFER_SIZE && putBufferTail < BUFFER_SIZE);

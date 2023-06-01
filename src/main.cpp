@@ -26,8 +26,8 @@ void userWrapper(void* p)
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 //    __asm__ volatile("csrw sscratch, 1"); // to check for permissions
 
-    myUserMain();
-//    userMain();
+//    myUserMain();
+    userMain();
 }
 
 int main()
@@ -110,9 +110,9 @@ void initializeBusyWaitThread()
 
 void initializeKernelThread()
 {
-    IThread::setPRunning(&kernelThread);
-    kernelThread.id = 0;
     IThread::pAllThreads[0] = &kernelThread;
+    kernelThread.id = 0;
+    IThread::setPRunning(&kernelThread);
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 }
 

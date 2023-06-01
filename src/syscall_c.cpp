@@ -125,7 +125,7 @@ void* mem_alloc(size_t size)
 
     size /= MEM_BLOCK_SIZE;
 
-    return (void*) helperRet64P164(1, size);
+    return (void*)(helperRet64P164(1, size));
 }
 
 int mem_free(void* ptr)

@@ -8,8 +8,6 @@ IThread* IThread::pRunning = nullptr;
 uint64** IThread::pRunningSp = nullptr;
 uint64 IThread::nrTotalThreads = 1;
 IThread* IThread::pAllThreads[MAX_NR_TOTAL_THREADS];
-uint64 IThread::initialUserMemoryUsage;
-bool IThread::switchedToUserThread = 0;
 
 void wrapper(uint64 __DO_NOT_USE, IThread::Body body, void* arg) // this entire function can be run from USER thread
 {
@@ -72,7 +70,7 @@ void IThread::switchToUser()
     if(!cameFromKernelMode) // if user thread calls this it does nothing
     {
 #ifdef __DEBUG_MODE
-        assert(false); // temp
+        assert(false);
         assert(IThread::pRunning->id != 0);
 #endif
         return;
@@ -80,13 +78,8 @@ void IThread::switchToUser()
 
     assert(IThread::pRunning->id == 0);
 
-    Scheduler* s = Scheduler::get(); // temp
-    assert(s); // temp
-
     Scheduler::dispatchToNext();
 
-    IThread* t = IThread::getPRunning(); // temp
-    assert(t); // temp
     assert(IThread::getPRunning()->id == USER_THREAD_ID);
 
     __asm__ volatile("li t1, 256");
@@ -106,7 +99,7 @@ int IThread::createThread(uint64* id, Body body, void* arg, void* stackSpace)
     if(t == nullptr)
         return -1;
 
-    t->initClass(body);
+    t->initClass(body, stackSpace);
     t->configureStack(stackSpace);
     t->initContext(arg);
 
@@ -116,7 +109,7 @@ int IThread::createThread(uint64* id, Body body, void* arg, void* stackSpace)
     return 0;
 }
 
-void IThread::initClass(Body threadBody)
+void IThread::initClass(Body threadBody, void* stackSpace)
 {
     assert(nrTotalThreads < MAX_NR_TOTAL_THREADS);
 
@@ -127,11 +120,11 @@ void IThread::initClass(Body threadBody)
     body = threadBody;
 
     sp = nullptr;
-    timeSlice = DEFAULT_TIME_SLICE;
     pNext = nullptr;
     pWaitingHead = nullptr;
     done = false;
     state = READY;
+    initialSp = stackSpace;
 }
 
 void IThread::initContext(void* arg)
@@ -172,7 +165,7 @@ int IThread::exit()
     assert(t->done == false);
     t->done = true;
 
-//    MemAlloc::get()->freeMem(t->initialSp - DEFAULT_STACK_SIZE);
+    MemAlloc::get()->freeMem((char*)t->initialSp - DEFAULT_STACK_SIZE);
 
     t->signalDone(); // WARNING: must be in this order
 

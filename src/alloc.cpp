@@ -2,6 +2,7 @@
 #include "../h/my_console.h"
 #include "../lib/hw.h"
 
+
 uint64 alignForward(uint64 n, uint64 alignConst)
 {
     assert(alignConst == MEM_BLOCK_SIZE);
@@ -21,6 +22,70 @@ uint64 alignBackward(uint64 n, uint64 alignConst)
     uint64 ret = n - n % MEM_BLOCK_SIZE;;
     assert(ret % MEM_BLOCK_SIZE == 0);
     return ret;
+}
+
+void MemAlloc::doMerge()
+{
+
+    while(true)
+    {
+        bool biggerChangedList = false;
+
+        FreeNode* i = pFreeHead;
+        while(i)
+        {
+            FreeNode* j = pFreeHead;
+            bool changedList = false;
+
+            FreeNode* jPrev = nullptr;
+            while(j)
+            {
+                if (i != j)
+                {
+                    if(i->base + i->size == ((char*)j))
+                    { // now ACTUALLY do merge
+
+//#ifdef __DEBUG_PRINT
+//                        kPutString("=== mem_free MERGE");
+//                        kPutNewline();
+//#endif
+
+                        i->size = i->size + j->size + alignForward((uint64)MAX_NODE_SIZE, MEM_BLOCK_SIZE);
+                        if(jPrev)
+                        {
+                            assert(pFreeHead != j);
+                            jPrev->pNext = j->pNext;
+                        }
+                        else
+                        {
+                            assert(pFreeHead == j);
+                            pFreeHead = j->pNext;
+                        }
+
+                        changedList = true;
+
+                        break;
+                    }
+                }
+
+                jPrev = j;
+                j = j->pNext;
+            }
+
+            if(changedList == true)
+            {
+                biggerChangedList = true;
+                break;
+            }
+
+            i = i->pNext;
+        }
+
+        if(biggerChangedList == false)
+            break;
+    }
+
+    __asm__ volatile("mv x10, x10");
 }
 
 void MemAlloc::printUserlandUsage()
@@ -68,10 +133,6 @@ void* MemAlloc::allocMem(size_t size)
     FreeNode* pCur = pFreeHead;
     FreeNode* pPrev = nullptr;
 
-//    assert(pFreeHead->size > 1000000);
-
-//    uint64 tempOriginalSize = pFreeHead->size;
-
     while(pCur != nullptr)
     {
         assert(((uint64) pCur->base) % MEM_BLOCK_SIZE == 0 &&
@@ -90,19 +151,9 @@ void* MemAlloc::allocMem(size_t size)
             assert(newFree->size % MEM_BLOCK_SIZE == 0 && (uint64)newFree->base % MEM_BLOCK_SIZE == 0 &&
                    ((uint64) newFree) % MEM_BLOCK_SIZE == 0);
 
-//            assert();
-//            if(!(tempOriginalSize - newFree->size <= actualSize + alignForward(MAX_NODE_SIZE, MEM_BLOCK_SIZE)))
-//            {
-//                __asm__ volatile("mv x10, x10");
-//                uint64 sizeDiff = tempOriginalSize - newFree->size;
-//                assert(sizeDiff);
-////                kPutU64(tempOriginalSize);
-////                IConsole::get()->flush();
-//            }
-
             newFree->pNext = pCur->pNext; // replace pCur with the new one
 
-            if(pPrev != nullptr) // ???
+            if(pPrev != nullptr)
                 pPrev->pNext = newFree;
             else
             {
@@ -153,6 +204,8 @@ int MemAlloc::freeMem(void* p)
             newFree->pNext = pFreeHead;
             pFreeHead = newFree;
 
+            doMerge();
+
             return 0; // zero signifies sucesss
         }
 
@@ -162,7 +215,7 @@ int MemAlloc::freeMem(void* p)
 
     kPutString("=== Error: mem_free was maby given an incorrect adress?");
     kPutNewline();
-    assert(false); // temp
+    assert(false);
     return -1; // negative values signify failure
 }
 
