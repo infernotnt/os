@@ -3,14 +3,13 @@
 #include "../lib/hw.h"
 #include "../h/risc.h"
 
-// switches from my console to theirs
-#define USE_MY_CONSOLE 1
-
 // for some debug printing (not assert)
 #define __DEBUG_PRINT 1
 
 // for debug system calls
 #define __DEBUG_MODE
+
+#define __USE_ASSERT
 
 #define BUFFER_SIZE 1000
 
@@ -34,7 +33,7 @@ public:
     }
 
 //    void writeToConsole();
-    void toRunAfterLargeOutput();
+    void flush();
 
     long int putBufferHead, putBufferTail;
     char putBuffer[BUFFER_SIZE];
@@ -69,6 +68,8 @@ void kPutInt(int);
 
 inline void _assert(bool valid, const char* file, int line) // MUST be inline
 {
+
+#ifdef __USE_ASSERT
     if(valid)
         return;
 
@@ -81,7 +82,8 @@ inline void _assert(bool valid, const char* file, int line) // MUST be inline
     kPutString("   ===========================");
     kPutNewline();
 
-    IConsole::get()->toRunAfterLargeOutput();
+    IConsole::get()->flush();
 
     stopKernel();
+#endif
 }

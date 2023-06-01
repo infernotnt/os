@@ -36,11 +36,8 @@ void IThread::join(uint64 id)
 
     IThread* t = pAllThreads[id];
 
-    // temp comment
-//    extern IThread kernelThread;
-//    assert(oldRunning != &kernelThread); // you're only supposed to open user threads with system call with code 4
-
-//    putU64(id);
+    extern IThread kernelThread;
+    assert(oldRunning != &kernelThread); // you're only supposed to switch to user threads with system call with code 4
 
     if(t->done == true)
         return;
@@ -94,10 +91,6 @@ void IThread::switchToUser()
 
     __asm__ volatile("li t1, 256");
     __asm__ volatile("csrc sstatus, t1"); // changes to user mode by changing the "spp" bit
-
-    // TEMP: disables console interrupt
-//    __asm__ volatile("li t1, 512");
-//    __asm__ volatile("csrc sie, t1");
 }
 
 void IThread::setPRunning(IThread* p)
@@ -142,9 +135,9 @@ void IThread::initContext(void* arg)
 {
     // skipping a0 to pass arguments as it is will be not be restored in the context switch because it is assumed to hold return values of a sys. call
 
-    for(uint64 i=0; i<32; i++) // temp
+    for(uint64 i=0; i<32; i++)
     {
-        *(sp+i) = i;
+        *(sp+i) = 0; // should be set to 0 because of tp and gp and maby other shit
     }
 
     *(sp+11) = (uint64)body;
@@ -164,6 +157,8 @@ void IThread::configureStack(void* stack)
 
     pStackStart = stack;
     sp = (uint64*)((char*)stack + ACTUAL_STACK_SIZE);
+
+    sp = sp - 2*10;
 
     assert(((uint64)sp) % 16 == 0);
     sp = sp - 34; // for the initial context (necessary to avoid exceptions from reading from unallowed adress), valjda

@@ -27,9 +27,8 @@ void userWrapper(void* p)
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 //    __asm__ volatile("csrw sscratch, 1"); // to check for permissions
 
-    externalInterruptTest();
 //    myUserMain();
-//    userMain();
+    userMain();
 }
 
 int main()
@@ -66,6 +65,7 @@ void initInputSemaphore()
     ISemaphore::create(&inputSemaphore, 0);
     assert(inputSemaphore == 0);
     IConsole::get()->inputSemaphore = ISemaphore::pAllSemaphores[inputSemaphore];
+    IConsole::get()->inputSemaphore->pBlockedHead = nullptr;
 }
 
 void doBusyWaitThread(void* p)
@@ -78,12 +78,7 @@ void doBusyWaitThread(void* p)
     {
         assert(IThread::getPRunning()->id == BUSY_WAIT_THREAD_ID);
         assert(Scheduler::get()->pHead != IThread::getPRunning());
-
         __asm__ volatile("mv x10, x10");
-
-//        __asm__ volatile("li a0, 5"); // calls Scheduler::specialBusyWaitDispatch();
-//        __asm__ volatile("ecall");
-
         a++;
     }
 

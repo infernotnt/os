@@ -1,9 +1,10 @@
 #include "../h/syscall_c.h"
+
+// temp
 #include "../h/my_console.h"
+
+// temp
 #include "../h/thread.h"
-#include "../h/my_console.h"
-#include "../lib/console.h"
-#include "../h/alloc.h"
 
 uint64 fib(uint64);
 
@@ -128,6 +129,7 @@ void* mem_alloc(size_t size)
     }
 
     assert(size % MEM_BLOCK_SIZE == 0);
+
     size /= MEM_BLOCK_SIZE;
 
     return (void*) helperRet64P164(1, size);
@@ -167,20 +169,12 @@ int time_sleep(time_t time)
 
 char getc()
 {
-#ifdef USE_MY_CONSOLE
     return helperRet8(0x41);
-#else
-    return __getc();
-#endif
 }
 
 void putc(char c)
 {
-#ifdef USE_MY_CONSOLE
     helperP164(0x42, *((uint64*)&c));
-#else
-    __putc(c);
-#endif
 }
 
 uint64 test_call(uint64 n)

@@ -1,30 +1,17 @@
 #include "../h/my_console.h"
 #include "../h/semaphore.h"
 
-void IConsole::toRunAfterLargeOutput()
+void IConsole::flush()
 {
-    assert(inputSemaphore != nullptr);
-
-#ifdef USE_MY_CONSOLE
-    while (((*(char *) CONSOLE_STATUS) & CONSOLE_TX_STATUS_BIT) != 0)
+    while ((((*(char *) CONSOLE_STATUS) & CONSOLE_TX_STATUS_BIT) != 0) && putBufferItems > 0)
     {
-        if (putBufferItems > 0)
-        {
-            assert(((*(char *) CONSOLE_STATUS) & CONSOLE_TX_STATUS_BIT) == CONSOLE_TX_STATUS_BIT);
-            *((char *) CONSOLE_TX_DATA) = putBuffer[putBufferTail];
+        assert(((*(char *) CONSOLE_STATUS) & CONSOLE_TX_STATUS_BIT) == CONSOLE_TX_STATUS_BIT);
+        *((char *) CONSOLE_TX_DATA) = putBuffer[putBufferTail];
 
-            putBufferItems--;
-            putBufferTail = (putBufferTail + 1) % BUFFER_SIZE;
-        }
-        else break;
+        putBufferItems--;
+        putBufferTail = (putBufferTail + 1) % BUFFER_SIZE;
     }
-#endif
 }
-
-//void IConsole::writeToConsole()
-//{
-//}
-
 
 void IConsole::consoleHandler()
 {
@@ -32,7 +19,7 @@ void IConsole::consoleHandler()
 
     int a = plic_claim();
 
-//    assert(a == 10);
+    assert(a == 10);
 //    assert(a == 0 || a != 0);
 
     if(a == 10)
@@ -41,22 +28,27 @@ void IConsole::consoleHandler()
         {
             if (((*((char *) CONSOLE_STATUS)) & CONSOLE_RX_STATUS_BIT) != 0)
             {
-                assert(getBufferItems < BUFFER_SIZE - 1); // temp
+                assert(getBufferItems < BUFFER_SIZE - 1);
 
-                char c = *(char *) CONSOLE_RX_DATA; // ovde nista ne radim zapravo, samo retriev-ujem karakter
+                uint64 fakeChar;
+                *((char*)&fakeChar) = *(char *) CONSOLE_RX_DATA;
+                char realChar = *((char*)&fakeChar);
 
-                if(inputSemaphore->pBlockedHead != nullptr)
+                IThread* pNextBlocked = inputSemaphore->pBlockedHead;
+
+                ISemaphore::signal(IConsole::get()->inputSemaphore->id);
+
+                if(pNextBlocked != nullptr)
                 {
-                    *((inputSemaphore->pBlockedHead->sp) + 10) = *((uint64*)&c);
+                    *(pNextBlocked->sp + 10) = fakeChar;
                 }
                 else
                 {
-                    getBuffer[getBufferHead] = c;
+                    getBuffer[getBufferHead] = realChar;
                     getBufferHead = (getBufferHead + 1) % BUFFER_SIZE;
                     getBufferItems++;
 
                 }
-                ISemaphore::signal(IConsole::get()->inputSemaphore->id);
             }
         }
     }
@@ -67,10 +59,9 @@ void IConsole::consoleHandler()
 
 void IConsole::putc(char c)
 {
-    assert(inputSemaphore != nullptr);
-
     if(!(putBufferItems < BUFFER_SIZE)) // temp, equivalent to assert below
     {
+        return;
         __asm__ volatile("mv x10, x10");
         assert(false);
     }
@@ -111,7 +102,7 @@ char IConsole::getc()
     kPutNewline();
     kPutString("====== Stopping the kernel ======");
 
-    IConsole::get()->toRunAfterLargeOutput();
+    IConsole::get()->flush();
 
     disableExternalInterrupts();
 
@@ -126,7 +117,6 @@ void kPutNewline()
 {
     IConsole::get()->putc('\n');
 
-    IConsole::get()->toRunAfterLargeOutput();
 }
 
 void kPutString(const char* s)
@@ -138,8 +128,6 @@ void kPutString(const char* s)
             break;
         else IConsole::get()->putc(s[i++]);
     }
-
-    IConsole::get()->toRunAfterLargeOutput();
 }
 
 void kPutU64(uint64 n)
@@ -177,16 +165,19 @@ void kPutU64(uint64 n)
     }
 }
 
-void kPutInt(int)
+void kPutInt(int n)
 {
-    assert(false);
-    IConsole::get()->toRunAfterLargeOutput();
+    if(n < 0)
+    {
+        IConsole::get()->putc('-');
+        n = -n;
+    }
+    kPutU64(n);
 }
 
 void putNewline()
 {
     putc('\n');
-    IConsole::get()->toRunAfterLargeOutput();
 }
 
 void putString(const char* s)
@@ -199,7 +190,6 @@ void putString(const char* s)
         else putc(s[i++]);
     }
 
-    IConsole::get()->toRunAfterLargeOutput();
 }
 
 void putU64(uint64 n)
@@ -235,7 +225,6 @@ void putU64(uint64 n)
             initial /= 10;
         }
     }
-    IConsole::get()->toRunAfterLargeOutput();
 }
 
 void putInt(int n)

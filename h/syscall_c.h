@@ -4,8 +4,6 @@
 
 const int EOF = -1;
 
-//typedef unsigned long time_t;
-//typedef uint64 size_t;
 typedef uint64 thread_t;
 typedef uint64 sem_t;
 

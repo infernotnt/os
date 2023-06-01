@@ -1,27 +1,4 @@
 #include "../h/syscall_cpp.hpp"
-#include "../h/thread.h"
-#include "../h/scheduler.h"
-
-/*
-void Thread::forceExit()
-{
-    IThread* t = IThread::pAllThreads[myHandle];
-
-    assert(IThread::getPRunning() != t); // ?? thread tried to exit itelsf? idk what to do how to exit while stack is being deleted?
-
-    IThread* pCur = Scheduler::get()->pHead;
-    if(Scheduler::get()->pHead == t)
-    {
-        Scheduler::get()->pHead->
-    }
-    while(pCur)
-    {
-        if(pCur == p)
-    }
-
-    t->exit();
-}
-*/
 
 time_t PeriodicThread::getPeriod()
 {
@@ -30,7 +7,7 @@ time_t PeriodicThread::getPeriod()
 
 void PeriodicThread::terminate()
 {
-    period = 9999999999969420;
+    period = 0;
 }
 
 int Thread::sleep (time_t time)
@@ -42,12 +19,15 @@ void periodicWrapper(void* p)
 {
     PeriodicThread* t = (PeriodicThread*)p;
 
+    if(t->getPeriod() == 0)
+        return;
+
     volatile uint64 i;
     while(i>=0)
     {
         time_sleep(t->getPeriod());
 
-        if(t->period == 9999999999969420)
+        if(t->period == 0)
             break;
 
         t->periodicActivation();
@@ -90,12 +70,12 @@ void operator delete(void* p)
 
 char Console::getc()
 {
-    return ::getc(); // dal ovo "::"?
+    return ::getc();
 }
 
 void Console::putc(char c)
 {
-    ::putc(c); // dal ovo "::"?
+    ::putc(c);
 }
 
 Thread::Thread (void (*body)(void*), void* arg)
@@ -109,11 +89,7 @@ int Thread::start()
 
 void Thread::join()
 {
-    if(body != nullptr)
-    {
-        body = nullptr;
-        thread_join(myHandle);
-    }
+    thread_join(myHandle);
 }
 
 Thread::~Thread()

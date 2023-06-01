@@ -22,28 +22,13 @@ void cExternalInterruptRoutine()
     if(cause == 1)
     {
         __asm__ volatile ("csrc sip, 0x2"); // clears the 2nd bit which signifies software interrupt (timer for project)
-//        gTimer++;
         Scheduler::doSleepStuffOnTick();
         Scheduler::doTimeSliceAndGTimeOnTick(); // must be after doSleepStuffOnTick
     }
     else if (cause == 9)
     {
-        __asm__ volatile("mv x10, x10");
-        if(IThread::getPRunning()->id == BUSY_WAIT_THREAD_ID)
-        {
-            __asm__ volatile("mv x10, x10");
-        }
-
-#ifdef USE_MY_CONSOLE
         IConsole::get()->consoleHandler();
-#else
-        console_handler();
-#endif
-        __asm__ volatile("mv x10, x10");
-    }
-    else
-    {
-        assert(false); // unknown interupt
+        IConsole::get()->flush();
     }
 }
 
@@ -127,7 +112,12 @@ void handleExeptions(uint64 cause)
         kPutNewline();
         kPutString("Terminating kernel");
         kPutNewline();
-        assert(false);
+
+        IConsole::get()->flush();
+
+        volatile uint64 i = 3;
+        while(i >= 0)
+        { }
     }
 }
 
@@ -181,7 +171,7 @@ uint64 handleSystemCall(uint64 code, uint64 parameter1, uint64 parameter2, uint6
     }
     else if (code == 34) // sem_close
     {
-        *((int*)&ret) = ISemaphore::close(parameter1); // TODO: ovde gde su int-ovi parameter1 param2, .... mozda nista ne valja
+        *((int*)&ret) = ISemaphore::close(parameter1);
     }
     else if (code == 35) // sem_wait
     {
@@ -202,6 +192,7 @@ uint64 handleSystemCall(uint64 code, uint64 parameter1, uint64 parameter2, uint6
     else if (code == 66) // putc
     {
         IConsole::get()->putc(*((char*)&parameter1));
+        IConsole::get()->flush();
     }
     else
     {

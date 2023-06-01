@@ -63,12 +63,11 @@ void Scheduler::doTimeSliceAndGTimeOnTick()
 
     if(IThread::timeSliceCounter == DEFAULT_TIME_SLICE && IThread::getPRunning()->id != BUSY_WAIT_THREAD_ID)
         Scheduler::dispatchUserVersion();
-
-    if(IThread::getPRunning()->id == BUSY_WAIT_THREAD_ID && Scheduler::get()->pHead != nullptr)
+    else if(IThread::getPRunning()->id == BUSY_WAIT_THREAD_ID && Scheduler::get()->pHead != nullptr)
         Scheduler::dispatchToNext();
 
 #ifdef __DEBUG_PRINT
-    if (gTimer % 10 == 0)
+    if (gTimer % 50 == 0)
     {
         kPutString("Time: ");
         kPutU64(gTimer / 10);
@@ -126,9 +125,8 @@ int Scheduler::sleep(time_t time)
 
 void Scheduler::dispatchUserVersion()
 {
-    // reenable, temp comment
-//    assert(IThread::getPRunning() !=
-//           &kernelThread); // you're only supposed to open user threads with system call with code 4
+    assert(IThread::getPRunning() !=
+           &kernelThread); // you're only supposed to open user threads with system call with code 4
 
     assert(IThread::getPRunning()->id != BUSY_WAIT_THREAD_ID);
 
@@ -187,8 +185,8 @@ IThread* doWaitingStuff()
     IThread* pNew;
 
 #ifdef __DEBUG_PRINT
-    kPutString("===== SLEEPING WAIT OR INPUT WAIT");
-    kPutNewline();
+//    kPutString("===== SLEEPING WAIT OR INPUT WAIT");
+//    kPutNewline();
 #endif
 
     pNew = IThread::pAllThreads[BUSY_WAIT_THREAD_ID];

@@ -9,13 +9,18 @@ uint64 alignForward(uint64 n, uint64 alignConst)
     {
         n += MEM_BLOCK_SIZE - (n % MEM_BLOCK_SIZE);
     }
+
+    assert(n % alignConst == 0);
+
     return n;
 }
 
 uint64 alignBackward(uint64 n, uint64 alignConst)
 {
     assert(alignConst == MEM_BLOCK_SIZE);
-    return n - n % MEM_BLOCK_SIZE;;
+    uint64 ret = n - n % MEM_BLOCK_SIZE;;
+    assert(ret % MEM_BLOCK_SIZE == 0);
+    return ret;
 }
 
 void MemAlloc::printUserlandUsage()
@@ -48,13 +53,10 @@ MemAlloc* MemAlloc::get()
 
 void* MemAlloc::allocMem(size_t size)
 {
-    // Algorithm: puts it in the first place large enough found
+//    kPutInt(size);
+//    kPutNewline();
 
-//    size_t initialSize = size;
-//    putString("=== called: allocMem(");
-//    putU64(initialSize);
-//    putString(")");
-//    putNewline();
+    // Algorithm: puts it in the first place large enough found
 
     size = alignForward(size, MEM_BLOCK_SIZE);
 
@@ -66,6 +68,10 @@ void* MemAlloc::allocMem(size_t size)
     FreeNode* pCur = pFreeHead;
     FreeNode* pPrev = nullptr;
 
+//    assert(pFreeHead->size > 1000000);
+
+    uint64 tempOriginalSize = pFreeHead->size;
+
     while(pCur != nullptr)
     {
         assert(((uint64) pCur->base) % MEM_BLOCK_SIZE == 0 &&
@@ -74,18 +80,29 @@ void* MemAlloc::allocMem(size_t size)
 
         FreeNode *newFree;
         newFree = (FreeNode *) alignForward((uint64) (pCur->base + usableSize), MEM_BLOCK_SIZE);
-        newFree->base = (char*)alignForward((uint64)newFree + MAX_NODE_SIZE, MEM_BLOCK_SIZE);
-        if (pCur->base + pCur->size > newFree->base)
+        char* newFreeBase = (char*)alignForward((uint64)newFree + MAX_NODE_SIZE, MEM_BLOCK_SIZE);
+        if (pCur->base + pCur->size > newFreeBase)
         {
             // success: memory block found
+            newFree->base = newFreeBase;
 
             newFree->size = pCur->base + pCur->size - newFree->base;
             assert(newFree->size % MEM_BLOCK_SIZE == 0 && (uint64)newFree->base % MEM_BLOCK_SIZE == 0 &&
                    ((uint64) newFree) % MEM_BLOCK_SIZE == 0);
 
+//            assert();
+            if(!(tempOriginalSize - newFree->size <= actualSize + alignForward(MAX_NODE_SIZE, MEM_BLOCK_SIZE)))
+            {
+                __asm__ volatile("mv x10, x10");
+                uint64 sizeDiff = tempOriginalSize - newFree->size;
+                assert(sizeDiff);
+//                kPutU64(tempOriginalSize);
+//                IConsole::get()->flush();
+            }
+
             newFree->pNext = pCur->pNext; // replace pCur with the new one
 
-            if(pPrev) // ???
+            if(pPrev != nullptr) // ???
                 pPrev->pNext = newFree;
             else
             {
@@ -97,7 +114,6 @@ void* MemAlloc::allocMem(size_t size)
             newTaken->pNext = pTakenHead;
             newTaken->base = pCur->base;
             newTaken->size = usableSize;
-            newTaken->pNext = pTakenHead;
             pTakenHead = newTaken;
 
             void *ret = newTaken->base;

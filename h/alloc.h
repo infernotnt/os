@@ -24,7 +24,6 @@ public:
 
     const size_t MAX_NODE_SIZE;
 private:
-    // TODO: obrisati assignment operator, copy construktor, mozda move konstruktor
     MemAlloc();
 };
 
@@ -34,7 +33,6 @@ struct MemAlloc::FreeNode
     size_t size;
     char* base;
 
-    // TODO: testirati da li ovo za nullptr default radi
     FreeNode(FreeNode* pNext = nullptr)
     : pNext(pNext)
         { }
