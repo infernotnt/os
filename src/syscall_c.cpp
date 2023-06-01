@@ -1,10 +1,5 @@
 #include "../h/syscall_c.h"
 
-// temp
-#include "../h/my_console.h"
-
-// temp
-#include "../h/thread.h"
 
 uint64 fib(uint64);
 
@@ -128,8 +123,6 @@ void* mem_alloc(size_t size)
         size += MEM_BLOCK_SIZE - (size % MEM_BLOCK_SIZE);
     }
 
-    assert(size % MEM_BLOCK_SIZE == 0);
-
     size /= MEM_BLOCK_SIZE;
 
     return (void*) helperRet64P164(1, size);
@@ -154,6 +147,10 @@ int thread_create(thread_t* handle, void(*start_routine)(void*), void*arg)
 {
 //    char* stackSpace = (char*) MemAlloc::get()->allocMem(ACTUAL_STACK_SIZE);
     char* stackSpace = (char*)mem_alloc(DEFAULT_STACK_SIZE) + DEFAULT_STACK_SIZE;
+
+    if(stackSpace == nullptr)
+        return -1;
+
     return helperRet32P164P264P364P464(0x11, (uint64)handle, (uint64)start_routine, (uint64)arg, (uint64)stackSpace);
 }
 

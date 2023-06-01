@@ -37,7 +37,7 @@ MemAlloc::MemAlloc()
 {
     pFreeHead = (FreeNode*)alignForward((uint64)HEAP_START_ADDR, MEM_BLOCK_SIZE);
     pFreeHead->base = (char*)alignForward((uint64)pFreeHead + MAX_NODE_SIZE, MEM_BLOCK_SIZE);
-    pFreeHead->size = alignBackward((uint64)HEAP_END_ADDR - (uint64)pFreeHead->base, MEM_BLOCK_SIZE);
+    pFreeHead->size = alignBackward((uint64)HEAP_END_ADDR - 1 - (uint64)pFreeHead->base, MEM_BLOCK_SIZE);
 
     pTakenHead = nullptr;
 
@@ -53,8 +53,8 @@ MemAlloc* MemAlloc::get()
 
 void* MemAlloc::allocMem(size_t size)
 {
-//    kPutInt(size);
-//    kPutNewline();
+    if(size == 0)
+        return nullptr;
 
     // Algorithm: puts it in the first place large enough found
 

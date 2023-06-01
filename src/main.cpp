@@ -16,8 +16,7 @@ void initInputSemaphore();
 void initializeKernelThread();
 void initializeBusyWaitThread();
 void initializeUserThread();
-
-void externalInterruptTest();
+void initSemaphores();
 
 IThread kernelThread;
 
@@ -27,8 +26,8 @@ void userWrapper(void* p)
     assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 //    __asm__ volatile("csrw sscratch, 1"); // to check for permissions
 
-//    myUserMain();
-    userMain();
+    myUserMain();
+//    userMain();
 }
 
 int main()
@@ -42,6 +41,7 @@ int main()
     initializeBusyWaitThread();
     initializeUserThread();
 
+    initSemaphores();
     initInputSemaphore();
 
     IThread* a = Scheduler::get()->pHead;
@@ -57,6 +57,12 @@ int main()
     __asm__ volatile("csrw sscratch, 1"); // to check for permissions
 
     return 0;
+}
+
+void initSemaphores()
+{
+    for(int i=0; i<NR_MAX_SEMAPHORES; i++)
+        ISemaphore::pAllSemaphores[i] = nullptr;
 }
 
 void initInputSemaphore()

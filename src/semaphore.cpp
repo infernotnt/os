@@ -7,6 +7,9 @@ ISemaphore* ISemaphore::pAllSemaphores[NR_MAX_SEMAPHORES];
 
 int ISemaphore::close(uint64 id)
 {
+    if(id > NR_MAX_SEMAPHORES || pAllSemaphores[id] == nullptr)
+        return -1; // invalid id
+
     ISemaphore* target = pAllSemaphores[id];
     assert(target->id == id);
 
@@ -44,6 +47,9 @@ int ISemaphore::create(uint64* pId, uint64 initialValue)
 
     ISemaphore* s = pAllSemaphores[nrSemaphores-1];
 
+    if(s == nullptr)
+        return -1;
+
     s->id = nrSemaphores-1;
     *pId = s->id;
     s->value = initialValue;
@@ -56,6 +62,9 @@ int ISemaphore::create(uint64* pId, uint64 initialValue)
 
 int ISemaphore::wait(uint64 id)
 {
+    if(id > NR_MAX_SEMAPHORES || pAllSemaphores[id] == nullptr)
+        return -1; // invalid id
+
     ISemaphore* target = pAllSemaphores[id];
     assert(target->id == id);
 
@@ -100,6 +109,9 @@ void ISemaphore::addToQueue()
 
 int ISemaphore::signal(uint64 id)
 {
+    if(id > NR_MAX_SEMAPHORES || pAllSemaphores[id] == nullptr)
+        return -1; // invalid id
+
     ISemaphore* target = pAllSemaphores[id];
     assert(target->id == id);
 

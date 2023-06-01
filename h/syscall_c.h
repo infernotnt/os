@@ -9,7 +9,6 @@ typedef uint64 sem_t;
 
 class _thread;
 
-
 void* mem_alloc(size_t size);
 int mem_free(void*);
 

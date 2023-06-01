@@ -103,6 +103,9 @@ int IThread::createThread(uint64* id, Body body, void* arg, void* stackSpace)
 {
     IThread* t = (IThread*)MemAlloc::get()->allocMem(sizeof(IThread));
 
+    if(t == nullptr)
+        return -1;
+
     t->initClass(body);
     t->configureStack(stackSpace);
     t->initContext(arg);
