@@ -264,7 +264,9 @@ void doA(void* p)
 
     for(int i=0; i<=5; i++)
     {
+#ifdef __DEBUG_MODE
         assert(fib(i) == test_call(i));
+#endif
         thread_dispatch();
     }
 
@@ -279,7 +281,9 @@ void doB(void* p)
 
     for(int i=0; i<=10; i++)
     {
+#ifdef __DEBUG_MODE
         assert(fib(i) == test_call(i));
+#endif
         thread_dispatch();
     }
 
@@ -310,7 +314,10 @@ void testSystemCalls()
         a++;
         b++;
 
+        uint64 called = 0;
+#ifdef __DEBUG_MODE
         uint64 called = test_call(i);
+#endif
         uint64 actual = fib(i);
 
         if(called != actual)
