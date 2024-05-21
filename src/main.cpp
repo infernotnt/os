@@ -1,108 +1,119 @@
 #include "../h/alloc.h"
-#include "../h/c_api.h"
+#include "../h/syscall_c.h"
 #include "../h/thread.h"
-#include "../h/c_api.h"
 #include "../h/scheduler.h"
-#include "../h/0_console.h"
+#include "../h/my_console.h"
+#include "../h/my_tests.h"
 
 extern "C" void trapRoutine();
 
 void myUserMain();
-//void userMain();
+void userMain();
 void doInitialAsserts();
 void initInterruptVector();
+void doBusyWaitThread(void*);
+void initInputSemaphore();
+void initializeKernelThread();
+void initializeBusyWaitThread();
+void initializeUserThread();
+void initSemaphores();
 
-uint64 fib(uint64 n);
-void testAsyncCall();
-
-Thread kernelThread;
+IThread kernelThread;
 
 void userWrapper(void* p)
 {
     assert(p == nullptr);
-    assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
-
-    enableExternalInterrupts();
+    assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
+//    __asm__ volatile("csrw sscratch, 1"); // to check for permissions
 
 //    myUserMain();
-
-    for(int i=0; i<10; i++)
-    {
-        Console::get()->putc(i + '0');
-
-        Console::get()->putc(' ');
-        Console::get()->putc('b');
-        Console::get()->putc('a');
-        Console::get()->putc('b');
-        Console::get()->putc('a');
-
-        Console::get()->putc('\n');
-    }
+    userMain();
 }
 
 int main()
 {
     disableExternalInterrupts();
-
     initInterruptVector();
     doInitialAsserts();
 
-    uint64* sp;
+    initializeKernelThread();
+
+    initializeBusyWaitThread();
+    initializeUserThread();
+
+    initSemaphores();
+    initInputSemaphore();
+
+    IThread* a = Scheduler::get()->pHead;
+    assert(a->id == USER_THREAD_ID);
+
+    uint64* sp;                                                 /// WARNING: this must be immediately before calling the user thread
     __asm__ volatile ("mv %[name], sp" : [name] "=r"(sp));
     kernelThread.sp = sp;
-    Thread::setPRunning(&kernelThread);
-    assert(&(Thread::getPRunning()->sp) == Thread::pRunningSp);
-    kernelThread.id = 0;
-    Thread::pAllThreads[0] = &kernelThread;
 
-    thread_t t;
-    thread_create(&t, &userWrapper, nullptr);
-
-    Thread::initialUserMemoryUsage = MemAlloc::get()->getUserlandUsage();
-
-    __asm__ volatile ("li a0, 4"); // this is a system call that calls Thread::switchToUser()
+    __asm__ volatile ("li a0, 4"); // this is a system call that calls IThread::switchToUser()
     __asm__ volatile ("ecall");
 
-    __asm__ volatile ("csrw sscratch, x0"); //TEST permissions
+    __asm__ volatile("csrw sscratch, 1"); // to check for permissions
 
     return 0;
 }
 
-void doC(void* p)
+void initSemaphores()
 {
-    volatile uint64 i=0;
-    extern uint64 gTimer;
-    uint64 oldTimer = gTimer;
-    while(i>=0)
-    {
-        if(gTimer != oldTimer)
-        {
-            __asm__ volatile ("mv x1, x1");
-        }
-        i++;
-        oldTimer = gTimer;
-    }
-    __asm__ volatile ("mv x1, x1");
+    for(int i=0; i<NR_MAX_SEMAPHORES; i++)
+        ISemaphore::pAllSemaphores[i] = nullptr;
 }
 
-void testAsyncCall()
+void initInputSemaphore()
 {
-    enableExternalInterrupts();
+    uint64 inputSemaphore=69;
+    ISemaphore::create(&inputSemaphore, 0);
+    assert(inputSemaphore == 0);
+    IConsole::get()->inputSemaphore = ISemaphore::pAllSemaphores[inputSemaphore];
+    IConsole::get()->inputSemaphore->pBlockedHead = nullptr;
+}
 
-    assert(MemAlloc::get()->getUserlandUsage() == 0);
+void doBusyWaitThread(void* p)
+{
+    assert(p == nullptr);
+    __asm__ volatile("mv x10, x10");
 
-//    void doB(void*);
+    volatile uint64 a;
+    while(true)
+    {
+        assert(IThread::getPRunning()->id == BUSY_WAIT_THREAD_ID);
+        assert(Scheduler::get()->pHead != IThread::getPRunning());
+//        kPutString("Busy wait Thread");
+//        kPutNewline();
+        __asm__ volatile("mv x10, x10");
+        a++;
+    }
 
-    int argA = 69;
-//    int argB = 420;
-    thread_t a;
-//    thread_t b;
-    thread_create(&a, doC, &argA);
-//    thread_create(&b, doB, &argB);
-    thread_dispatch();
+    assert(false); // should never get here
+}
 
-//    assert(Thread::pAllThreads[a]->id == Thread::pAllThreads[b]->id-1);
-    assert(MemAlloc::get()->getUserlandUsage() == 0);
+void initializeUserThread()
+{
+    thread_t userThread;
+    thread_create(&userThread, &userWrapper, nullptr);
+    assert(IThread::pAllThreads[userThread]->id == USER_THREAD_ID);
+}
+
+void initializeBusyWaitThread()
+{
+    thread_t busyWaitThread;
+    thread_create(&busyWaitThread, &doBusyWaitThread, nullptr);
+    assert(IThread::pAllThreads[busyWaitThread]->id == BUSY_WAIT_THREAD_ID);
+    Scheduler::get()->getNext();                                                 // get this function out of the Scheduler algorithm
+}
+
+void initializeKernelThread()
+{
+    IThread::pAllThreads[0] = &kernelThread;
+    kernelThread.id = 0;
+    IThread::setPRunning(&kernelThread);
+    assert(&(IThread::getPRunning()->sp) == IThread::pRunningSp);
 }
 
 void doInitialAsserts()
@@ -112,18 +123,21 @@ void doInitialAsserts()
     assert(DEFAULT_STACK_SIZE == 4096);
     assert(DEFAULT_TIME_SLICE == 2);
     assert(sizeof(char) == 1);
-    assert(sizeof(Thread) < 1000);
+    assert(sizeof(IThread) < 1000);
     assert(sizeof(int) == 4);
     assert(sizeof(uint64) == 8);
+    assert(sizeof(unsigned long) == sizeof(uint64));
+    assert(sizeof(unsigned) == sizeof(int));
+    assert(USER_THREAD_ID > BUSY_WAIT_THREAD_ID); // user thread should have the largest thread id from all the threads that the user himself did not create explicitly
+    assert(sizeof(long int) == sizeof(uint64));
 }
 
 void initInterruptVector()
 {
-
 // should be before changing sstatus 0x2 bit
     __asm__ volatile ("csrw stvec, %[vector]" : : [vector] "r"(&trapRoutine));
 
 // set MODE to 1 - vector mode
-    __asm__ volatile ("csrs stvec, 0x1");
     __asm__ volatile ("csrc stvec, 0x2");
+    __asm__ volatile ("csrs stvec, 0x1");
 }

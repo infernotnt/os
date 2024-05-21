@@ -11,15 +11,25 @@ public:
         return &instance;
     }
 
+    int sleep(time_t time);
+
     static void dispatchToNext(); // WARNING: different than sys. call dispatch()
-    static Thread* getNext();
-    static void put(Thread*);
+    static void dispatchUserVersion();
+    static IThread* getNext();
+    static void put(IThread*);
     static void printState();
 
-    Thread* pHead; // points to the one that is the next to be run
+    static void doTimeSliceAndGTimeOnTick();
+    static void doSleepStuffOnTick();
+    static void reduceSleepTimerForAll();
+
+//    static void specialBusyWaitDispatch();
+
+    IThread* pHead; // points to the one that is the next to be run
+    IThread* pSleepHead;
 
 private:
     Scheduler()
-        : pHead(nullptr)
+        : pHead(nullptr), pSleepHead(nullptr)
     { }
 };

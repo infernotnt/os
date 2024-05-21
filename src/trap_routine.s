@@ -1,3 +1,10 @@
+# 1 "src/trap_routine.S"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 31 "<command-line>"
+# 1 "/usr/riscv64-linux-gnu/include/stdc-predef.h" 1 3
+# 32 "<command-line>" 2
+# 1 "src/trap_routine.S"
 .global trapRoutine
 
 .extern _Z25cInternalInterruptRoutinev
@@ -10,19 +17,19 @@
 
 .align 4
 trapRoutine:
-    j internalInterruptRoutine  # 0
-    j externalInterruptRoutine  # 1
-    j _Z15__exeptionErrorv      # 2
-    j _Z15__exeptionErrorv      # 3
-    j _Z15__exeptionErrorv      # 4
-    j _Z15__exeptionErrorv      # 5
-    j _Z15__exeptionErrorv      # 6
-    j _Z15__exeptionErrorv      # 7
-    j _Z15__exeptionErrorv      # 8
-    j externalInterruptRoutine  # 9
-    j _Z15__exeptionErrorv      # 10
-    j _Z15__exeptionErrorv      # 11
-    j _Z15__exeptionErrorv      # 12
+    j internalInterruptRoutine # 0
+    j externalInterruptRoutine # 1
+    j _Z15__exeptionErrorv # 2
+    j _Z15__exeptionErrorv # 3
+    j _Z15__exeptionErrorv # 4
+    j _Z15__exeptionErrorv # 5
+    j _Z15__exeptionErrorv # 6
+    j _Z15__exeptionErrorv # 7
+    j _Z15__exeptionErrorv # 8
+    j externalInterruptRoutine # 9
+    j _Z15__exeptionErrorv # 10
+    j _Z15__exeptionErrorv # 11
+    j _Z15__exeptionErrorv # 12
 
 
 internalInterruptRoutine:

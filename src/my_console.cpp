@@ -1,16 +1,105 @@
-//
-// Created by os on 4/25/23.
-//
-
 #include "../h/my_console.h"
-#include "../h/c_api.h"
+#include "../h/semaphore.h"
 
-//inline void _assert(bool valid, const char* file, int line)
+void IConsole::flush()
+{
+    while ((((*(char *) CONSOLE_STATUS) & CONSOLE_TX_STATUS_BIT) != 0) && putBufferItems > 0)
+    {
+        assert(((*(char *) CONSOLE_STATUS) & CONSOLE_TX_STATUS_BIT) == CONSOLE_TX_STATUS_BIT);
+        *((char *) CONSOLE_TX_DATA) = putBuffer[putBufferTail];
+
+        putBufferItems--;
+        putBufferTail = (putBufferTail + 1) % BUFFER_SIZE;
+    }
+}
+
+void IConsole::consoleHandler()
+{
+    assert(inputSemaphore != nullptr);
+
+    int a = plic_claim();
+
+    assert(a == 10);
+//    assert(a == 0 || a != 0);
+
+    if(a == 10)
+    {
+        if(getBufferItems < BUFFER_SIZE )
+        {
+            if (((*((char *) CONSOLE_STATUS)) & CONSOLE_RX_STATUS_BIT) != 0)
+            {
+                assert(getBufferItems < BUFFER_SIZE - 1);
+
+                uint64 fakeChar;
+                *((char*)&fakeChar) = *(char *) CONSOLE_RX_DATA;
+                char realChar = *((char*)&fakeChar);
+
+                IThread* pNextBlocked = inputSemaphore->pBlockedHead;
+
+                ISemaphore::signal(IConsole::get()->inputSemaphore->id);
+
+                if(pNextBlocked != nullptr)
+                {
+                    *(pNextBlocked->sp + 10) = fakeChar;
+                }
+                else
+                {
+                    getBuffer[getBufferHead] = realChar;
+                    getBufferHead = (getBufferHead + 1) % BUFFER_SIZE;
+                    getBufferItems++;
+
+                }
+            }
+        }
+    }
+
+    plic_complete(a);
+
+}
+
+void IConsole::putc(char c)
+{
+    if(putBufferItems >= BUFFER_SIZE)
+        return; // dismiss new characters
+
+    assert(putBufferItems < BUFFER_SIZE);
+
+    assert(putBufferHead < BUFFER_SIZE && putBufferTail < BUFFER_SIZE);
+
+    putBuffer[putBufferHead] = c;
+
+    putBufferItems++;
+    putBufferHead = (putBufferHead+1) % BUFFER_SIZE;
+}
+
+char IConsole::getc()
+{
+    assert(inputSemaphore != nullptr);
+    char ret;
+
+    if(getBufferItems > 0)
+    {
+        ret = getBuffer[getBufferTail];
+        getBufferItems--;
+        getBufferTail++;
+    }
+    else
+    {
+        ret = 69; // actual return comes from trap routine
+    }
+
+    ISemaphore::wait(inputSemaphore->id);
+
+    return ret;
+}
 
 [[noreturn]] void stopKernel()
 {
-    putNewline();
-    putString("====== Stopping the kernel ======");
+    __asm__ volatile("mv x10, x10");
+    kPutNewline();
+    kPutString("====== Stopping the kernel ======");
+
+    IConsole::get()->flush();
 
     disableExternalInterrupts();
 
@@ -19,6 +108,68 @@
     {
         a++;
     }
+}
+
+void kPutNewline()
+{
+    IConsole::get()->putc('\n');
+
+}
+
+void kPutString(const char* s)
+{
+    int i=0;
+    while(true)
+    {
+        if(s[i] == '\0')
+            break;
+        else IConsole::get()->putc(s[i++]);
+    }
+}
+
+void kPutU64(uint64 n)
+{
+    if(n >= 0 and n <= 9)
+        IConsole::get()->putc('0' + n);
+    else if (n < 0)
+    {
+        kPutString("===== FATAL PRINTING ERROR IN FUNCTION putU64. NEGATIVE VALUE. Stoping the kernel ====");
+        kPutNewline();
+        stopKernel();
+    }
+    else {
+        uint64 initial = 1000000000000000000;
+
+        if (n > initial || n <= 9)
+        {
+            kPutString("===== FATAL PRINTING ERROR IN FUNCTION putU64() Stoping the kernel ====");
+            kPutNewline();
+            stopKernel();
+        }
+
+        bool alreadyWritten = false;
+        while(initial > 0)
+        {
+            int digit = n / initial;
+            if (digit > 0 || alreadyWritten)
+            {
+                alreadyWritten = true;
+                IConsole::get()->putc(digit + '0');
+                n = n % initial;
+            }
+            initial /= 10;
+        }
+    }
+}
+
+void kPutInt(int n)
+{
+    if(n < 0)
+    {
+        IConsole::get()->putc('-');
+        n = -n;
+    }
+    kPutU64(n);
 }
 
 void putNewline()
@@ -32,45 +183,10 @@ void putString(const char* s)
     while(true)
     {
         if(s[i] == '\0')
-            return;
+            break;
         else putc(s[i++]);
     }
-}
 
-void putBinary(uint64 n)
-{
-    assert(false);
-    if(n < 0)
-    {
-        putString("===== FATAL PRINTING ERROR IN FUNCTION putU64. NEGATIVE VALUE. Stoping the kernel ====");
-        putNewline();
-        stopKernel();
-    }
-    else if(n == 0 || n == 1)
-    {
-        putc('0' + n);
-    }
-    else
-    {
-       uint64 initial = 1 << 30;
-       putString("AAA");
-//       putInt(initial);
-       putNewline();
-       putInt(sizeof(uint64));
-
-        bool alreadyWritten = false;
-        while(initial > 0)
-        {
-            bool digit = n / initial;
-            if (digit > 0 || alreadyWritten)
-            {
-                alreadyWritten = true;
-                putc(digit + '0');
-                n = n % initial;
-            }
-            initial = ((initial) >> 1);
-        }
-    }
 }
 
 void putU64(uint64 n)
@@ -110,35 +226,11 @@ void putU64(uint64 n)
 
 void putInt(int n)
 {
-    if(n >= 0 and n <= 9)
-        putc('0' + n);
-    else if (n < 0)
+    if(n>0)
+        putU64(n);
+    else
     {
         putc('-');
-        putInt(-n);
+        putU64(-n);
     }
-    else {
-        int initial = 1000000000;
-
-        if (n > initial || n <= 9)
-        {
-            putString("===== FATAL PRINTING ERROR IN FUNCTION putInt(int). Stoping the kernel ====");
-            putNewline();
-            stopKernel();
-        }
-
-        bool alreadyWritten = false;
-        while(initial > 0)
-        {
-            int digit = n / initial;
-            if (digit > 0 || alreadyWritten)
-            {
-                alreadyWritten = true;
-                putc(digit + '0');
-                n = n % initial;
-            }
-            initial /= 10;
-        }
-    }
-
 }

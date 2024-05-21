@@ -1,32 +1,31 @@
-ra             0x80003834	0x80003834 <test_call(unsigned long)+32>
-sp             0x800111c0	0x800111c0 <kernelStack+40920>
-gp             0x0	0x0
-tp             0x0	0x0
-t0             0x80000000	2147483648
-t1             0x80002b0c	2147494668
-t2             0x0	0
-fp             0x800111d0	0x800111d0 <kernelStack+40936>
-s1             0x80006ff0	2147512304
-a0             0x3	3
-a1             0x1	1
-a2             0x2e	46
-a3             0x88000000	2281701376
-a4             0x100000	1048576
-a5             0xedb00	973568
-a6             0x1000	4096
-a7             0x1000	4096
-s2             0x0	0
-s3             0x0	0
-s4             0x0	0
-s5             0x0	0
-s6             0x0	0
-s7             0x0	0
-s8             0x0	0
-s9             0x0	0
-s10            0x0	0
-s11            0x0	0
-t3             0x1000	4096
-t4             0x0	0
-t5             0x0	0
-t6             0x0	0
-pc             0x800036f8	0x800036f8 <helperRet64P164(uint64, uint64)+20>
+//        if(pCur->size >= actualSize) // mozda moze i manje jer za actualSize koristim i node od pCur
+//        { // found slot large enough?
+//
+//            FreeNode* newFree;
+//            newFree =
+//
+//            TakenNode *newTaken;
+//            newTaken = (TakenNode*)pCur;
+//            newTaken->base = pCur->base;
+//            newTaken->size = pCur->size;
+//            newTaken->pNext = pTakenHead;
+//            pTakenHead = newTaken;
+//
+//            if(pPrev != nullptr) // PAZI: pcur promenjen
+//            {
+//                pPrev->pNext = newFree;
+//            }
+//            else
+//            {
+//                assert(pCurCopy == pFreeHead);
+//                pFreeHead = newFree;
+//            }
+//
+//            newFree->pNext = pCur->pNext;
+//
+//
+//            // neki return ili break;
+//        }
+
+
+
